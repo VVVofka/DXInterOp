@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------------------
 // File: InterOp.cpp
-//
+// https://hackmag.com/coding/computing-with-gpu/
 // This application demonstrates the usage of AMP C++ interOp APIs with Direct3D 11. 
 // It displays the animation of a triangle rotation. 
 //
