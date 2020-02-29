@@ -28,3 +28,6 @@ struct Vertex2D
 {
     DirectX::XMFLOAT2 Pos;
 };
+struct Vertex3D {
+    DirectX::XMFLOAT3 Pos;
+};

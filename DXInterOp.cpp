@@ -15,6 +15,7 @@
 #include <exception>
 //#include "DXUT.h"
 #include "DXInterOp.h"
+#include "MDX3.h"
 #include "MDX.h"
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -23,7 +24,7 @@ HWND                        g_hWnd = NULL;
 // Forward declarations
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-MDX mdx;
+MDX3 mdx;
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.

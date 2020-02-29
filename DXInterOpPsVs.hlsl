@@ -18,6 +18,12 @@ float4 VS( uint id : SV_VERTEXID ) : SV_POSITION
 	// to adjust the indexing. 
     return float4(asfloat(posBufVS.Load(id*8+0)), asfloat(posBufVS.Load(id*8+4)), 0.0f, 1.0f );
 }
+float4 VS3(uint id : SV_VERTEXID) : SV_POSITION
+{
+	// vertex type is declared as a struct of XMFLOAT2. So to access the buffer, we need 
+	// to adjust the indexing. 
+	return float4(asfloat(posBufVS.Load(id * 8 + 0)), asfloat(posBufVS.Load(id * 8 + 4)), asfloat(posBufVS.Load(id * 8 + 8)), 1.0f);
+}
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader

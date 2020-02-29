@@ -26,9 +26,9 @@ class MDX3 {
     ID3D11Buffer* g_pVertexPosBuffer = NULL;
     ID3D11ShaderResourceView* g_pVertexPosBufferRV = NULL;
     ID3D11UnorderedAccessView* g_pVertexPosBufferUAV = NULL;
-    AMP_compute_engine* g_pAMPComputeEngine = NULL;
+    AMP_compute_engine3* g_pAMPComputeEngine = NULL;
 public:
-    static const unsigned int          g_numVertices = 3;
+    unsigned int          g_numVertices = 3;
     //--------------------------------------------------------------------------------------
     HRESULT InitDevice(HWND ghWnd) {// Create Direct3D device and shaders. Call from wWinMain()
         g_hWnd = ghWnd;
@@ -106,16 +106,16 @@ private:
     } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CreateComputeShader() {
         // A triangle 
-        std::vector<Vertex2D> vertices(3);
-        vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
-        vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);
-        vertices[2].Pos = DirectX::XMFLOAT2(-0.5f, -0.5f);
+        std::vector<Vertex3D> vertices(g_numVertices);
+        vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
+        vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
+        vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
         //Vertex2D vertices[g_numVertices] =
         //{   DirectX::XMFLOAT2(-0.25f, 0.0f),
         //    DirectX::XMFLOAT2(0.0f, -0.5f),
         //    DirectX::XMFLOAT2(-0.5f, -0.5f),
         //};
-        g_pAMPComputeEngine = new AMP_compute_engine(g_pd3dDevice);
+        g_pAMPComputeEngine = new AMP_compute_engine3(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data(vertices);
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
 
@@ -139,9 +139,9 @@ private:
         ID3DBlob* pVSBlob = NULL;
         LPCSTR pProfile = (g_pd3dDevice->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "vs_5_0" : "vs_4_0";
 
-        hr = CompileShaderFromFile(L"DXInterOpPsVs.hlsl", "VS", pProfile, &pVSBlob);
+        hr = CompileShaderFromFile(L"DXInterOpPsVs.hlsl", "VS3", pProfile, &pVSBlob);
         if (FAILED(hr)) {
-            MessageBox(NULL, L"The vertex shader in DXInterOpPsVs.hlsl cannot be compiled", L"Error", MB_OK);
+            MessageBox(NULL, L"The vertex shader VS3 in DXInterOpPsVs.hlsl cannot be compiled", L"Error", MB_OK);
             return hr;
         }
         // Create the vertex shader
@@ -169,13 +169,13 @@ private:
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(Vertex2D) * g_numVertices;
+        bd.ByteWidth = sizeof(Vertex3D) * g_numVertices;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = 0;
         RETURN_IF_FAIL(g_pd3dDevice->CreateBuffer(&bd, NULL, &g_pVertexBuffer));
 
         // Set vertex buffer
-        UINT stride = sizeof(Vertex2D);
+        UINT stride = sizeof(Vertex3D);
         UINT offset = 0;
         g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
@@ -231,7 +231,7 @@ public:
     void Render() {               //  Call from main loop wWinMain()
         g_pAMPComputeEngine->run();
         // Bind the vertex shader data though the compute shader result buffer view
-        UINT stride = sizeof(Vertex2D);
+        UINT stride = sizeof(Vertex3D);
         UINT offset = 0;
         g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
         g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
