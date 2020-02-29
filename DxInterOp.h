@@ -24,8 +24,7 @@
     #define RETURN_IF_FAIL(x)    { HRESULT thr = (x); if (FAILED(thr)) { return E_FAIL; } }
 #endif
 
-struct Vertex2D
-{
+struct Vertex2D {
     DirectX::XMFLOAT2 Pos;
 };
 struct Vertex3D {
