@@ -17,21 +17,15 @@
 #include "MDX.h"
 //--------------------------------------------------------------------------------------
 // Global Variables
-//--------------------------------------------------------------------------------------
-//const unsigned int          g_numVertices           = 3;
 HINSTANCE                   g_hInst = NULL;
 HWND                        g_hWnd = NULL;
-//--------------------------------------------------------------------------------------
 // Forward declarations
-//--------------------------------------------------------------------------------------
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 MDX mdx;
-
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
-//--------------------------------------------------------------------------------------
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -56,8 +50,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	mdx.CleanupDevice();
 	return (int)msg.wParam;
 } // ////////////////////////////////////////////////////////////////////////////
-// Register class and create window
-HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow) {
+HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow) {  // Register class and create window
 	// Register class
 	WNDCLASSEX wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);

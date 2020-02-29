@@ -42,24 +42,20 @@ public:
 private:
     HRESULT CreateSwapChain() {
         HRESULT hr = S_OK;
-
         RECT rc;
         GetClientRect(g_hWnd, &rc);
         UINT width = rc.right - rc.left;
         UINT height = rc.bottom - rc.top;
-
         UINT createDeviceFlags = 0;
 #ifdef _DEBUG
         createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
         D3D_DRIVER_TYPE driverTypes[] =
-        {
-            D3D_DRIVER_TYPE_HARDWARE,
+        {   D3D_DRIVER_TYPE_HARDWARE,
             D3D_DRIVER_TYPE_WARP,
             D3D_DRIVER_TYPE_REFERENCE,
         };
         UINT numDriverTypes = ARRAYSIZE(driverTypes);
-
         D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
         UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
