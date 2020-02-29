@@ -27,16 +27,16 @@ public:
 	AMP_compute_engine(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)) {}
 
 	void initialize_data(int num_elements, const Vertex2D* data) {
+		//m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(num_elements, data, m_accl_view));
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(num_elements, data, m_accl_view));
-	}
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void initialize_data(const std::vector<Vertex2D>& data) {
+		//m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const {
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
-	}
-
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run() {
 		array<Vertex2D, 1>& data_ref = *m_data;
 
@@ -52,28 +52,44 @@ public:
 			data_ref[idx].Pos.y = pos.y * cos(THETA) - pos.x * sin(THETA);
 			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
 			});
-	}
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 private:
 	accelerator_view					m_accl_view;
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
 }; // ******************************************************************************************************
+
 class AMP_compute_engine3 {
+private:
+	accelerator_view					m_accl_view;
+	//array<Vertex3D, 1>*	m_data; // set in initialize_data() from MDX.CreateComputeShader()
+	//std::unique_ptr<array<Vertex3D, 1>>	m_data; // set in initialize_data() from MDX.CreateComputeShader()
+	std::shared_ptr<array<Vertex3D, 1>>	m_data; // set in initialize_data() from MDX.CreateComputeShader()
+	std::vector<Vertex3D> vret;
 public:
 	AMP_compute_engine3(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)) {}
 
-	void initialize_data(int num_elements, const Vertex3D* data) {
-		m_data = std::unique_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(num_elements, data, m_accl_view));
-	}
-	void initialize_data(const std::vector<Vertex3D>& data) {
-		m_data = std::unique_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(data.size(), data.begin(), m_accl_view));
+	void initialize_data(int num_elements, const Vertex3D* data) { 
+		m_data = std::shared_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(num_elements, data, m_accl_view));
+		//m_data = std::unique_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(num_elements, data, m_accl_view));
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void initialize_data(const std::vector<Vertex3D>& data) { // Call from MDX.CreateComputeShader()
+		//m_data = std::unique_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(data.size(), data.begin(), m_accl_view));
+		m_data = std::shared_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(data.size(), data.begin(), m_accl_view));
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void return_data() { // std::vector<Vertex3D>& data
+		//array<Vertex3D, 1>& data_ref = *m_data; 
+		// private std::unique_ptr<array<Vertex3D, 1>>
+		concurrency::copy(*m_data, &vret);
+		//return vret;
+		//return NULL;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const {
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
-	}
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-	void run() {
-		array<Vertex3D, 1>& data_ref = *m_data;
+	void run() {  //Call from MDX.Render() from "main loop" in wWinMain()
+		array<Vertex3D, 1>& data_ref = *m_data; // private std::unique_ptr<array<Vertex3D, 1>>
 
 		// Transform the vertex data on the accelerator which is associated with the array data_ref. 
 		//
@@ -88,10 +104,7 @@ public:
 			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
 			data_ref[idx].Pos.z = pos.y * cos(THETA) + pos.x * sin(THETA);
 			});
-	}
-private:
-	accelerator_view					m_accl_view;
-	std::unique_ptr<array<Vertex3D, 1>>	m_data;
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 }; // ******************************************************************************************************
 
 
