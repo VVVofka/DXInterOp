@@ -11,7 +11,6 @@
 #include "DXInterOp.h"
 #include "ComputeEngine.h"
 class MDX {
-	HINSTANCE                   g_hInst = NULL;
 	HWND                        g_hWnd = NULL;
 	D3D_DRIVER_TYPE             g_driverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL           g_featureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -27,13 +26,12 @@ class MDX {
 	ID3D11Buffer* g_pVertexPosBuffer = NULL;
 	ID3D11ShaderResourceView* g_pVertexPosBufferRV = NULL;
 	ID3D11UnorderedAccessView* g_pVertexPosBufferUAV = NULL;
-
 	AMP_compute_engine* g_pAMPComputeEngine = NULL;
-
 public:
 	static const unsigned int          g_numVertices = 3;
 	//--------------------------------------------------------------------------------------
-	HRESULT InitDevice() {// Create Direct3D device and shaders. Call from wWinMain()
+	HRESULT InitDevice(HWND ghWnd) {// Create Direct3D device and shaders. Call from wWinMain()
+        g_hWnd = ghWnd;
 		HRESULT hr = S_OK;
 		RETURN_IF_FAIL(CreateSwapChain());
 		RETURN_IF_FAIL(CreateComputeShader());
@@ -112,7 +110,7 @@ private:
     } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CreateComputeShader() {
         // A triangle 
-        Vertex2D vertices[this->g_numVertices] =
+        Vertex2D vertices[g_numVertices] =
         {   DirectX::XMFLOAT2(-0.25f, 0.0f),
             DirectX::XMFLOAT2(0.0f, -0.5f),
             DirectX::XMFLOAT2(-0.5f, -0.5f),
