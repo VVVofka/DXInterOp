@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <iterator>
 #include <exception>
+//#include "DXUT.h"
 #include "DXInterOp.h"
 #include "MDX.h"
 //--------------------------------------------------------------------------------------
@@ -43,12 +44,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			DispatchMessage(&msg);
 		}
 		else {
-			//ComputeRenderData();
 			mdx.Render();
 		}
 	}
 	mdx.CleanupDevice();
-	return DXUTGetExitCode();
+	//return DXUTGetExitCode();
 	return (int)msg.wParam;
 } // ////////////////////////////////////////////////////////////////////////////
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow) {  // Register class and create window

@@ -10,35 +10,35 @@
 #include <exception>
 #include "DXInterOp.h"
 #include "ComputeEngine.h"
-class MDX {
-	HWND                        g_hWnd = NULL;
-	D3D_DRIVER_TYPE             g_driverType = D3D_DRIVER_TYPE_NULL;
-	D3D_FEATURE_LEVEL           g_featureLevel = D3D_FEATURE_LEVEL_11_0;
-	ID3D11Device* g_pd3dDevice = NULL;
-	ID3D11DeviceContext* g_pImmediateContext = NULL;
-	IDXGISwapChain* g_pSwapChain = NULL;
-	ID3D11RenderTargetView* g_pRenderTargetView = NULL;
-	ID3D11ComputeShader* g_pComputeShader = NULL;
-	ID3D11VertexShader* g_pVertexShader = NULL;
-	ID3D11PixelShader* g_pPixelShader = NULL;
-	ID3D11InputLayout* g_pVertexLayout = NULL;
-	ID3D11Buffer* g_pVertexBuffer = NULL;
-	ID3D11Buffer* g_pVertexPosBuffer = NULL;
-	ID3D11ShaderResourceView* g_pVertexPosBufferRV = NULL;
-	ID3D11UnorderedAccessView* g_pVertexPosBufferUAV = NULL;
-	AMP_compute_engine* g_pAMPComputeEngine = NULL;
+class MDX3 {
+    HWND                        g_hWnd = NULL;
+    D3D_DRIVER_TYPE             g_driverType = D3D_DRIVER_TYPE_NULL;
+    D3D_FEATURE_LEVEL           g_featureLevel = D3D_FEATURE_LEVEL_11_0;
+    ID3D11Device* g_pd3dDevice = NULL;
+    ID3D11DeviceContext* g_pImmediateContext = NULL;
+    IDXGISwapChain* g_pSwapChain = NULL;
+    ID3D11RenderTargetView* g_pRenderTargetView = NULL;
+    ID3D11ComputeShader* g_pComputeShader = NULL;
+    ID3D11VertexShader* g_pVertexShader = NULL;
+    ID3D11PixelShader* g_pPixelShader = NULL;
+    ID3D11InputLayout* g_pVertexLayout = NULL;
+    ID3D11Buffer* g_pVertexBuffer = NULL;
+    ID3D11Buffer* g_pVertexPosBuffer = NULL;
+    ID3D11ShaderResourceView* g_pVertexPosBufferRV = NULL;
+    ID3D11UnorderedAccessView* g_pVertexPosBufferUAV = NULL;
+    AMP_compute_engine* g_pAMPComputeEngine = NULL;
 public:
-	static const unsigned int          g_numVertices = 3;
-	//--------------------------------------------------------------------------------------
-	HRESULT InitDevice(HWND ghWnd) {// Create Direct3D device and shaders. Call from wWinMain()
+    static const unsigned int          g_numVertices = 3;
+    //--------------------------------------------------------------------------------------
+    HRESULT InitDevice(HWND ghWnd) {// Create Direct3D device and shaders. Call from wWinMain()
         g_hWnd = ghWnd;
-		HRESULT hr = S_OK;
-		RETURN_IF_FAIL(CreateSwapChain());
-		RETURN_IF_FAIL(CreateComputeShader());
-		RETURN_IF_FAIL(CreateVertexShader());
-		RETURN_IF_FAIL(CreatePixelShader());
-		return hr;
-	} // //////////////////////////////////////////////////////////////////////////////////
+        HRESULT hr = S_OK;
+        RETURN_IF_FAIL(CreateSwapChain());
+        RETURN_IF_FAIL(CreateComputeShader());
+        RETURN_IF_FAIL(CreateVertexShader());
+        RETURN_IF_FAIL(CreatePixelShader());
+        return hr;
+    } // //////////////////////////////////////////////////////////////////////////////////
 private:
     HRESULT CreateSwapChain() {
         HRESULT hr = S_OK;
@@ -51,7 +51,7 @@ private:
         createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
         D3D_DRIVER_TYPE driverTypes[] =
-        {   D3D_DRIVER_TYPE_HARDWARE,
+        { D3D_DRIVER_TYPE_HARDWARE,
             D3D_DRIVER_TYPE_WARP,
             D3D_DRIVER_TYPE_REFERENCE,
         };
@@ -229,7 +229,7 @@ private:
     } // ///////////////////////////////////////////////////////////////////////////////////////////////
 public:
     void Render() {               //  Call from main loop wWinMain()
-        g_pAMPComputeEngine->run();    
+        g_pAMPComputeEngine->run();
         // Bind the vertex shader data though the compute shader result buffer view
         UINT stride = sizeof(Vertex2D);
         UINT offset = 0;
@@ -270,4 +270,5 @@ public:
         SAFE_RELEASE(g_pd3dDevice);
     } // //////////////////////////////////////////////////////////////////////////////////////////
 }; // ***********************************************************************
+
 

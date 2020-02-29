@@ -57,5 +57,5 @@ public:
 private:
 	accelerator_view					m_accl_view;
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
-};
+}; // ******************************************************************************************************
 

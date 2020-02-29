@@ -224,6 +224,7 @@
     <ClInclude Include="ComputeEngine.h" />
     <ClInclude Include="DxInterOp.h" />
     <ClInclude Include="MDX.h" />
+    <ClInclude Include="MDX3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXInterOp.cpp">
