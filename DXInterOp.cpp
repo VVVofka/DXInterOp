@@ -48,6 +48,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 	}
 	mdx.CleanupDevice();
+	return DXUTGetExitCode();
 	return (int)msg.wParam;
 } // ////////////////////////////////////////////////////////////////////////////
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow) {  // Register class and create window
@@ -92,6 +93,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_KEYDOWN:
+	{
+		//switch (wParam) {
+		//case VK_ESCAPE:
+		//{
+		//	if (GetDXUTState().GetHandleEscape())
+		//		SendMessage(hWnd, WM_CLOSE, 0, 0);
+		//	break;
+		//}
+
+		//case VK_PAUSE:
+		//{
+		//	if (GetDXUTState().GetHandlePause()) {
+		//		bool bTimePaused = DXUTIsTimePaused();
+		//		bTimePaused = !bTimePaused;
+		//		if (bTimePaused)
+		//			DXUTPause(true, false);
+		//		else
+		//			DXUTPause(false, false);
+		//	}
+		//	break;
+		//}
+		//}
+		break;
+	}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
