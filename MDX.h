@@ -106,13 +106,17 @@ private:
     } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CreateComputeShader() {
         // A triangle 
-        Vertex2D vertices[g_numVertices] =
-        {   DirectX::XMFLOAT2(-0.25f, 0.0f),
-            DirectX::XMFLOAT2(0.0f, -0.5f),
-            DirectX::XMFLOAT2(-0.5f, -0.5f),
-        };
+        std::vector<Vertex2D> vertices(3);
+        vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
+        vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);
+        vertices[2].Pos = DirectX::XMFLOAT2(-0.5f, -0.5f);
+        //Vertex2D vertices[g_numVertices] =
+        //{   DirectX::XMFLOAT2(-0.25f, 0.0f),
+        //    DirectX::XMFLOAT2(0.0f, -0.5f),
+        //    DirectX::XMFLOAT2(-0.5f, -0.5f),
+        //};
         g_pAMPComputeEngine = new AMP_compute_engine(g_pd3dDevice);
-        g_pAMPComputeEngine->initialize_data(g_numVertices, vertices);
+        g_pAMPComputeEngine->initialize_data(vertices);
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
 
         // Bind a resource view to the CS buffer
