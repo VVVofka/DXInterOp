@@ -46,6 +46,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		else {
 			mdx.Render();
+			mdx.
 		}
 	}
 	mdx.CleanupDevice();
