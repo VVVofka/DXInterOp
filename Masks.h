@@ -179,6 +179,7 @@ struct Blocks2D2 {
 		int dirx20, int diry20, int dirx21, int diry21, int dirx30, int diry30, int dirx31, int diry31,
 		int dirx22, int diry22, int dirx23, int diry23, int dirx32, int diry32, int dirx33, int diry33
 	) {
+		v[index] = Block2D2(0, 0, 0, 0);
 		int nItem = 0, nCell = 0;
 		v[index].setDir(nCell, nItem++, dirx00, diry00);
 		v[index].setDir(nCell, nItem++, dirx01, diry01);
