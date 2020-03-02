@@ -24,7 +24,7 @@ HWND                        g_hWnd = NULL;
 // Forward declarations
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-//#define MY2D
+#define MY2D
 #ifdef MY2D
 MDX2 mdx; std::vector<Vertex2D> vertices(3);
 #else // MY2D
@@ -37,7 +37,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	RETURN_IF_FAIL(InitWindow(hInstance, nCmdShow));
-
 #ifdef MY2D
 	vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
 	vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);

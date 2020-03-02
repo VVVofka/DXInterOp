@@ -12,7 +12,7 @@ ByteAddressBuffer posBufVS : register( t0);
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-float4 VS( uint id : SV_VERTEXID ) : SV_POSITION
+float4 VS2( uint id : SV_VERTEXID ) : SV_POSITION
 {
 	// vertex type is declared as a struct of XMFLOAT2. So to access the buffer, we need 
 	// to adjust the indexing. 

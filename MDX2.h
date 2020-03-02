@@ -13,7 +13,7 @@ public:
         g_numVertices = vertices.size();
         RETURN_IF_FAIL(MDX::CreateSwapChain());
         RETURN_IF_FAIL(CreateComputeShader(vertices));
-        RETURN_IF_FAIL(MDX::CreateVertexShader("VS"));
+        RETURN_IF_FAIL(MDX::CreateVertexShader("VS2"));
         RETURN_IF_FAIL(MDX::CreatePixelShader());
         return hr;
     } // //////////////////////////////////////////////////////////////////////////////////
