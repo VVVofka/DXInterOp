@@ -25,7 +25,7 @@ HWND                        g_hWnd = NULL;
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 //MDX3 mdx; std::vector<Vertex3D> vertices(3);
-MDX mdx; std::vector<Vertex2D> vertices(3);
+MDX2 mdx; std::vector<Vertex2D> vertices(3);
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
@@ -54,7 +54,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		else {
 			mdx.Render();
-			
 		}
 	}
 	mdx.CleanupDevice();
