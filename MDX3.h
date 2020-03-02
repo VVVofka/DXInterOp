@@ -9,7 +9,7 @@
 #include <iterator>
 #include <exception>
 #include "DXInterOp.h"
-#include "ComputeEngine.h"
+#include "AMPEngine3.h"
 class MDX3 {
     HWND                        g_hWnd = NULL;
     D3D_DRIVER_TYPE             g_driverType = D3D_DRIVER_TYPE_NULL;
@@ -26,7 +26,7 @@ class MDX3 {
     ID3D11Buffer* g_pVertexPosBuffer = NULL;
     ID3D11ShaderResourceView* g_pVertexPosBufferRV = NULL;
     ID3D11UnorderedAccessView* g_pVertexPosBufferUAV = NULL;
-    AMP_compute_engine3* g_pAMPComputeEngine = NULL;
+    AMPEngine3* g_pAMPComputeEngine = NULL;
 public:
     unsigned int          g_numVertices = 0;
     //D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -114,7 +114,7 @@ private:
         return hr;
     } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CreateComputeShader(std::vector<Vertex3D>& vertices) {
-        g_pAMPComputeEngine = new AMP_compute_engine3(g_pd3dDevice);
+        g_pAMPComputeEngine = new AMPEngine3(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data(vertices);
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
 

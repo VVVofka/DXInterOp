@@ -16,7 +16,7 @@
 //#include "DXUT.h"
 #include "DXInterOp.h"
 #include "MDX3.h"
-#include "MDX.h"
+#include "MDX2.h"
 //--------------------------------------------------------------------------------------
 // Global Variables
 HINSTANCE                   g_hInst = NULL;

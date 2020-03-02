@@ -222,9 +222,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine2.h" />
-    <ClInclude Include="ComputeEngine.h" />
+    <ClInclude Include="AMPEngine3.h" />
     <ClInclude Include="DxInterOp.h" />
-    <ClInclude Include="MDX.h" />
+    <ClInclude Include="MDX2.h" />
     <ClInclude Include="MDX3.h" />
   </ItemGroup>
   <ItemGroup>
