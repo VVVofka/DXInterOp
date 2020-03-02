@@ -8,81 +8,15 @@ public:
                        std::vector<Vertex3D>& vertices,
                        D3D_PRIMITIVE_TOPOLOGY Primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST
     ) {// Create Direct3D device and shaders. Call from wWinMain()
-        primitive = Primitive;
+        HRESULT hr = MDX::InitDevice(ghWnd, Primitive);
         g_numVertices = vertices.size();
-        g_hWnd = ghWnd;
-        HRESULT hr = S_OK;
-        RETURN_IF_FAIL(CreateSwapChain());
+        RETURN_IF_FAIL(MDX::CreateSwapChain());
         RETURN_IF_FAIL(CreateComputeShader(vertices));
-        RETURN_IF_FAIL(CreateVertexShader());
-        RETURN_IF_FAIL(CreatePixelShader());
+        RETURN_IF_FAIL(MDX::CreateVertexShader("VS3"));
+        RETURN_IF_FAIL(MDX::CreatePixelShader());
         return hr;
     } // //////////////////////////////////////////////////////////////////////////////////
 private:
-    HRESULT CreateSwapChain() {
-        HRESULT hr = S_OK;
-        RECT rc;
-        GetClientRect(g_hWnd, &rc);
-        UINT width = rc.right - rc.left;
-        UINT height = rc.bottom - rc.top;
-        UINT createDeviceFlags = 0;
-#ifdef _DEBUG
-        createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-        D3D_DRIVER_TYPE driverTypes[] =
-        { D3D_DRIVER_TYPE_HARDWARE,
-            D3D_DRIVER_TYPE_WARP,
-            D3D_DRIVER_TYPE_REFERENCE,
-        };
-        UINT numDriverTypes = ARRAYSIZE(driverTypes);
-        D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-        UINT numFeatureLevels = ARRAYSIZE(featureLevels);
-
-        // Create swap chain
-        DXGI_SWAP_CHAIN_DESC sd;
-        ZeroMemory(&sd, sizeof(sd));
-        sd.BufferCount = 1;
-        sd.BufferDesc.Width = width;
-        sd.BufferDesc.Height = height;
-        sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        sd.BufferDesc.RefreshRate.Numerator = 60;
-        sd.BufferDesc.RefreshRate.Denominator = 1;
-        sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        sd.OutputWindow = g_hWnd;
-        sd.SampleDesc.Count = 1;
-        sd.SampleDesc.Quality = 0;
-        sd.Windowed = TRUE;
-
-        for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++) {
-            g_driverType = driverTypes[driverTypeIndex];
-            hr = D3D11CreateDeviceAndSwapChain(NULL, g_driverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
-                D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &g_featureLevel, &g_pImmediateContext);
-            if (SUCCEEDED(hr))
-                break;
-        }
-        RETURN_IF_FAIL(hr);
-
-        // Create a render target view
-        ID3D11Texture2D* pBackBuffer = NULL;
-        RETURN_IF_FAIL(g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer));
-
-        hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_pRenderTargetView);
-        SAFE_RELEASE(pBackBuffer);
-        RETURN_IF_FAIL(hr);
-
-        g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, NULL);
-
-        // Setup the viewport
-        D3D11_VIEWPORT vp;
-        vp.Width = (FLOAT)width;
-        vp.Height = (FLOAT)height;
-        vp.MinDepth = 0.0f;
-        vp.MaxDepth = 1.0f;
-        vp.TopLeftX = 0;
-        vp.TopLeftY = 0;
-        g_pImmediateContext->RSSetViewports(1, &vp);
-        return hr;
-    } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CreateComputeShader(std::vector<Vertex3D>& vertices) {
         g_pAMPComputeEngine = new AMPEngine3(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data(vertices);
@@ -103,55 +37,7 @@ private:
         RETURN_IF_FAIL(g_pd3dDevice->CreateShaderResourceView(g_pVertexPosBuffer, &DescRV, &g_pVertexPosBufferRV));
         return S_OK;
     } // /////////////////////////////////////////////////////////////////////////////////////////////
-    HRESULT CreateVertexShader() {
-        HRESULT hr = S_OK;
-        ID3DBlob* pVSBlob = NULL;
-        LPCSTR pProfile = (g_pd3dDevice->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "vs_5_0" : "vs_4_0";
 
-        hr = CompileShaderFromFile(L"DXInterOpPsVs.hlsl", "VS3", pProfile, &pVSBlob);
-        if (FAILED(hr)) {
-            MessageBox(NULL, L"The vertex shader VS3 in DXInterOpPsVs.hlsl cannot be compiled", L"Error", MB_OK);
-            return hr;
-        }
-        // Create the vertex shader
-        hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &g_pVertexShader);
-        if (FAILED(hr)) {
-            pVSBlob->Release();
-            return hr;
-        }
-        // Define the input layout
-        D3D11_INPUT_ELEMENT_DESC layout[] =
-        {
-            { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        };
-        UINT numElements = ARRAYSIZE(layout);
-
-        // Create the input layout
-        hr = g_pd3dDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
-            pVSBlob->GetBufferSize(), &g_pVertexLayout);
-        pVSBlob->Release();
-        RETURN_IF_FAIL(hr);
-
-        // Set the input layout
-        g_pImmediateContext->IASetInputLayout(g_pVertexLayout);
-
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(Vertex3D) * g_numVertices;
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bd.CPUAccessFlags = 0;
-        RETURN_IF_FAIL(g_pd3dDevice->CreateBuffer(&bd, NULL, &g_pVertexBuffer));
-
-        // Set vertex buffer
-        UINT stride = sizeof(Vertex3D);
-        UINT offset = 0;
-        g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-
-        // Set primitive topology
-        g_pImmediateContext->IASetPrimitiveTopology(primitive);
-        return hr;
-    } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CompileShaderFromFile(LPCWSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut) {
         HRESULT hr = S_OK;
         DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_OPTIMIZATION_LEVEL2;
@@ -180,47 +66,11 @@ private:
         SAFE_RELEASE(pErrorBlob);
         return hr;
     } // ///////////////////////////////////////////////////////////////////////////////////////////
-    HRESULT CreatePixelShader() {
-        HRESULT hr = S_OK;
-        // Compile the pixel shader
-        ID3DBlob* pPSBlob = NULL;
-        LPCSTR pProfile = (g_pd3dDevice->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "ps_5_0" : "ps_4_0";
-
-        hr = CompileShaderFromFile(L"DXInterOpPsVs.hlsl", "PS", pProfile, &pPSBlob);
-        if (FAILED(hr)) {
-            MessageBox(NULL, L"The pixel shader in DXInterOpPsVs.hlsl cannot be compiled.", L"Error", MB_OK);
-            return hr;
-        }
-        // Create the pixel shader
-        hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &g_pPixelShader);
-        pPSBlob->Release();
-        return hr;
-    } // ///////////////////////////////////////////////////////////////////////////////////////////////
 public:
     void Render() {               //  Call from main loop wWinMain()
         g_pAMPComputeEngine->run();
-        // Bind the vertex shader data though the compute shader result buffer view
         UINT stride = sizeof(Vertex3D);
-        UINT offset = 0;
-        g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-        g_pImmediateContext->IASetPrimitiveTopology(primitive);
-
-        ID3D11ShaderResourceView* aRViews[1] = { g_pVertexPosBufferRV };
-        g_pImmediateContext->VSSetShaderResources(0, 1, aRViews);
-
-        // Clear the back buffer 
-        g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, BackColor);
-
-        // Render the triangle
-        g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
-        g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
-        g_pImmediateContext->Draw(g_numVertices, 0);
-
-        ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-        g_pImmediateContext->VSSetShaderResources(0, 1, ppSRVNULL);
-
-        // Present the information rendered to the back buffer to the front buffer (the screen)
-        g_pSwapChain->Present(0, 0);
+        MDX::Render(stride);
     } // ///////////////////////////////////////////////////////////////////////////////////////////////////
     void CleanupDevice(){     //  Call from wWinMain() twice: onExit & onError
         MDX::CleanupDevice();
