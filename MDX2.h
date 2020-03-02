@@ -23,31 +23,15 @@ private:
         g_pAMPComputeEngine->initialize_data(vertices);
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
         return MDX::CreateComputeShader();
-        //// Bind a resource view to the CS buffer
-        //D3D11_BUFFER_DESC descBuf;
-        //ZeroMemory(&descBuf, sizeof(descBuf));
-        //g_pVertexPosBuffer->GetDesc(&descBuf);
-
-        //D3D11_SHADER_RESOURCE_VIEW_DESC DescRV;
-        //ZeroMemory(&DescRV, sizeof(DescRV));
-        //DescRV.Format = DXGI_FORMAT_R32_TYPELESS;
-        //DescRV.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
-        //DescRV.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
-        //DescRV.Buffer.FirstElement = 0;
-        //DescRV.Buffer.NumElements = descBuf.ByteWidth / sizeof(int);
-        //RETURN_IF_FAIL(g_pd3dDevice->CreateShaderResourceView(g_pVertexPosBuffer, &DescRV, &g_pVertexPosBufferRV));
-        //return S_OK;
     } // /////////////////////////////////////////////////////////////////////////////////////////////
  public:
     void Render() {               //  Call from main loop wWinMain()
         g_pAMPComputeEngine->run();    
-        UINT stride = sizeof(Vertex2D);
-        MDX::Render(stride);
+        MDX::Render(sizeof(Vertex2D));
     } // ///////////////////////////////////////////////////////////////////////////////////////////////////
     void CleanupDevice(){     //  Call from wWinMain() twice: onExit & onError
         MDX::CleanupDevice();
         SAFE_DELETE(g_pAMPComputeEngine);
     } // //////////////////////////////////////////////////////////////////////////////////////////
-
 }; // ***********************************************************************
 
