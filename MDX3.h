@@ -28,17 +28,18 @@ class MDX3 {
     ID3D11UnorderedAccessView* g_pVertexPosBufferUAV = NULL;
     AMP_compute_engine3* g_pAMPComputeEngine = NULL;
 public:
-    unsigned int          g_numVertices = 3;
+    unsigned int          g_numVertices = 0;
     //D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
     float BackColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
     // Fore color in *.hlsl
     //--------------------------------------------------------------------------------------
-    HRESULT InitDevice(HWND ghWnd) {// Create Direct3D device and shaders. Call from wWinMain()
+    HRESULT InitDevice(HWND ghWnd, std::vector<Vertex3D>& vertices) {// Create Direct3D device and shaders. Call from wWinMain()
+        g_numVertices = vertices.size();
         g_hWnd = ghWnd;
         HRESULT hr = S_OK;
         RETURN_IF_FAIL(CreateSwapChain());
-        RETURN_IF_FAIL(CreateComputeShader());
+        RETURN_IF_FAIL(CreateComputeShader(vertices));
         RETURN_IF_FAIL(CreateVertexShader());
         RETURN_IF_FAIL(CreatePixelShader());
         return hr;
@@ -108,17 +109,7 @@ private:
         g_pImmediateContext->RSSetViewports(1, &vp);
         return hr;
     } // ///////////////////////////////////////////////////////////////////////////////////////////
-    HRESULT CreateComputeShader() {
-        // A triangle 
-        std::vector<Vertex3D> vertices(g_numVertices);
-        vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
-        vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
-        vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
-        //Vertex2D vertices[g_numVertices] =
-        //{   DirectX::XMFLOAT2(-0.25f, 0.0f),
-        //    DirectX::XMFLOAT2(0.0f, -0.5f),
-        //    DirectX::XMFLOAT2(-0.5f, -0.5f),
-        //};
+    HRESULT CreateComputeShader(std::vector<Vertex3D>& vertices) {
         g_pAMPComputeEngine = new AMP_compute_engine3(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data(vertices);
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));

@@ -33,7 +33,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	RETURN_IF_FAIL(InitWindow(hInstance, nCmdShow));
 
-	if (FAILED(mdx.InitDevice(g_hWnd))) {
+	std::vector<Vertex3D> vertices(3);
+	vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
+	vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
+	vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
+
+	if (FAILED(mdx.InitDevice(g_hWnd, vertices))) {
 		mdx.CleanupDevice();
 		return E_FAIL;
 	}
@@ -46,7 +51,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		else {
 			mdx.Render();
-			mdx.
+			
 		}
 	}
 	mdx.CleanupDevice();
