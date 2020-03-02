@@ -61,12 +61,12 @@ private:
 class AMP_compute_engine3 {
 private:
 	accelerator_view					m_accl_view;
-	std::unique_ptr<array<Vertex3D, 1>>	m_data; // set in initialize_data() from MDX.CreateComputeShader()
+	std::unique_ptr<array<Vertex3D, 1>>	m_data; // set in initialize_data() from MDX3.CreateComputeShader()
 	std::vector<Vertex3D> vret;
 public:
 	AMP_compute_engine3(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)) {}
 
-	void initialize_data(const std::vector<Vertex3D>& data) { // Call from MDX.CreateComputeShader()
+	void initialize_data(const std::vector<Vertex3D>& data) { // Call from MDX3.CreateComputeShader()
 		m_data = std::unique_ptr<array<Vertex3D, 1>>(new array<Vertex3D, 1>(data.size(), data.begin(), m_accl_view));
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	std::vector<Vertex3D>* return_data() { // std::vector<Vertex3D>& data

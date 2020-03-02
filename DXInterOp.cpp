@@ -24,7 +24,8 @@ HWND                        g_hWnd = NULL;
 // Forward declarations
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-MDX3 mdx;
+//MDX3 mdx; std::vector<Vertex3D> vertices(3);
+MDX mdx; std::vector<Vertex2D> vertices(3);
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
@@ -33,10 +34,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	RETURN_IF_FAIL(InitWindow(hInstance, nCmdShow));
 
-	std::vector<Vertex3D> vertices(3);
-	vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
-	vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
-	vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
+	//vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
+	//vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
+	//vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
+	vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
+	vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);
+	vertices[2].Pos = DirectX::XMFLOAT2(-0.5f, -0.5f);
 
 	if (FAILED(mdx.InitDevice(g_hWnd, vertices))) {
 		mdx.CleanupDevice();

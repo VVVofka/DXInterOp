@@ -29,9 +29,19 @@ class MDX {
 	AMP_compute_engine* g_pAMPComputeEngine = NULL;
 public:
 	unsigned int          g_numVertices = 0;
-	//--------------------------------------------------------------------------------------
-	HRESULT InitDevice(HWND ghWnd, std::vector<Vertex2D> vertices) {// Create Direct3D device and shaders. Call from wWinMain()
+    //D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+
+    float BackColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
+    // Fore color in *.hlsl
+    //--------------------------------------------------------------------------------------
+
+    HRESULT InitDevice(HWND ghWnd,
+                       std::vector<Vertex2D> vertices,
+                       D3D_PRIMITIVE_TOPOLOGY Primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST
+    ) {// Create Direct3D device and shaders. Call from wWinMain()
         g_numVertices = vertices.size();
+        primitive = Primitive;
         g_hWnd = ghWnd;
         vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
         vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);
@@ -174,7 +184,7 @@ private:
         g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
         // Set primitive topology
-        g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        g_pImmediateContext->IASetPrimitiveTopology(primitive);
         return hr;
     } // ///////////////////////////////////////////////////////////////////////////////////////////
     HRESULT CompileShaderFromFile(LPCWSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut) {
@@ -228,14 +238,13 @@ public:
         UINT stride = sizeof(Vertex2D);
         UINT offset = 0;
         g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-        g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        g_pImmediateContext->IASetPrimitiveTopology(primitive);
 
         ID3D11ShaderResourceView* aRViews[1] = { g_pVertexPosBufferRV };
         g_pImmediateContext->VSSetShaderResources(0, 1, aRViews);
 
         // Clear the back buffer 
-        float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-        g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
+        g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, BackColor);
 
         // Render the triangle
         g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);

@@ -34,7 +34,11 @@ public:
     float BackColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
     // Fore color in *.hlsl
     //--------------------------------------------------------------------------------------
-    HRESULT InitDevice(HWND ghWnd, std::vector<Vertex3D>& vertices) {// Create Direct3D device and shaders. Call from wWinMain()
+    HRESULT InitDevice(HWND ghWnd, 
+                       std::vector<Vertex3D>& vertices,
+                       D3D_PRIMITIVE_TOPOLOGY Primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST
+    ) {// Create Direct3D device and shaders. Call from wWinMain()
+        primitive = Primitive;
         g_numVertices = vertices.size();
         g_hWnd = ghWnd;
         HRESULT hr = S_OK;
