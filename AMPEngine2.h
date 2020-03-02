@@ -1,5 +1,4 @@
 #pragma once
-//include <windows.h>
 #include <memory>
 #include <amp.h>
 #include <amp_math.h>
