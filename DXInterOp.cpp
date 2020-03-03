@@ -34,7 +34,7 @@ MDX3 mdx; std::vector<Vertex3D> vertices(3);
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
-
+#pragma warning(suppress : 28251)
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -50,7 +50,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 #endif // MY2D
 
 	Blocks2D2 blks;
-	_RPT0(0, blks.dump().c_str());
+	//_RPT0(0, blks.dump().c_str());
 
 	if (FAILED(mdx.InitDevice(g_hWnd, vertices))) {
 		mdx.CleanupDevice();
