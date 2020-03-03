@@ -16,6 +16,27 @@ class AMPEngine2{
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 
+	std::vector<DirectX::XMFLOAT2> v_pos;
+	std::vector<int> v_area;
+	void Create(int minszX, int minszY, int maxsz, double kFill){
+		int szx = minszX;
+		int szy = minszY;
+		int sz = __max(minszX, minszY);
+		while(sz <= maxsz){
+			// TODO: fill lays here
+			szy *= 2, szx *= 2, sz *= 2;
+		}
+		size_t szarea = ++szx * ++szy;
+		v_area.resize(szarea);
+		size_t szpos = int(szarea * kFill + 0.5);
+		v_pos.resize(szpos);
+		double kfact = double(szy) / double(szx);
+		for(auto q : v_pos){
+			// TODO: rand
+			q.x = szx / 2 * cos()
+		}
+	} // //////////////////////////////////////////////////////////////////////////////////
+
 	void initialize_data(int num_elements, const Vertex2D* data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(num_elements, data, m_accl_view));
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,8 +61,10 @@ public:
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 private:
-	accelerator_view					m_accl_view;
-	std::unique_ptr<array<Vertex2D, 1>>	m_data;
+	accelerator_view					          m_accl_view;
+	std::unique_ptr<array<Vertex2D, 1>>	          m_data;
+	std::unique_ptr<array<DirectX::XMFLOAT2, 1>>  ar_pos;
+
 }; // ******************************************************************************************************
 
 

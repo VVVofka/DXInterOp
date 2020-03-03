@@ -17,6 +17,9 @@ public:
         RETURN_IF_FAIL(MDX::CreatePixelShader());
         return hr;
     } // //////////////////////////////////////////////////////////////////////////////////
+    void Create(int minszX, int minszY, int maxsz, double kFill){
+        g_pAMPComputeEngine->Create(minszX, minszY, maxsz, kFill);
+    } // //////////////////////////////////////////////////////////////////////////////////
 private:
  HRESULT CreateComputeShader(std::vector<Vertex2D>& vertices) {
         g_pAMPComputeEngine = new AMPEngine2(g_pd3dDevice);
