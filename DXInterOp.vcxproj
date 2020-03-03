@@ -114,6 +114,7 @@
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>26812;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +146,7 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>26812;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

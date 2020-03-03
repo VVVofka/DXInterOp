@@ -6,7 +6,9 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
-#include <windows.h>
+//#include <windows.h>
+#include "MDX3.h"
+#include "MDX2.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,8 +17,7 @@
 #include <exception>
 //#include "DXUT.h"
 #include "DXInterOp.h"
-#include "MDX3.h"
-#include "MDX2.h"
+#include "Masks.h"
 //--------------------------------------------------------------------------------------
 // Global Variables
 HINSTANCE                   g_hInst = NULL;
@@ -33,6 +34,7 @@ MDX3 mdx; std::vector<Vertex3D> vertices(3);
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -46,6 +48,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
 	vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
 #endif // MY2D
+
+	Blocks2D2 blks;
+	_RPT0(0, blks.dump().c_str());
 
 	if (FAILED(mdx.InitDevice(g_hWnd, vertices))) {
 		mdx.CleanupDevice();
