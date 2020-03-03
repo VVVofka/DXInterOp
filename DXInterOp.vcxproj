@@ -230,6 +230,7 @@
     <ClInclude Include="MDX.h" />
     <ClInclude Include="MDX2.h" />
     <ClInclude Include="MDX3.h" />
+    <ClInclude Include="Model2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXInterOp.cpp">
