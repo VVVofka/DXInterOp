@@ -25,6 +25,8 @@
 #endif
 
 struct Vertex2D {
+    Vertex2D(){}
+    Vertex2D(float x, float y){ Pos.x = x; Pos.y = y; }
     DirectX::XMFLOAT2 Pos;
 };
 struct Vertex3D {

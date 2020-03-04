@@ -16,13 +16,15 @@ using namespace concurrency::direct3d;
 class AMPEngine2{
 	accelerator_view					m_accl_view;
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
-	array<DirectX::XMFLOAT2, 1>         ar_pos;
+	std::unique_ptr<array<Vertex2D, 1>> ar_pos;
+	std::unique_ptr<array<int, 1>>      ar_area;
 	Model2D                             model;
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 	void Create(int minszX, int minszY, int maxsz, double kFill) {
 		model.Create(minszX, minszY, maxsz, kFill);
-		ar_pos = array<DirectX::XMFLOAT2, 2>(model.)
+		ar_pos = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(model.v_pos.size(), model.v_pos.begin(), m_accl_view));
+		ar_area= std::unique_ptr<array<int, 1>>(new array<int, 1>(model.v_area.size(), model.v_area.begin(), m_accl_view));
 	} // //////////////////////////////////////////////////////////////////////////////////////////////
 	void initialize_data(int num_elements, const Vertex2D* data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(num_elements, data, m_accl_view));

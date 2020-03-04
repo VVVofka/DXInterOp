@@ -3,10 +3,12 @@
 #include <cmath>
 #include <vector>
 #include <DirectXMath.h>
+#include "DXInterOp.h"
+
 //using namespace std;
 class Model2D {
 public:
-	std::vector<DirectX::XMFLOAT2> v_pos;
+	std::vector<Vertex2D> v_pos;
 	std::vector<int> v_area;
 	int szx = 0;
 	int szy = 0;
@@ -35,7 +37,7 @@ public:
 			v_area[curpos] = v_pos.size();
 			int y = curpos / szy;
 			int x = curpos % szy;
-			v_pos.push_back(DirectX::XMFLOAT2(float(x), float(y)));
+			v_pos.push_back(Vertex2D(float(x), float(y)));
 		}
 	} // //////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
