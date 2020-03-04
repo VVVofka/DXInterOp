@@ -12,11 +12,12 @@ public:
 	std::vector<int> v_area;
 	int szx = 0;
 	int szy = 0;
+
 	void Create(int minszX, int minszY, int maxsz, double kFill) {
 		szx = minszX;
 		szy = minszY;
 		int sz = __max(minszX, minszY);
-		while (sz <= maxsz) {
+		while (sz <= maxsz/2) {
 			// TODO: fill lays here
 			szy *= 2, szx *= 2, sz *= 2;
 		}
@@ -35,9 +36,10 @@ public:
 				curpos = dist(gen);
 			} while (v_area[curpos] < 0);
 			v_area[curpos] = v_pos.size();
-			int y = curpos / szy;
-			int x = curpos % szy;
-			v_pos.push_back(Vertex2D(float(x), float(y)));
+			float y =  (((2 * curpos) / szx) - szy) / float(szy);
+			float x = ((2 * (curpos % szx)) - szx) / float(szx);
+			v_pos.push_back(Vertex2D(x, y));
+			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
 		}
 	} // //////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************

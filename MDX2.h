@@ -17,13 +17,14 @@ public:
         RETURN_IF_FAIL(MDX::CreatePixelShader());
         return hr;
     } // //////////////////////////////////////////////////////////////////////////////////
-    void Create(int minszX, int minszY, int maxsz, double kFill){
-        g_pAMPComputeEngine->Create(minszX, minszY, maxsz, kFill);
-    } // //////////////////////////////////////////////////////////////////////////////////
+    //void Create(int minszX, int minszY, int maxsz, double kFill){
+    //    g_pAMPComputeEngine->Create(minszX, minszY, maxsz, kFill);
+    //} // //////////////////////////////////////////////////////////////////////////////////
 private:
  HRESULT CreateComputeShader(std::vector<Vertex2D>& vertices) {
         g_pAMPComputeEngine = new AMPEngine2(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data(vertices);
+        //g_pAMPComputeEngine->Create(4, 3, 1000, 0.33);
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
         return MDX::CreateComputeShader();
     } // /////////////////////////////////////////////////////////////////////////////////////////////

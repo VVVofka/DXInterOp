@@ -7,7 +7,9 @@
 //#include <ppl.h>
 #include <numeric>
 #include "Model2D.h"
+
 #define THETA 3.1415f/1024  
+extern Model2D model;
 
 using namespace concurrency;
 using namespace concurrency::fast_math;
@@ -16,21 +18,14 @@ using namespace concurrency::direct3d;
 class AMPEngine2{
 	accelerator_view					m_accl_view;
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
-	std::unique_ptr<array<Vertex2D, 1>> ar_pos;
 	std::unique_ptr<array<int, 2>>      ar_area;
-	Model2D                             model;
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
-	void Create(int minszX, int minszY, int maxsz, double kFill) {
-		model.Create(minszX, minszY, maxsz, kFill);
-		ar_pos = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(model.v_pos.size(), model.v_pos.begin(), m_accl_view));
-		ar_area= std::unique_ptr<array<int, 2>>(new array<int, 2>(model.szy, model.szx, model.v_area.begin(), m_accl_view));
-	} // //////////////////////////////////////////////////////////////////////////////////////////////
-	void initialize_data(int num_elements, const Vertex2D* data){
-		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(num_elements, data, m_accl_view));
-	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
+#ifdef MYAREA
+		ar_area= std::unique_ptr<array<int, 2>>(new array<int, 2>(model.szy, model.szx, model.v_area.begin(), m_accl_view));
+#endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
@@ -44,13 +39,10 @@ public:
 			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	std::vector<Vertex2D>* return_data(std::vector<Vertex2D>* vreturn){ 
+	std::vector<Vertex2D>* return_data(std::vector<Vertex2D>* vreturn){
 		concurrency::copy(*m_data, begin(*vreturn));
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-private:
-
 }; // ******************************************************************************************************
 
 

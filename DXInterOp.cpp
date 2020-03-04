@@ -18,6 +18,8 @@
 //#include "DXUT.h"
 #include "DXInterOp.h"
 #include "Masks.h"
+#include "Model2D.h"
+
 //--------------------------------------------------------------------------------------
 // Global Variables
 HINSTANCE                   g_hInst = NULL;
@@ -25,11 +27,16 @@ HWND                        g_hWnd = NULL;
 // Forward declarations
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-#define MY2D
 #ifdef MY2D
-MDX2 mdx; std::vector<Vertex2D> vertices(3);
+MDX2 mdx; 
+Model2D model;
+std::vector<Vertex2D> vertices(3);
+#elif MY3D // MY2D
+MDX3 mdx; 
+std::vector<Vertex3D> vertices(3);
 #else // MY2D
-MDX3 mdx; std::vector<Vertex3D> vertices(3);
+MDX2 mdx; 
+Model2D model = Model2D();
 #endif // MY2D
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -39,23 +46,33 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	RETURN_IF_FAIL(InitWindow(hInstance, nCmdShow));
+
 #ifdef MY2D
 	vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
 	vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);
 	vertices[2].Pos = DirectX::XMFLOAT2(-0.5f, -0.5f);
-#else // MY2D
-	vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
-	vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
-	vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
-#endif // MY2D
-
-	Blocks2D2 blks;
-	//_RPT0(0, blks.dump().c_str());
-
 	if (FAILED(mdx.InitDevice(g_hWnd, vertices))) {
 		mdx.CleanupDevice();
 		return E_FAIL;
 	}
+#elif MY3D // MY2D
+	vertices[0].Pos = DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f);
+	vertices[1].Pos = DirectX::XMFLOAT3(0.0f, -0.5f, -0.3f);
+	vertices[2].Pos = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.3f);
+	if (FAILED(mdx.InitDevice(g_hWnd, vertices))) {
+		mdx.CleanupDevice();
+		return E_FAIL;
+	}
+#else 
+	model.Create(4, 3, 100, 0.33);
+	if (FAILED(mdx.InitDevice(g_hWnd, model.v_pos))) {
+		mdx.CleanupDevice();
+		return E_FAIL;
+	}
+#endif // MY2D
+
+	//Blocks2D2 blks;	//_RPT0(0, blks.dump().c_str());
+
 	// Main message loop
 	MSG msg = { 0 };
 	while (WM_QUIT != msg.message) {
