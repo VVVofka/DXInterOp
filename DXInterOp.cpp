@@ -7,8 +7,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 //#include <windows.h>
-#include "MDX3.h"
-#include "MDX2.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -18,7 +16,16 @@
 //#include "DXUT.h"
 #include "DXInterOp.h"
 #include "Masks.h"
+#ifdef MY2D
+#include "MDX2.h"
 #include "Model2D.h"
+#elif MY3D // MY2D
+#include "MDX3.h"
+#else // MY2D
+#include "MDX2.h"
+#include "Model2D.h"
+#include "Sz2D.h"
+#endif // MY2D
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -64,7 +71,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		return E_FAIL;
 	}
 #else 
-	model.Create(4, 3, 100, 0.73);
+	model.Create(Sz2D(3, 4), 100, 0.73);
 	if (FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))) {
 		mdx.CleanupDevice();
 		return E_FAIL;
