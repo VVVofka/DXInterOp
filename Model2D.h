@@ -11,6 +11,8 @@ public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DirectX::XMFLOAT2>> v_dirs;
+	std::vector<int> lastArea(){ return v_areas[v_areas.size() - 1]; }
+	std::vector<Vertex2D> lastPoss(){ return v_poss[v_poss.size() - 1]; }
 	
 	int szx = 0;
 	int szy = 0;
@@ -38,7 +40,6 @@ public:
 			for(auto q : v_dirs[nlay])
 				q.x = q.y = 0;
 
-			size_t szpos = int(szarea * kFill + 0.5);
 			v_poss.push_back(std::vector<Vertex2D>());
 			v_dirs.reserve(szarea);
 
@@ -46,36 +47,29 @@ public:
 			nlay++;
 		} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 		
-		  // Last lay
+		 // Last lay
 		std::random_device rd;   // non-deterministic generator
-		std::mt19937 gen(rd());  // to seed mersenne twister.
+		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
 
 		size_t szarea = (szx + 1) * (szy + 1);
 		v_areas.push_back(std::vector<int>(szarea));
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
-		while(v_pos.size() < szpos){
-			int curpos;
-			do{
-				curpos = dist(gen);
-			} while(v_area[curpos] < 0);
-			v_area[curpos] = v_pos.size();
-			float y = (((2 * curpos) / szx) - szy) / float(szy);
-			float x = ((2 * (curpos % szx)) - szx) / float(szx);
-			v_pos.push_back(Vertex2D(x, y));
-			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
-		}
-
-		v_dirs.push_back(std::vector<DirectX::XMFLOAT2>(szarea));
-		for(auto q : v_dirs[nlay])
-			q.x = q.y = 0;
 
 		size_t szpos = int(szarea * kFill + 0.5);
 		v_poss.push_back(std::vector<Vertex2D>());
-		v_dirs.reserve(szarea);
+		v_poss[nlay].reserve(szpos);
 
-
-
-
+		while(v_poss[nlay].size() < szpos){
+			int curpos;
+			do{
+				curpos = dist(gen);
+			} while(v_areas[nlay][curpos] < 0);
+			v_areas[nlay][curpos] = v_poss[nlay].size();
+			float y = (((2 * curpos) / szx) - szy) / float(szy);
+			float x = ((2 * (curpos % szx)) - szx) / float(szx);
+			v_poss[nlay].push_back(Vertex2D(x, y));
+			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
+		} // 	while(v_poss[nlay].size() < szpos)
 	} // //////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
 

@@ -65,7 +65,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 #else 
 	model.Create(4, 3, 100, 0.73);
-	if (FAILED(mdx.InitDevice(g_hWnd, model.v_pos))) {
+	if (FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))) {
 		mdx.CleanupDevice();
 		return E_FAIL;
 	}

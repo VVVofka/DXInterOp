@@ -24,7 +24,7 @@ public:
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 #ifdef MYAREA
-		ar_area= std::unique_ptr<array<int, 2>>(new array<int, 2>(model.szy, model.szx, model.v_area.begin(), m_accl_view));
+		ar_area= std::unique_ptr<array<int, 2>>(new array<int, 2>(model.szy, model.szx, model.lastArea().begin(), m_accl_view));
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{

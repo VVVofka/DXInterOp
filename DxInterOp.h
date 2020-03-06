@@ -29,7 +29,7 @@
 #endif
 
 struct Vertex2D {
-    Vertex2D(){}
+    Vertex2D(){Pos.x = Pos.y = 0;}
     Vertex2D(float x, float y){ Pos.x = x; Pos.y = y; }
     DirectX::XMFLOAT2 Pos;
 };
