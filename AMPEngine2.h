@@ -7,6 +7,7 @@
 //#include <ppl.h>
 #include <numeric>
 #include "Model2D.h"
+#include <DirectXMath.h>
 
 #define THETA 3.1415f/1024  
 extern Model2D model;
@@ -17,14 +18,24 @@ using namespace concurrency::direct3d;
 
 class AMPEngine2{
 	accelerator_view					m_accl_view;
-	std::unique_ptr<array<Vertex2D, 1>>	m_data;
 	std::unique_ptr<array<int, 2>>      ar_area;
+	std::unique_ptr<array<Vertex2D, 1>>	m_data;
+
+	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
+	std::vector<std::unique_ptr<array<Vertex2D, 1>>> var_poss;
+	std::vector<std::unique_ptr<array<DirectX::XMFLOAT3, 1>>> var_dirs;
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 #ifdef MYAREA
 		ar_area= std::unique_ptr<array<int, 2>>(new array<int, 2>(model.szy, model.szx, model.lastArea().begin(), m_accl_view));
+
+		for(auto q : model.v_areas){
+			var_areas.push_back(std::unique_ptr<array<int, 2>>());
+			var_areas[var_areas.size()-1] = std::unique_ptr<array<int, 2>>
+				(new array<int, 2>(model.szy, model.szx, model.lastArea().begin(), m_accl_view));
+		}
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{

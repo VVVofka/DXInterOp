@@ -11,11 +11,13 @@ public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DirectX::XMFLOAT2>> v_dirs;
+	
 	std::vector<int> lastArea(){ return v_areas[v_areas.size() - 1]; }
 	std::vector<Vertex2D> lastPoss(){ return v_poss[v_poss.size() - 1]; }
+
 	
-	int szx = 0;
-	int szy = 0;
+	std::vector<int> vszx;
+	std::vector<int> vszy;
 
 	void Create(int minszX, int minszY, int maxszXY, double kFill){
 		const int RESERV_LAYS_CNT = 16;
