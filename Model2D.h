@@ -6,41 +6,76 @@
 #include "DXInterOp.h"
 
 //using namespace std;
-class Model2D {
+class Model2D{
 public:
-	std::vector<Vertex2D> v_pos;
-	std::vector<int> v_area;
+	std::vector<std::vector<Vertex2D>> v_poss;
+	std::vector<std::vector<int>> v_areas;
+	std::vector<std::vector<DirectX::XMFLOAT2>> v_dirs;
+	
 	int szx = 0;
 	int szy = 0;
 
-	void Create(int minszX, int minszY, int maxsz, double kFill) {
-		szx = minszX;
-		szy = minszY;
-		int sz = __max(minszX, minszY);
-		while (sz <= maxsz/2) {
-			// TODO: fill lays here
-			szy *= 2, szx *= 2, sz *= 2;
-		}
-		size_t szarea = ++szx * ++szy;
-		v_area.resize(szarea);
-		for (auto q : v_area) q = -1;
-		size_t szpos = int(szarea * kFill + 0.5);
-		v_pos.reserve(szpos);
+	void Create(int minszX, int minszY, int maxszXY, double kFill){
+		const int RESERV_LAYS_CNT = 16;
+		v_poss.reserve(RESERV_LAYS_CNT);
+		v_areas.reserve(RESERV_LAYS_CNT);
+		v_dirs.reserve(RESERV_LAYS_CNT - 2);
+		int nlay = 0;
+		if(minszY & 1 || minszX & 1)
+			szx = 2 * minszX, 
+			szy = 2 * minszY;
+		else
+			szx = minszX, 
+			szy = minszY;
+		int szmaxxy = __max(szx, szy);
+		while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
+			size_t szarea = (szx + 1) * (szy + 1);
+			v_areas.push_back(std::vector<int>(szarea));
+			for(auto q : v_areas[nlay])
+				q = -1;
 
+			v_dirs.push_back(std::vector<DirectX::XMFLOAT2>(szarea));
+			for(auto q : v_dirs[nlay])
+				q.x = q.y = 0;
+
+			size_t szpos = int(szarea * kFill + 0.5);
+			v_poss.push_back(std::vector<Vertex2D>());
+			v_dirs.reserve(szarea);
+
+			szx *= 2; szy *= 2; szmaxxy *= 2;
+			nlay++;
+		} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
+		
+		  // Last lay
 		std::random_device rd;   // non-deterministic generator
 		std::mt19937 gen(rd());  // to seed mersenne twister.
+
+		size_t szarea = (szx + 1) * (szy + 1);
+		v_areas.push_back(std::vector<int>(szarea));
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
-		while (v_pos.size() < szpos) {
+		while(v_pos.size() < szpos){
 			int curpos;
-			do {
+			do{
 				curpos = dist(gen);
-			} while (v_area[curpos] < 0);
+			} while(v_area[curpos] < 0);
 			v_area[curpos] = v_pos.size();
-			float y =  (((2 * curpos) / szx) - szy) / float(szy);
+			float y = (((2 * curpos) / szx) - szy) / float(szy);
 			float x = ((2 * (curpos % szx)) - szx) / float(szx);
 			v_pos.push_back(Vertex2D(x, y));
 			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
 		}
+
+		v_dirs.push_back(std::vector<DirectX::XMFLOAT2>(szarea));
+		for(auto q : v_dirs[nlay])
+			q.x = q.y = 0;
+
+		size_t szpos = int(szarea * kFill + 0.5);
+		v_poss.push_back(std::vector<Vertex2D>());
+		v_dirs.reserve(szarea);
+
+
+
+
 	} // //////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
 
