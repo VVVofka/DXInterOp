@@ -31,10 +31,15 @@ public:
 #ifdef MYAREA
 		//ar_area= std::unique_ptr<array<int, 2>>(new array<int, 2>(model.sz.y, model.sz.x, model.lastArea().begin(), m_accl_view));
 
-		for(auto q : model.v_areas){
+		for(size_t nlay = 0; nlay < model.v_areas.size(); nlay++){
+			int y = model.sizeY(nlay);
+			int x = model.sizeX(nlay);
 			var_areas.push_back(std::unique_ptr<array<int, 2>>());
-			var_areas[var_areas.size()-1] = std::unique_ptr<array<int, 2>>
-				(new array<int, 2>(model.szy, model.szx, model.lastArea().begin(), m_accl_view));
+			var_areas[nlay] = std::unique_ptr<array<int, 2>>
+				(new array<int, 2>(y, x, model.v_areas[nlay].begin(), m_accl_view));
+			var_poss.push_back(std::unique_ptr<array<Vertex2D, 1>>());
+			var_poss[nlay] = std::unique_ptr<array<Vertex2D, 1>>
+				(new array<Vertex2D, 1>(model.v_poss[nlay].size(), model.v_poss[nlay].begin(), m_accl_view));
 		}
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
