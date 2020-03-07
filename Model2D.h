@@ -28,8 +28,7 @@ public:
 		vsz.reserve(RESERV_LAYS_CNT);
 		int nlay = 0;
 		Sz2D sz(minsz);
-		if(sz.y & 1 || sz.x & 1)
-			sz *= 2;
+		//if(sz.y & 1 || sz.x & 1)			sz *= 2;
 		int szmaxxy = sz.Max();
 		while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
 			vsz.push_back(sz);

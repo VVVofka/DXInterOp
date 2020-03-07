@@ -23,7 +23,7 @@ class AMPEngine2{
 
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
 	std::vector<std::unique_ptr<array<Vertex2D, 1>>> var_poss;
-	std::vector<std::unique_ptr<array<DirectX::XMFLOAT3, 1>>> var_dirs;
+	std::vector<std::unique_ptr<array<DirectX::XMFLOAT2, 2>>> var_dirs;
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 	void initialize_data(const std::vector<Vertex2D>& data){
@@ -34,9 +34,15 @@ public:
 		for(size_t nlay = 0; nlay < model.v_areas.size(); nlay++){
 			int y = model.sizeY(nlay);
 			int x = model.sizeX(nlay);
+
 			var_areas.push_back(std::unique_ptr<array<int, 2>>());
 			var_areas[nlay] = std::unique_ptr<array<int, 2>>
 				(new array<int, 2>(y, x, model.v_areas[nlay].begin(), m_accl_view));
+
+			var_dirs.push_back(std::unique_ptr<array<DirectX::XMFLOAT2, 2>>());
+			var_dirs[nlay] = std::unique_ptr<array<DirectX::XMFLOAT2, 2>>
+				(new array<DirectX::XMFLOAT2, 2>(y, x, model.v_dirs[nlay].begin(), m_accl_view));
+
 			var_poss.push_back(std::unique_ptr<array<Vertex2D, 1>>());
 			var_poss[nlay] = std::unique_ptr<array<Vertex2D, 1>>
 				(new array<Vertex2D, 1>(model.v_poss[nlay].size(), model.v_poss[nlay].begin(), m_accl_view));
