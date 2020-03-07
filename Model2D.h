@@ -38,13 +38,13 @@ public:
 			for(auto q : v_areas[nlay])
 				q = -1;
 
-			if(nlay == 0)
-				v_dirs.push_back(std::vector<DirectX::XMFLOAT2>());
-			else{
+			//if(nlay == 0)
+			//	v_dirs.push_back(std::vector<DirectX::XMFLOAT2>());
+			//else{
 				v_dirs.push_back(std::vector<DirectX::XMFLOAT2>(szarea));
 				for(auto q : v_dirs[nlay])
 					q.x = q.y = 0.f;
-			}
+//			}
 			v_poss.push_back(std::vector<Vertex2D>());
 
 			sz *= 2; szmaxxy *= 2;
@@ -55,8 +55,8 @@ public:
 		std::random_device rd;   // non-deterministic generator
 		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
 
-		size_t szarea = vsz[nlay].Area();
 		vsz.push_back(sz);
+		size_t szarea = vsz[nlay].Area();
 		v_areas.push_back(std::vector<int>(szarea));
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
 
