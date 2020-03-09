@@ -25,6 +25,7 @@
 #include "MDX2.h"
 #include "Model2D.h"
 #include "Sz2D.h"
+#include "Masks.h"
 #endif // MY2D
 
 //--------------------------------------------------------------------------------------

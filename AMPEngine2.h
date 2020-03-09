@@ -7,6 +7,7 @@
 //#include <ppl.h>
 #include <numeric>
 #include "Model2D.h"
+#include "Masks.h"
 #include <DirectXMath.h>
 
 #define THETA 3.1415f/1024  
@@ -22,7 +23,7 @@ class AMPEngine2 {
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
 
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
-	std::vector<std::unique_ptr<array<DirectX::XMFLOAT2, 2>>> var_dirs;
+	std::vector<std::unique_ptr<array<DirItem, 2>>> var_dirs;
 
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)) {}
@@ -39,9 +40,9 @@ public:
 				(new array<int, 2>(sizey, sizex, model.v_areas[nlay].begin(), m_accl_view));
 
 			if (nlay < layscnt - 1) {
-				var_dirs.push_back(std::unique_ptr<array<DirectX::XMFLOAT2, 2>>());
-				var_dirs[nlay] = std::unique_ptr<array<DirectX::XMFLOAT2, 2>>
-					(new array<DirectX::XMFLOAT2, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
+				var_dirs.push_back(std::unique_ptr<array<DirItem, 2>>());
+				var_dirs[nlay] = std::unique_ptr<array<DirItem, 2>>
+					(new array<DirItem, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
 			}
 		}
 		auto v = model.v_poss[model.v_poss.size() - 1];
@@ -55,6 +56,8 @@ public:
 		int nlastlay = model.LaysCnt() - 1;
 		array<int, 2>& src = *var_areas[nlastlay];
 		array<int, 2>& dst = *var_areas[nlastlay - 1];
+		array<DirItem, 2>& srcd = *var_dirs[nlastlay];
+		array<DirItem, 2>& dstd = *var_dirs[nlastlay - 1];
 		runAlast(src, dst);
 		for (int nlay = nlastlay - 1; nlay > 0; nlay--) {
 			src = dst;
@@ -62,9 +65,10 @@ public:
 			runA(src, dst);
 		}
 		for (int nlay = 1; nlay < nlastlay; nlay++) {
-			src = *var_areas[nlay-1];
+			srcd = *var_dirs[nlay-1];
+			dstd = *var_dirs[nlay];
 			dst = *var_areas[nlay];
-			runD(src, dst);
+			runD(srcd, dstd, dst);
 		}
 		src = dst;
 		dst = *var_areas[nlastlay];
@@ -132,8 +136,22 @@ public:
 			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
 			});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runD(array<int, 2>& src, array<int, 2>& dst) {
-
+	void runD(array<DirItem, 2>& srcd, array<DirItem, 2>& dstd, array<int, 2>& dsta) {
+		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta](index<2> idx) restrict(amp) { // TODO: dst.extent var_areas[lastlay - 1]->extent
+			const int y = idx[0];
+			const int y2 = y * 2;
+			const int x = idx[1];
+			const int x2 = x * 2;
+			// yx: l-left, r-right
+			int tl = dsta[y2][x2];
+			int tr = dsta[y2][x2+1];
+			int bl = dsta[y2+1][x2];
+			int br = dsta[y2+1][x2+1];
+			int mask0 = (tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3);
+			int mask1 = ((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3);
+			int mask2 = ((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3);
+			int mask3 = ((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3);
+			});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runDlast(array<int, 2>& src, array<int, 2>& dst) {
 

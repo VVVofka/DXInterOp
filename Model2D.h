@@ -6,11 +6,12 @@
 #include "DXInterOp.h"
 #include "Sz2D.h"
 //using namespace std;
+struct DirItem { float x0 = 0, x1 = 0, x2 = 0, x3 = 0, y0 = 0, y1 = 0, y2 = 0, y3 = 0; };
 class Model2D {
 public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
-	std::vector<std::vector<DirectX::XMFLOAT2>> v_dirs;
+	std::vector<std::vector<DirItem>> v_dirs;
 
 	std::vector<int> lastArea() { return v_areas[v_areas.size() - 1]; }
 	std::vector<Vertex2D> lastPoss() { return v_poss[v_poss.size() - 1]; }
@@ -37,10 +38,9 @@ public:
 			size_t szarea = sz.x * sz.y;
 			v_areas.push_back(std::vector<int>(szarea));
 			for (auto q : v_areas[nlay]) q = -1;
-			
-			v_dirs.push_back(std::vector<DirectX::XMFLOAT2>(szarea));
-			for (auto q : v_dirs[nlay]) q.x = q.y = 0.f;
-			
+
+			v_dirs.push_back(std::vector<DirItem>(szarea));
+
 			v_poss.push_back(std::vector<Vertex2D>());
 
 			sz *= 2; szmaxxy *= 2;
@@ -54,6 +54,7 @@ public:
 		vsz.push_back(sz);
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea));
+		v_dirs.push_back(std::vector<DirItem>(szarea));
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
 
 		v_poss.push_back(std::vector<Vertex2D>());
