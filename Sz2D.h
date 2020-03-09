@@ -15,7 +15,7 @@ public:
 	
 	//Sz2D operator * (int mult){ return Sz2D(y*mult, x*mult); }
 	
-	size_t Area(){ return (y + 1) * (x + 1); }
+	//size_t Area(){ return (y + 1) * (x + 1); }
 	int Max(){return __max(y, x);}
 }; // ***************************************************************
 

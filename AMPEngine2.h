@@ -52,44 +52,91 @@ public:
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run() {
-		array<Vertex2D, 1>& data_ref = *m_data;
-		int lastlay = model.LaysCnt() - 1;
-		array<int, 2>& src = *var_areas[lastlay - 1];
-		array<int, 2>& dst = *var_areas[lastlay - 2];
-		parallel_for_each(var_areas[lastlay - 1]->extent, [&dst, &src](index<2> idx) restrict(amp) { // TODO: dst.extent var_areas[lastlay - 1]->extent
-			const int mask[16] = { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
-			                     //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-			int y = idx[0];
-			int y2 = y * 2;
-			int y2t = y2 - 1;
-			int y2b = y2 + 1;
-			
-			int x = idx[1];
-			int x2 = x * 2;
-			int x2l = x2 - 1;
-			int x2r = x2 + 1;
-
-			int y2x2 = src[y2][x2];
-
-			int y2tx2 = src[y2t][x2];
-			int y2bx2 = src[y2b][x2];
-			int y2x2l = src[y2][x2l];
-			int y2x2r = src[y2][x2r];
-
-			int sum0 = mask[y2x2 + (y2tx2 << 1) + (y2x2l << 2) + (src[y2t][x2l] << 3)];
-			int sum1 = mask[y2x2 + (y2tx2 << 1) + (y2x2r << 2) + (src[y2t][x2r] << 3)];
-			int sum2 = mask[y2x2 + (y2bx2 << 1) + (y2x2l << 2) + (src[y2b][x2l] << 3)];
-			int sum3 = mask[y2x2 + (y2bx2 << 1) + (y2x2r << 2) + (src[y2b][x2r] << 3)];
-			dst[y][x] = (((((sum3 << 1) + sum2) << 1) + sum1) << 1) + sum0;
-			});
-		for (int nlay = lastlay; nlay > 0; nlay--) {
+		int nlastlay = model.LaysCnt() - 1;
+		array<int, 2>& src = *var_areas[nlastlay];
+		array<int, 2>& dst = *var_areas[nlastlay - 1];
+		runAlast(src, dst);
+		for (int nlay = nlastlay - 1; nlay > 0; nlay--) {
+			src = dst;
+			dst = *var_areas[nlay-1];
+			runA(src, dst);
 		}
+		for (int nlay = 1; nlay < nlastlay; nlay++) {
+			src = *var_areas[nlay-1];
+			dst = *var_areas[nlay];
+			runD(src, dst);
+		}
+		src = dst;
+		dst = *var_areas[nlastlay];
+		runDlast(src, dst);
+
+		array<Vertex2D, 1>& data_ref = *m_data;
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp) {
 			// Rotate the vertex by angle THETA
 			DirectX::XMFLOAT2 pos = data_ref[idx].Pos;
 			data_ref[idx].Pos.y = pos.y * cos(THETA) - pos.x * sin(THETA);
 			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
 			});
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void runAlast(array<int, 2>& src, array<int, 2>& dst) {
+		parallel_for_each(src.extent, [&dst, &src](index<2> idx) restrict(amp) { // TODO: dst.extent var_areas[lastlay - 1]->extent
+			const int mask[16] = { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1 };
+			                     //00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
+			                     //00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
+			                     //0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
+			const int y = idx[0];
+			const int y2 = y * 2;
+			const int y2t = y2 - 1;
+			const int y2b = y2 + 1;
+
+			const int x = idx[1];
+			const int x2 = x * 2;
+			const int x2l = x2 - 1;
+			const int x2r = x2 + 1;
+
+			// yx: c-centre, l-left, r-right
+			const int cc = src[y2][x2] & 1;
+			const int tc = (src[y2t][x2] & 1) << 1;
+			const int cl = (src[y2][x2l] & 1) << 2;
+			const int tl = (src[y2t][x2l] & 1) << 3;
+			int sum = mask[cc + tc + cl + tl];
+			const int cr = (src[y2][x2r] & 1) << 2;
+			const int tr = (src[y2t][x2r] & 1) << 3;
+			sum = (sum << 1) | mask[cc + tc + cr + tr];
+			const int bc = (src[y2b][x2] & 1) << 1;
+			const int bl = (src[y2b][x2l] & 1) << 3;
+			sum = (sum << 1) | mask[cc + bc + cl + bl];
+			const int br = (src[y2b][x2r] & 1) << 3;
+			dst[y][x] = (sum << 1) | mask[cc + bc + cr + br];
+			});
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void runA(array<int, 2>& src, array<int, 2>& dst) {
+		parallel_for_each(src.extent, [&dst, &src](index<2> idx) restrict(amp) { // TODO: dst.extent var_areas[lastlay - 1]->extent
+			const int mask[16] = { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1 };
+			                     //00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
+			                     //00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
+			                     //0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
+			const int y = idx[0];
+			const int y2 = y * 2;
+			const int x = idx[1];
+			const int x2 = x * 2;
+
+			// yx: l-left, r-right
+			int tl = src[y2][x2];
+			int tr = src[y2][x2+1];
+			int bl = src[y2+1][x2];
+			int br = src[y2+1][x2+1];
+			int sum = mask[(tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3)];
+			sum = (sum << 1) | mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
+			sum = (sum << 1) | mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
+			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
+			});
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void runD(array<int, 2>& src, array<int, 2>& dst) {
+
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void runDlast(array<int, 2>& src, array<int, 2>& dst) {
+
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak() {
 		array<Vertex2D, 1>& data_ref = *m_data;

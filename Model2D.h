@@ -34,7 +34,7 @@ public:
 		while (szmaxxy <= maxszXY / 2) { // without last lay (it don't contnent v_dirs)
 			vsz.push_back(sz);
 
-			size_t szarea = sz.Area();
+			size_t szarea = sz.x * sz.y;
 			v_areas.push_back(std::vector<int>(szarea));
 			for (auto q : v_areas[nlay]) q = -1;
 			
@@ -52,7 +52,7 @@ public:
 		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
 
 		vsz.push_back(sz);
-		size_t szarea = vsz[nlay].Area();
+		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea));
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
 
