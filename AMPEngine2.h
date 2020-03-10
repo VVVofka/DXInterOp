@@ -149,39 +149,42 @@ public:
 			int tr = dsta[y2][x2 + 1];
 			int bl = dsta[y2 + 1][x2];
 			int br = dsta[y2 + 1][x2 + 1];
-			int mask0 = 16 * ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
-			int mask1 = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
-			int mask2 = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
-			int mask3 = 16 * (((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3));
+			int mask[4]; // shift
+			mask[0] = 16 * ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
+			mask[1] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+			mask[2] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+			mask[3] = 16 * (((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3));
 
-			int j = mask0;
-			float srcx = srcd[y][x].x0, srcy = srcd[y][x].y0;
-			DirItem* item = &dstd[y2][x2];
-			item->x0 = srcx + dirxmasks[j]; item->y0 = srcy + dirymasks[j++];
-			item->x1 = srcx + dirxmasks[j]; item->y1 = srcy + dirymasks[j++];
-			item->x2 = srcx + dirxmasks[j]; item->y2 = srcy + dirymasks[j++];
-			item->x3 = srcx + dirxmasks[j]; item->y3 = srcy + dirymasks[j++];
-			
-			srcx = srcd[y][x].x1, srcy = srcd[y][x].y1;
-			item = &dstd[y2][x2 + 1];
-			item->x0 = srcx + dirxmasks[j]; item->y0 = srcy + dirymasks[j++];
-			item->x1 = srcx + dirxmasks[j]; item->y1 = srcy + dirymasks[j++];
-			item->x2 = srcx + dirxmasks[j]; item->y2 = srcy + dirymasks[j++];
-			item->x3 = srcx + dirxmasks[j]; item->y3 = srcy + dirymasks[j++];
+			for(int shift = 0; shift < 4; shift++){
+				int j = mask[shift];
+				float srcx = srcd[y][x].x0[shift], srcy = srcd[y][x].y0[shift];
+				DirItem* item = &dstd[y2][x2];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
 
-			srcx = srcd[y][x].x2, srcy = srcd[y][x].y2;
-			item = &dstd[y2 + 1][x2];
-			item->x0 = srcx + dirxmasks[j]; item->y0 = srcy + dirymasks[j++];
-			item->x1 = srcx + dirxmasks[j]; item->y1 = srcy + dirymasks[j++];
-			item->x2 = srcx + dirxmasks[j]; item->y2 = srcy + dirymasks[j++];
-			item->x3 = srcx + dirxmasks[j]; item->y3 = srcy + dirymasks[j++];
+				srcx = srcd[y][x].x1[shift], srcy = srcd[y][x].y1[shift];
+				item = &dstd[y2][x2 + 1];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
 
-			srcx = srcd[y][x].x3, srcy = srcd[y][x].y3;
-			item = &dstd[y2 + 1][x2 + 1];
-			item->x0 = srcx + dirxmasks[j]; item->y0 = srcy + dirymasks[j++];
-			item->x1 = srcx + dirxmasks[j]; item->y1 = srcy + dirymasks[j++];
-			item->x2 = srcx + dirxmasks[j]; item->y2 = srcy + dirymasks[j++];
-			item->x3 = srcx + dirxmasks[j]; item->y3 = srcy + dirymasks[j];
+				srcx = srcd[y][x].x2[shift], srcy = srcd[y][x].y2[shift];
+				item = &dstd[y2 + 1][x2];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
+
+				srcx = srcd[y][x].x3[shift], srcy = srcd[y][x].y3[shift];
+				item = &dstd[y2 + 1][x2 + 1];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j];
+			}
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runDlast(array<int, 2>& src, array<int, 2>& dst){

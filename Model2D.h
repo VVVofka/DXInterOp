@@ -6,23 +6,33 @@
 #include "DXInterOp.h"
 #include "Sz2D.h"
 //using namespace std;
-struct DirItem { float x0 = 0, x1 = 0, x2 = 0, x3 = 0, y0 = 0, y1 = 0, y2 = 0, y3 = 0; };
-class Model2D {
+struct DirItem{
+	float
+		x0[4] = {0,0,0,0},
+		x1[4] = {0,0,0,0},
+		x2[4] = {0,0,0,0},
+		x3[4] = {0,0,0,0},
+		y0[4] = {0,0,0,0},
+		y1[4] = {0,0,0,0},
+		y2[4] = {0,0,0,0},
+		y3[4] = {0,0,0,0};
+};
+class Model2D{
 public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DirItem>> v_dirs;
 
-	std::vector<int> lastArea() { return v_areas[v_areas.size() - 1]; }
-	std::vector<Vertex2D> lastPoss() { return v_poss[v_poss.size() - 1]; }
+	std::vector<int> lastArea(){ return v_areas[v_areas.size() - 1]; }
+	std::vector<Vertex2D> lastPoss(){ return v_poss[v_poss.size() - 1]; }
 
 	std::vector<Sz2D> vsz;
-	int sizeY(int nlay) { return vsz[nlay].y; }
-	int sizeX(int nlay) { return vsz[nlay].x; }
-	int LaysCnt() { return v_areas.size(); }
-	std::vector<int>* dataArea(int nlay) { return &v_areas[nlay]; }
+	int sizeY(int nlay){ return vsz[nlay].y; }
+	int sizeX(int nlay){ return vsz[nlay].x; }
+	int LaysCnt(){ return v_areas.size(); }
+	std::vector<int>* dataArea(int nlay){ return &v_areas[nlay]; }
 
-	void Create(Sz2D minsz, int maxszXY, double kFill) {
+	void Create(Sz2D minsz, int maxszXY, double kFill){
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
@@ -32,12 +42,12 @@ public:
 		Sz2D sz(minsz);
 		//if(sz.y & 1 || sz.x & 1)			sz *= 2;
 		int szmaxxy = sz.Max();
-		while (szmaxxy <= maxszXY / 2) { // without last lay (it don't contnent v_dirs)
+		while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
 			vsz.push_back(sz);
 
 			size_t szarea = sz.x * sz.y;
 			v_areas.push_back(std::vector<int>(szarea));
-			for (auto q : v_areas[nlay]) q = -1;
+			for(auto q : v_areas[nlay]) q = -1;
 
 			v_dirs.push_back(std::vector<DirItem>(szarea));
 
@@ -61,11 +71,11 @@ public:
 		size_t szpos = int(szarea * kFill + 0.5);
 		v_poss[nlay].reserve(szpos);
 
-		while (v_poss[nlay].size() < szpos) {
+		while(v_poss[nlay].size() < szpos){
 			int curpos;
-			do {
+			do{
 				curpos = dist(gen);
-			} while (v_areas[nlay][curpos] < 0);
+			} while(v_areas[nlay][curpos] < 0);
 
 			v_areas[nlay][curpos] = v_poss[nlay].size();
 
