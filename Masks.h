@@ -44,19 +44,14 @@ struct CellItem{
 			diry = 0, eny = 0;
 		}
 	} // /////////////////////////////////////////////////////////
-	std::string dump(){
-		std::string ret;
-		if(enx == 1){
-			ret = dirx == 0 ? "-1" : " 1";
-		} else
-			ret = " 0";
-
-		if(eny == 1){
-			ret += diry == 0 ? "-1" : " 1";
-		} else
-			ret += " 0";
-
-		return ret;
+	std::string dumpx(){ return dump(enx, dirx); }
+	std::string dumpy(){ return dump(eny, diry); }
+	std::string dump(){ return dumpx() + dumpy(); }
+	// ///////////////////////////////////////////////////////////
+	std::string dump(int en, int dir){
+		if(en == 1)
+			return dir == 0 ? "-1" : "+1";
+		return dir == 0 ? "-0": "+0";
 	} // //////////////////////////////////////////////////////////////////
 	CellItem reflectHor(){
 		int x = b2i(enx, dirx);
@@ -85,6 +80,7 @@ private:
 		if(dir == 0) return -1;
 		return 1;
 	} // ///////////////////////////////////////////////////////////////////////////////
+
 }; // *************************************************************
 struct Cell2D{
 	int val = -1;
@@ -97,6 +93,18 @@ struct Cell2D{
 		std::string ret;
 		ret = dirs[startpos + 0].dump() + " " + dirs[startpos + 1].dump();
 		return ret;
+	} // /////////////////////////////////////////////////////////////////
+	std::string dumpx(std::string delimet = ", "){
+		std::string ret = dirs[0].dumpx() + delimet;
+		ret += dirs[1].dumpx() + delimet;
+		ret += dirs[2].dumpx() + delimet;
+		return ret + dirs[3].dumpx();
+	} // /////////////////////////////////////////////////////////////////
+	std::string dumpy(std::string delimet = ", "){
+		std::string ret = dirs[0].dumpy() + delimet;
+		ret += dirs[1].dumpy() + delimet;
+		ret += dirs[2].dumpy() + delimet;
+		return ret + dirs[3].dumpy();
 	} // /////////////////////////////////////////////////////////////////
 	std::string Dump(std::string inp){
 		std::string ret = inp;
@@ -147,6 +155,7 @@ struct Cell2D{
 		return ret;
 	} // //////////////////////////////////////////////////////////////////////////////
 }; // ***********************************************************************
+
 // 01
 // 23
 // 3210
@@ -159,11 +168,25 @@ struct Block2D2{
 		v[2].setVal(val2);
 		v[3].setVal(val3);
 	} // /////////////////////////////////////////////////////////////////////
-	std::string dump(std::string ret){
-		ret += v[0].dump(0) + " " + v[1].dump(0) + "\n";
-		ret += v[0].dump(2) + " " + v[1].dump(2) + "\n\n";
-		ret += v[2].dump(0) + " " + v[3].dump(0) + "\n";
-		ret += v[2].dump(2) + " " + v[3].dump(2) + "\n";
+	std::string dump(std::string ret, std::string delim = " "){
+		ret += v[0].dump(0) + delim + v[1].dump(0) + "\n";
+		ret += v[0].dump(2) + delim + v[1].dump(2) + "\n\n";
+		ret += v[2].dump(0) + delim + v[3].dump(0) + "\n";
+		ret += v[2].dump(2) + delim + v[3].dump(2) + "\n";
+		return ret;
+	} // ////////////////////////////////////////////////////////////////////////////////
+	std::string dumpx(std::string ret, std::string delim = ", "){
+		ret += v[0].dumpx(delim) + delim;
+		ret += v[1].dumpx(delim) + delim;
+		ret += v[2].dumpx(delim) + delim;
+		ret += v[3].dumpx(delim);
+		return ret;
+	} // ////////////////////////////////////////////////////////////////////////////////
+	std::string dumpy(std::string ret, std::string delim = ", "){
+		ret += v[0].dumpy(delim) + delim;
+		ret += v[1].dumpy(delim) + delim;
+		ret += v[2].dumpy(delim) + delim;
+		ret += v[3].dumpy(delim);
 		return ret;
 	} // ////////////////////////////////////////////////////////////////////////////////
 	void Dump(std::string ret){
@@ -173,7 +196,7 @@ struct Block2D2{
 	int A(){
 		int ret = 0;
 		for(int j = 0; j < 4; j++){
-			if(v[j].val != 0) 
+			if(v[j].val != 0)
 				ret += (1 << j);
 		}
 		assert(ret < 16);
@@ -216,6 +239,7 @@ struct Block2D2{
 		return ret;
 	} // //////////////////////////////////////////////////////////////////////////////
 }; // **************************************************************************
+
 struct Blocks2D2{
 	Block2D2 v[16] = {};
 	void Add(int index,
@@ -253,7 +277,7 @@ struct Blocks2D2{
 		Block2D2 dgl2 = v[index].reflectDiag2();
 
 		Block2D2 vmodifs[7] = {hor, ver, dgl1, dgl2,
-		           hor.reflectDiag2(), ver.reflectDiag2(), dgl1.reflectDiag2()};
+				   hor.reflectDiag2(), ver.reflectDiag2(), dgl1.reflectDiag2()};
 
 		for(int m = 0; m < 7; m++){
 			int a = vmodifs[m].A();
@@ -357,5 +381,16 @@ struct Blocks2D2{
 		}
 		return ret;
 	} // ////////////////////////////////////////////////////////////////////////////////
-
+	void dumpx(std::string delim = ","){
+		for(int j = 0; j < 16; j++){
+			std::string s = v[j].dumpx("", delim) + (j == 15 ? std::string("\n") : delim);
+			_RPT2(0, "\n%s", s.c_str());
+		}
+	} // ////////////////////////////////////////////////////////////////////////////////
+	void dumpy(std::string delim = ","){
+		for(int j = 0; j < 16; j++){
+			std::string s = v[j].dumpy("", delim) + (j == 15 ? std::string("\n") : delim);
+			_RPT2(0, "\n%s", s.c_str());
+		}
+	} // ////////////////////////////////////////////////////////////////////////////////
 }; // ***************************************************************************

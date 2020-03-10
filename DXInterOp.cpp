@@ -25,7 +25,6 @@
 #include "MDX2.h"
 #include "Model2D.h"
 #include "Sz2D.h"
-#include "Masks.h"
 #endif // MY2D
 
 //--------------------------------------------------------------------------------------
@@ -79,7 +78,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 #endif // MY2D
 
-	//Blocks2D2 blks;	//_RPT0(0, blks.dump().c_str());
+	Blocks2D2 blks;	//_RPT0(0, blks.dump().c_str());
+	blks.dumpx();
+	_RPT0(0, "\n Y \n");
+	blks.dumpy();
 
 	// Main message loop
 	MSG msg = { 0 };
