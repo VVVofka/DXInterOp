@@ -72,7 +72,7 @@ public:
 		}
 		src = dst;
 		dst = *var_areas[nlastlay];
-		runDlast(srcd, dstd, dst, dirXMasks, dirYMasks);
+		runDlast(srcd, dst, dirXMasks, dirYMasks);
 
 		array<Vertex2D, 1>& data_ref = *m_data;
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
@@ -137,7 +137,7 @@ public:
 			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runD(array<DirItem, 2>& srcd, 
+	void runD(array<DirItem, 2>& srcd,
 			  array<DirItem, 2>& dstd, array<int, 2>& dsta,
 			  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
 		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
@@ -180,9 +180,9 @@ public:
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runDlast(array<DirItem, 2>& srcd,
-				  array<DirItem, 2>& dstd, array<int, 2>& dsta,
+				  array<int, 2>& dsta,
 				  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
-		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+		parallel_for_each(srcd.extent, [&srcd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			// yx: c-centre, l-left, r-right
 			const int y = idx[0];
 			const int y2t = y * 2;
@@ -194,12 +194,27 @@ public:
 			const int x2c = x2l + 1;
 			const int x2r = x2c + 1;
 
-			int tl = dsta[y2][x2];
-			int tc = dsta[y2][x2 + 1];
-			int tr = dsta[y2][x2 + 1];
-			int bl = dsta[y2 + 1][x2];
-			int br = dsta[y2 + 1][x2 + 1];
-			int mask = 16 * (tl + (tr << 1) + (bl << 2) + (br<< 3));
+			int tl = dsta[y2t][x2l];
+			int tc = dsta[y2t][x2c];
+			int tr = dsta[y2t][x2r];
+
+			int cl = dsta[y2c][x2l];
+			int cc = dsta[y2c][x2c];
+			int cr = dsta[y2c][x2r];
+
+			int bl = dsta[y2b][x2l];
+			int bc = dsta[y2b][x2c];
+			int br = dsta[y2b][x2r];
+			//#define SWAP(AY, AX, BY, BX) ({int tmp = dsta[(AY)][(AX)]; dsta[(AY)][(AX)] = dsta[(BY)][(BX)]; dsta[(BY)][(BX)]=tmp;})
+#define SWAP(AY, AX, BY, BX) (tmp=dsta[(AY)][(AX)], dsta[(AY)][(AX)]=dsta[(BY)][(BX)], dsta[(BY)][(BX)]=tmp)
+
+			&& srcd[y][x].x0 > 0 && srcd[y][x].y0 == 0) SWAP(y2t, x2l, y2t, x2c);
+			if(tl != tc && srcd[y][x].x0 > 0 && srcd[y][x].y0 == 0) SWAP(y2t, x2l, y2t, x2c);
+			if(tl != cl && srcd[y][x].x1 == 0 && srcd[y][x].y1 == 0) SWAP(y2t, x2l, y2t, x2c);
+			if(tl != tc && srcd[y][x].x0 > 0 && srcd[y][x].y0 == 0) SWAP(y2t, x2l, y2t, x2c);
+
+
+			int mask = 16 * (tl + (tr << 1) + (bl << 2) + (br << 3));
 
 			for(int shift = 0; shift < 4; shift++){
 				int j = mask[shift];
@@ -263,7 +278,7 @@ private:
 -1,-1,-1,-1,+1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
 -0,-0,-0,-0,-1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
 -1,+1,-1,-1,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,
--1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1 };
+-1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1};
 	const float vdirsY[16 * 16] = {
 -1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1,
 -0,-0,-0,-0,+1,+1,+1,+1,-0,-0,-1,-1,-0,-0,-1,-1,
@@ -280,9 +295,9 @@ private:
 +1,+1,+1,-0,+1,+1,-0,+1,-0,-0,-0,-0,-0,-0,-0,-0,
 -0,-0,-0,-0,-1,-1,-1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
 -1,-1,+1,-1,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,
--1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1	};
-array<float, 1> dirXMasks = array<float, 1>(16*16, vdirsX);
-array<float, 1> dirYMasks = array<float, 1>(16*16, vdirsY);
+-1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1};
+	array<float, 1> dirXMasks = array<float, 1>(16 * 16, vdirsX);
+	array<float, 1> dirYMasks = array<float, 1>(16 * 16, vdirsY);
 
 }; // ******************************************************************************************************
 inline void getMaskDir(const int y2, const int x2, array<int, 2>& dsta, int* mask) restrict(amp){
@@ -296,5 +311,37 @@ inline void getMaskDir(const int y2, const int x2, array<int, 2>& dsta, int* mas
 	mask[2] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
 	mask[3] = 16 * (((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3));
 } // //////////////////////////////////////////////////////////////////////////////////
+inline void moveQuad(const int y, const int x, array<int, 2>& dsta, float* dirsy, float* dirsx, int shift) restrict(amp){
+	int tl = dsta[y2t][x2l];
+	if(dsta[y][x] != 0){
+		if(dsta[y][x+1] == 0 && dirsx[shift] srcd[y][x].y0[0] == 0 && srcd[y][x].x0[0] > 0){
+			srcd[y][x].x0[0] = 0;
+			dsta[y2t][x2l] = 0;
+			dsta[y2t][x2c] = 1;
+		} else if(cl == 0 && srcd[y][x].y0[0] > 0 && srcd[y][x].x0[0] == 0){
+			srcd[y][x].y0[0] = 0;
+			dsta[y2t][x2l] = 0;
+			dsta[y2c][x2l] = 1;
+		} else if(cc == 0 && srcd[y][x].y0[0] > 0 && srcd[y][x].x0[0] > 0){
+			srcd[y][x].y0[0] = 0;
+			srcd[y][x].x0[0] = 0;
+			dsta[y2t][x2l] = 0;
+			dsta[y2c][x2c] = 1;
+		}
+	}
+	if(tc != 0){
+		if(cl == 0 && srcd[y][x].y0[0] > 0 && srcd[y][x].x0[0] < 0){
+			srcd[y][x].y0[0] = 0;
+			srcd[y][x].x0[0] = 0;
+			dsta[y2t][x2c] = 0;
+			dsta[y2c][x2l] = 1;
+		} else if(cc == 0 && srcd[y][x].y0[0] > 0 && srcd[y][x].x0[0] > 0){
+			srcd[y][x].y0[0] = 0;
+			srcd[y][x].x0[0] = 0;
+			dsta[y2t][x2l] = 0;
+			dsta[y2c][x2c] = 1;
+		}
+	}
+} // //////////////////////////////////////////////////////////////////////////////////////////////
 
 
