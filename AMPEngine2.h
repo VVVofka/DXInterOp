@@ -16,7 +16,7 @@ extern Model2D model;
 using namespace concurrency;
 using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;
-
+inline void getMaskDir(const int y2, const int x2, array<int, 2>& dsta, int* mask)  restrict(amp);
 class AMPEngine2{
 	accelerator_view					m_accl_view;
 	std::unique_ptr<array<int, 2>>      ar_area;
@@ -72,7 +72,7 @@ public:
 		}
 		src = dst;
 		dst = *var_areas[nlastlay];
-		runDlast(src, dst);
+		runDlast(srcd, dstd, dst, dirXMasks, dirYMasks);
 
 		array<Vertex2D, 1>& data_ref = *m_data;
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
@@ -140,21 +140,12 @@ public:
 			  array<DirItem, 2>& dstd, array<int, 2>& dsta,
 			  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
 		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
-			const int y = idx[0];
-			const int y2 = y * 2;
-			const int x = idx[1];
-			const int x2 = x * 2;
-			// yx: l-left, r-right
-			int tl = dsta[y2][x2];
-			int tr = dsta[y2][x2 + 1];
-			int bl = dsta[y2 + 1][x2];
-			int br = dsta[y2 + 1][x2 + 1];
 			int mask[4]; // shift
-			mask[0] = 16 * ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
-			mask[1] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
-			mask[2] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
-			mask[3] = 16 * (((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3));
-
+			const int y = idx[0];
+			const int x = idx[1];
+			const int y2 = y * 2;
+			const int x2 = x * 2;
+			getMaskDir(y2, x2, dsta, mask);
 			for(int shift = 0; shift < 4; shift++){
 				int j = mask[shift];
 				float srcx = srcd[y][x].x0[shift], srcy = srcd[y][x].y0[shift];
@@ -187,8 +178,47 @@ public:
 			}
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runDlast(array<int, 2>& src, array<int, 2>& dst){
+	void runDlast(array<DirItem, 2>& srcd,
+				  array<DirItem, 2>& dstd, array<int, 2>& dsta,
+				  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
+		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+			int mask[4]; // shift
+			const int y = idx[0];
+			const int x = idx[1];
+			const int y2 = y * 2;
+			const int x2 = x * 2;
+			getMaskDir(y2, x2, dsta, mask);
+			for(int shift = 0; shift < 4; shift++){
+				int j = mask[shift];
+				float srcx = srcd[y][x].x0[shift], srcy = srcd[y][x].y0[shift];
+				DirItem* item = &dstd[y2][x2];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
 
+				srcx = srcd[y][x].x1[shift], srcy = srcd[y][x].y1[shift];
+				item = &dstd[y2][x2 + 1];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
+
+				srcx = srcd[y][x].x2[shift], srcy = srcd[y][x].y2[shift];
+				item = &dstd[y2 + 1][x2];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
+
+				srcx = srcd[y][x].x3[shift], srcy = srcd[y][x].y3[shift];
+				item = &dstd[y2 + 1][x2 + 1];
+				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
+				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
+				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
+				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j];
+			} // for(int shift = 0; shift < 4; shift++)
+		}); // parallel_for_each(srcd.extent,
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak(){
 		array<Vertex2D, 1>& data_ref = *m_data;
@@ -242,5 +272,16 @@ array<float, 1> dirXMasks = array<float, 1>(16*16, vdirsX);
 array<float, 1> dirYMasks = array<float, 1>(16*16, vdirsY);
 
 }; // ******************************************************************************************************
+inline void getMaskDir(const int y2, const int x2, array<int, 2>& dsta, int* mask) restrict(amp){
+	// yx: l-left, r-right
+	int tl = dsta[y2][x2];
+	int tr = dsta[y2][x2 + 1];
+	int bl = dsta[y2 + 1][x2];
+	int br = dsta[y2 + 1][x2 + 1];
+	mask[0] = 16 * ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
+	mask[1] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+	mask[2] = 16 * (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+	mask[3] = 16 * (((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3));
+} // //////////////////////////////////////////////////////////////////////////////////
 
 
