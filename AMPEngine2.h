@@ -83,31 +83,32 @@ public:
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runAlast(array<int, 2>& src, array<int, 2>& dst){
-		parallel_for_each(src.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			const int mask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
 			//00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
 			//0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
-			const int y = idx[0];
-			const int y2 = y * 2;
-			const int y2t = y2 - 1;
-			const int y2b = y2 + 1;
-
-			const int x = idx[1];
-			const int x2 = x * 2;
-			const int x2l = x2 - 1;
-			const int x2r = x2 + 1;
 
 			// yx: c-centre, l-left, r-right
-			const int cc = src[y2][x2] & 1;
-			const int tc = (src[y2t][x2] & 1) << 1;
-			const int cl = (src[y2][x2l] & 1) << 2;
+			const int y = idx[0];
+			const int y2t = y * 2;
+			const int y2c = y2t + 1;
+			const int y2b = y2c + 1;
+
+			const int x = idx[1];
+			const int x2l = x * 2;
+			const int x2c = x2l + 1;
+			const int x2r = x2c + 1;
+
+			const int cc = src[y2c][x2c] & 1;
+			const int tc = (src[y2t][x2c] & 1) << 1;
+			const int cl = (src[y2c][x2l] & 1) << 2;
 			const int tl = (src[y2t][x2l] & 1) << 3;
 			int sum = mask[cc + tc + cl + tl];
-			const int cr = (src[y2][x2r] & 1) << 2;
+			const int cr = (src[y2c][x2r] & 1) << 2;
 			const int tr = (src[y2t][x2r] & 1) << 3;
 			sum = (sum << 1) | mask[cc + tc + cr + tr];
-			const int bc = (src[y2b][x2] & 1) << 1;
+			const int bc = (src[y2b][x2c] & 1) << 1;
 			const int bl = (src[y2b][x2l] & 1) << 3;
 			sum = (sum << 1) | mask[cc + bc + cl + bl];
 			const int br = (src[y2b][x2r] & 1) << 3;
@@ -115,7 +116,7 @@ public:
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runA(array<int, 2>& src, array<int, 2>& dst){
-		parallel_for_each(src.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			const int mask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
 			//00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
@@ -182,12 +183,24 @@ public:
 				  array<DirItem, 2>& dstd, array<int, 2>& dsta,
 				  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
 		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
-			int mask[4]; // shift
+			// yx: c-centre, l-left, r-right
 			const int y = idx[0];
+			const int y2t = y * 2;
+			const int y2c = y2t + 1;
+			const int y2b = y2c + 1;
+
 			const int x = idx[1];
-			const int y2 = y * 2;
-			const int x2 = x * 2;
-			getMaskDir(y2, x2, dsta, mask);
+			const int x2l = x * 2;
+			const int x2c = x2l + 1;
+			const int x2r = x2c + 1;
+
+			int tl = dsta[y2][x2];
+			int tc = dsta[y2][x2 + 1];
+			int tr = dsta[y2][x2 + 1];
+			int bl = dsta[y2 + 1][x2];
+			int br = dsta[y2 + 1][x2 + 1];
+			int mask = 16 * (tl + (tr << 1) + (bl << 2) + (br<< 3));
+
 			for(int shift = 0; shift < 4; shift++){
 				int j = mask[shift];
 				float srcx = srcd[y][x].x0[shift], srcy = srcd[y][x].y0[shift];
