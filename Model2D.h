@@ -6,22 +6,32 @@
 #include "DXInterOp.h"
 #include "Sz2D.h"
 //using namespace std;
-struct DirItem{
-	float
-		x0[4] = {0,0,0,0},
-		x1[4] = {0,0,0,0},
-		x2[4] = {0,0,0,0},
-		x3[4] = {0,0,0,0},
-		y0[4] = {0,0,0,0},
-		y1[4] = {0,0,0,0},
-		y2[4] = {0,0,0,0},
-		y3[4] = {0,0,0,0};
-};
+//struct DirItem{
+//	float
+//		x0[4] = {0,0,0,0},
+//		x1[4] = {0,0,0,0},
+//		x2[4] = {0,0,0,0},
+//		x3[4] = {0,0,0,0},
+//		y0[4] = {0,0,0,0},
+//		y1[4] = {0,0,0,0},
+//		y2[4] = {0,0,0,0},
+//		y3[4] = {0,0,0,0};
+//};
+struct DrShiftQuadro{
+	struct DrQuadro{
+		struct DrItem{
+			float x, y;
+		}; // ********************************************************************************************
+		DrItem items[4];
+	}; // ********************************************************************************************
+	DrQuadro shifts[4];
+}; // ********************************************************************************************
+
 class Model2D{
 public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
-	std::vector<std::vector<DirItem>> v_dirs;
+	std::vector<std::vector<DrShiftQuadro>> v_dirs;
 
 	std::vector<int> lastArea(){ return v_areas[v_areas.size() - 1]; }
 	std::vector<Vertex2D> lastPoss(){ return v_poss[v_poss.size() - 1]; }
@@ -49,7 +59,7 @@ public:
 			v_areas.push_back(std::vector<int>(szarea));
 			for(auto q : v_areas[nlay]) q = -1;
 
-			v_dirs.push_back(std::vector<DirItem>(szarea));
+			v_dirs.push_back(std::vector<DrShiftQuadro>(szarea));
 
 			v_poss.push_back(std::vector<Vertex2D>());
 
@@ -64,7 +74,7 @@ public:
 		vsz.push_back(sz);
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea));
-		v_dirs.push_back(std::vector<DirItem>(szarea));
+		v_dirs.push_back(std::vector<DrShiftQuadro>(szarea));
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
 
 		v_poss.push_back(std::vector<Vertex2D>());

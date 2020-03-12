@@ -23,7 +23,7 @@ class AMPEngine2{
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
 
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
-	std::vector<std::unique_ptr<array<DirItem, 2>>> var_dirs;
+	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
 
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
@@ -40,9 +40,9 @@ public:
 				(new array<int, 2>(sizey, sizex, model.v_areas[nlay].begin(), m_accl_view));
 
 			if(nlay < layscnt - 1){
-				var_dirs.push_back(std::unique_ptr<array<DirItem, 2>>());
-				var_dirs[nlay] = std::unique_ptr<array<DirItem, 2>>
-					(new array<DirItem, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
+				var_dirs.push_back(std::unique_ptr<array<DrShiftQuadro, 2>>());
+				var_dirs[nlay] = std::unique_ptr<array<DrShiftQuadro, 2>>
+					(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
 			}
 		}
 		auto v = model.v_poss[model.v_poss.size() - 1];
@@ -56,8 +56,8 @@ public:
 		int nlastlay = model.LaysCnt() - 1;
 		array<int, 2>& src = *var_areas[nlastlay];
 		array<int, 2>& dst = *var_areas[nlastlay - 1];
-		array<DirItem, 2>& srcd = *var_dirs[nlastlay];
-		array<DirItem, 2>& dstd = *var_dirs[nlastlay - 1];
+		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay];
+		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		runAlast(src, dst);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			src = dst;
@@ -137,45 +137,25 @@ public:
 			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runD(array<DirItem, 2>& srcd,
-			  array<DirItem, 2>& dstd, array<int, 2>& dsta,
+	void runD(array<DrShiftQuadro, 2>& srcd,
+			  array<DrShiftQuadro, 2>& dstd, array<int, 2>& dsta,
 			  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
 		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			int mask[4]; // shift
 			const int y = idx[0];
 			const int x = idx[1];
-			const int y2 = y * 2;
-			const int x2 = x * 2;
-			getMaskDir(y2, x2, dsta, mask);
+			getMaskDir(y * 2, x * 2, dsta, mask);
 			for(int shift = 0; shift < 4; shift++){
-				int j = mask[shift];
-				float srcx = srcd[y][x].x0[shift], srcy = srcd[y][x].y0[shift];
-				DirItem* item = &dstd[y2][x2];
-				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
-				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
-				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
-				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
-
-				srcx = srcd[y][x].x1[shift], srcy = srcd[y][x].y1[shift];
-				item = &dstd[y2][x2 + 1];
-				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
-				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
-				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
-				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
-
-				srcx = srcd[y][x].x2[shift], srcy = srcd[y][x].y2[shift];
-				item = &dstd[y2 + 1][x2];
-				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
-				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
-				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
-				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j++];
-
-				srcx = srcd[y][x].x3[shift], srcy = srcd[y][x].y3[shift];
-				item = &dstd[y2 + 1][x2 + 1];
-				item->x0[shift] = srcx + dirxmasks[j]; item->y0[shift] = srcy + dirymasks[j++];
-				item->x1[shift] = srcx + dirxmasks[j]; item->y1[shift] = srcy + dirymasks[j++];
-				item->x2[shift] = srcx + dirxmasks[j]; item->y2[shift] = srcy + dirymasks[j++];
-				item->x3[shift] = srcx + dirxmasks[j]; item->y3[shift] = srcy + dirymasks[j];
+				int nmask = mask[shift];
+				for(int qSrc = 0; qSrc < 4; qSrc++){
+					auto src = srcd[y][x].shifts[shift].items[qSrc];
+					auto item = &dstd[qSrc / 2][qSrc % 2].shifts[shift];
+					for(int qDst = 0; qDst < 4; qDst++){
+						auto dst = &item->items[qDst];
+						dst->x = src.x + dirxmasks[nmask];
+						dst->y = src.y + dirymasks[nmask++];
+					}
+				}
 			}
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +294,7 @@ inline void getMaskDir(const int y2, const int x2, array<int, 2>& dsta, int* mas
 inline void moveQuad(const int y, const int x, array<int, 2>& dsta, float* dirsy, float* dirsx, int shift) restrict(amp){
 	int tl = dsta[y2t][x2l];
 	if(dsta[y][x] != 0){
-		if(dsta[y][x+1] == 0 && dirsx[shift] srcd[y][x].y0[0] == 0 && srcd[y][x].x0[0] > 0){
+		if(dsta[y][x + 1] == 0 && dirsx[shift] srcd[y][x].y0[0] == 0 && srcd[y][x].x0[0] > 0){
 			srcd[y][x].x0[0] = 0;
 			dsta[y2t][x2l] = 0;
 			dsta[y2t][x2c] = 1;
@@ -343,5 +323,4 @@ inline void moveQuad(const int y, const int x, array<int, 2>& dsta, float* dirsy
 		}
 	}
 } // //////////////////////////////////////////////////////////////////////////////////////////////
-
 
