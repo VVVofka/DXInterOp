@@ -9,7 +9,7 @@
 #include "Model2D.h"
 #include "Masks.h"
 #include <DirectXMath.h>
-
+ 
 #define THETA 3.1415f/1024  
 extern Model2D model;
 
@@ -144,12 +144,15 @@ public:
 			int mask[4]; // shift
 			const int y = idx[0];
 			const int x = idx[1];
-			getMaskDir(y * 2, x * 2, dsta, mask);
+			const int y2 = y * 2;
+			const int x2 = x * 2;
+			getMaskDir(y2, x2, dsta, mask);
 			for(int shift = 0; shift < 4; shift++){
 				int nmask = mask[shift];
+				auto srcsh = &srcd[y][x].shifts[shift];
 				for(int qSrc = 0; qSrc < 4; qSrc++){
-					auto src = srcd[y][x].shifts[shift].items[qSrc];
-					auto item = &dstd[qSrc / 2][qSrc % 2].shifts[shift];
+					auto src = srcsh->items[qSrc];
+					auto item = &dstd[y2 + qSrc / 2][x2 + qSrc % 2].shifts[shift];
 					for(int qDst = 0; qDst < 4; qDst++){
 						auto dst = &item->items[qDst];
 						dst->x = src.x + dirxmasks[nmask];
@@ -159,7 +162,7 @@ public:
 			}
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runDlast(array<DirItem, 2>& srcd,
+	void runDlast(array<DrShiftQuadro, 2>& srcd,
 				  array<int, 2>& dsta,
 				  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
 		parallel_for_each(srcd.extent, [&srcd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
