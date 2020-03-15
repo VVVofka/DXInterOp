@@ -12,7 +12,11 @@ public:
         HRESULT hr = MDX::InitDevice(ghWnd, Primitive);
         g_numVertices = vertices.size();
         RETURN_IF_FAIL(MDX::CreateSwapChain());
+#ifdef MYAREA
+        RETURN_IF_FAIL(CreateComputeShader());
+#else
         RETURN_IF_FAIL(CreateComputeShader(vertices));
+#endif
         RETURN_IF_FAIL(MDX::CreateVertexShader("VS2"));
         RETURN_IF_FAIL(MDX::CreatePixelShader());
         return hr;
@@ -21,6 +25,15 @@ public:
     //    g_pAMPComputeEngine->Create(minszX, minszY, maxsz, kFill);
     //} // //////////////////////////////////////////////////////////////////////////////////
 private:
+#ifdef MYAREA
+ HRESULT CreateComputeShader() {
+        g_pAMPComputeEngine = new AMPEngine2(g_pd3dDevice);
+        g_pAMPComputeEngine->initialize_data();
+        //g_pAMPComputeEngine->Create(4, 3, 1000, 0.33);
+        RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
+        return MDX::CreateComputeShader();
+    } // /////////////////////////////////////////////////////////////////////////////////////////////
+#else
  HRESULT CreateComputeShader(std::vector<Vertex2D>& vertices) {
         g_pAMPComputeEngine = new AMPEngine2(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data(vertices);
@@ -28,6 +41,7 @@ private:
         RETURN_IF_FAIL(g_pAMPComputeEngine->get_data_d3dbuffer(reinterpret_cast<void**>(&g_pVertexPosBuffer)));
         return MDX::CreateComputeShader();
     } // /////////////////////////////////////////////////////////////////////////////////////////////
+#endif
  public:
     void Render() {               //  Call from main loop wWinMain()
         g_pAMPComputeEngine->run();    

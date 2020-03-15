@@ -39,10 +39,11 @@ class AMPEngine2{
 
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
-	void initialize_data(const std::vector<Vertex2D>& data){
 #ifndef MYAREA
+	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 #else
+	void initialize_data(){
 		auto layscnt = model.v_areas.size();
 		for(size_t nlay = 0; nlay < layscnt; nlay++){
 			int sizey = model.sizeY(nlay);
@@ -196,60 +197,25 @@ public:
 			parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
 				const int y = idx[0];
 				const int x = idx[1];
-				auto q = &srcd[y][x].shifts[nshift];
-				int y2 = y * 2 + yshift;
-				int x2 = x * 2 + xshift;
+				auto q = srcd[y][x].shifts[nshift].items;
+				int y2 = mad(y,  2,  yshift); // y*2+yshift
+				int x2 = mad(x,  2,  xshift);
 
-				dstd[y2][x2].y += q->items[0].y;
-				dstd[y2][x2].x += q->items[0].x;
+				dstd[y2][x2].y += q->y;
+				dstd[y2][x2].x += q->x;
 
-				dstd[y2][x2 + 1].y += q->items[1].y;
-				dstd[y2][x2 + 1].x += q->items[1].x;
+				dstd[y2][x2 + 1].y += (++q)->y;
+				dstd[y2][x2 + 1].x += q->x;
 
-				dstd[y2 + 1][x2].y += q->items[2].y;
-				dstd[y2 + 1][x2].x += q->items[2].x;
+				dstd[y2 + 1][x2].y += (++q)->y;
+				dstd[y2 + 1][x2].x += q->x;
 
-				dstd[y2 + 1][x2 + 1].y += q->items[3].y;
-				dstd[y2 + 1][x2 + 1].x += q->items[3].x;
+				dstd[y2 + 1][x2 + 1].y += (++q)->y;
+				dstd[y2 + 1][x2 + 1].x += q->x;
+
+				//int z = sign(2.f);
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift
-
-		parallel_for_each(srcd.extent, [&srcd, &dsta, &dstd](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
-			const int y = idx[0];
-			const int x = idx[1];
-			int y2 = y * 2;
-			int x2 = x * 2;
-			auto shifts = srcd[y][x].shifts;
-			dstd[y2][x2].y += shifts[0].items[0].y;
-			dstd[y2][x2].x += shifts[0].items[0].x;
-
-			dstd[y2][x2 + 1].y += shifts[0].items[1].y + shifts[1].items[0].y;
-			dstd[y2][x2 + 1].x += shifts[0].items[1].x + shifts[1].items[0].x;
-
-			dstd[y2][x2 + 2].y += shifts[1].items[1].y;
-			dstd[y2][x2 + 2].x += shifts[1].items[1].x;
-
-			y2++; // = y*2 + 1 
-			dstd[y2][x2].y += shifts[0].items[2].y + shifts[2].items[0].y;
-			dstd[y2][x2].x += shifts[0].items[2].x + shifts[2].items[0].x;
-
-			dstd[y2][x2 + 1].y += shifts[0].items[3].y + shifts[1].items[2].y + shifts[2].items[1].y + shifts[3].items[0].y;
-			dstd[y2][x2 + 1].x += shifts[0].items[3].x + shifts[1].items[2].x + shifts[2].items[1].x + shifts[3].items[0].x;
-
-			dstd[y2][x2 + 2].y += shifts[1].items[3].y + shifts[3].items[1].y;
-			dstd[y2][x2 + 2].x += shifts[1].items[3].x + shifts[3].items[1].x;
-
-			y2++;  // = y*2 + 2
-			dstd[y2][x2].y += shifts[2].items[2].y;
-			dstd[y2][x2].x += shifts[2].items[2].x;
-
-			dstd[y2][x2 + 1].y += shifts[2].items[3].y + shifts[3].items[2].y;
-			dstd[y2][x2 + 1].x += shifts[2].items[3].x + shifts[3].items[2].x;
-
-			dstd[y2][x2 + 2].y += shifts[3].items[3].y;
-			dstd[y2][x2 + 2].x += shifts[3].items[3].x;
-
-		}); // parallel_for_each(srcd.extent,
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak(){
 		array<Vertex2D, 1>& data_ref = *m_data;
