@@ -30,8 +30,9 @@ using namespace concurrency::direct3d;
 
 class AMPEngine2{
 	accelerator_view					m_accl_view;
-	std::unique_ptr<array<int, 2>>      ar_area;
+	//std::unique_ptr<array<int, 2>>      ar_area;
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
+	std::unique_ptr<array<FLT2, 2>> last_dirs;
 
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
 	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
@@ -39,8 +40,9 @@ class AMPEngine2{
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 	void initialize_data(const std::vector<Vertex2D>& data){
+#ifndef MYAREA
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
-#ifdef MYAREA
+#else
 		auto layscnt = model.v_areas.size();
 		for(size_t nlay = 0; nlay < layscnt; nlay++){
 			int sizey = model.sizeY(nlay);
@@ -58,6 +60,7 @@ public:
 		}
 		auto v = model.v_poss[model.v_poss.size() - 1];
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
+		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
@@ -67,6 +70,7 @@ public:
 		int nlastlay = model.LaysCnt() - 1;
 		array<int, 2>& src = *var_areas[nlastlay];
 		array<int, 2>& dst = *var_areas[nlastlay - 1];
+		array<FLT2, 2>& dirs = *last_dirs;
 		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay];
 		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		runAlast(src, dst);
@@ -83,7 +87,7 @@ public:
 		}
 		src = dst;
 		dst = *var_areas[nlastlay];
-		runDlast(srcd, dst, dirXMasks, dirYMasks);
+		runDlast(srcd, dst, dirs);
 
 		array<Vertex2D, 1>& data_ref = *m_data;
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
@@ -185,25 +189,66 @@ public:
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runDlast(array<DrShiftQuadro, 2>& srcd,
 				  array<int, 2>& dsta,
-				  array<float, 1>& dstd){
-		parallel_for_each(srcd.extent, [&srcd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+				  array<FLT2, 2>& dstd){
+		for(int nshift = 0; nshift < 4; nshift++){
+			int yshift = nshift / 2;
+			int xshift = nshift % 2;
+			parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
+				const int y = idx[0];
+				const int x = idx[1];
+				auto q = &srcd[y][x].shifts[nshift];
+				int y2 = y * 2 + yshift;
+				int x2 = x * 2 + xshift;
+
+				dstd[y2][x2].y += q->items[0].y;
+				dstd[y2][x2].x += q->items[0].x;
+
+				dstd[y2][x2 + 1].y += q->items[1].y;
+				dstd[y2][x2 + 1].x += q->items[1].x;
+
+				dstd[y2 + 1][x2].y += q->items[2].y;
+				dstd[y2 + 1][x2].x += q->items[2].x;
+
+				dstd[y2 + 1][x2 + 1].y += q->items[3].y;
+				dstd[y2 + 1][x2 + 1].x += q->items[3].x;
+			}); // parallel_for_each(srcd.extent,
+		} // for(nshift
+
+		parallel_for_each(srcd.extent, [&srcd, &dsta, &dstd](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			const int y = idx[0];
 			const int x = idx[1];
-			const int y2 = y * 2;
-			const int x2 = x * 2;
-			for(int nshift = 0; nshift < 4; nshift++){
-				auto items = srcd[y][x].shifts[nshift].items;
-				for(int nitem = 0; nitem < 4; nitem++){
-					auto p = items[nitem];
+			int y2 = y * 2;
+			int x2 = x * 2;
+			auto shifts = srcd[y][x].shifts;
+			dstd[y2][x2].y += shifts[0].items[0].y;
+			dstd[y2][x2].x += shifts[0].items[0].x;
 
-				}
-			}
-			//moveQuad(y, x, y2, x2, dsta, srcd, 0);
-			//moveQuad(y, x, y2, x2, dsta, srcd, 0);
-			//moveQuad(y2, x2, dsta, srcd[y][x].shifts[0]);
-			//moveQuad(y2, x2 + 1, dsta, srcd[y][x].shifts[1]);
-			//moveQuad(y2 + 1, x2, dsta, srcd[y][x].shifts[2]);
-			//moveQuad(y2 + 1, x2 + 1, dsta, srcd[y][x].shifts[3]);
+			dstd[y2][x2 + 1].y += shifts[0].items[1].y + shifts[1].items[0].y;
+			dstd[y2][x2 + 1].x += shifts[0].items[1].x + shifts[1].items[0].x;
+
+			dstd[y2][x2 + 2].y += shifts[1].items[1].y;
+			dstd[y2][x2 + 2].x += shifts[1].items[1].x;
+
+			y2++; // = y*2 + 1 
+			dstd[y2][x2].y += shifts[0].items[2].y + shifts[2].items[0].y;
+			dstd[y2][x2].x += shifts[0].items[2].x + shifts[2].items[0].x;
+
+			dstd[y2][x2 + 1].y += shifts[0].items[3].y + shifts[1].items[2].y + shifts[2].items[1].y + shifts[3].items[0].y;
+			dstd[y2][x2 + 1].x += shifts[0].items[3].x + shifts[1].items[2].x + shifts[2].items[1].x + shifts[3].items[0].x;
+
+			dstd[y2][x2 + 2].y += shifts[1].items[3].y + shifts[3].items[1].y;
+			dstd[y2][x2 + 2].x += shifts[1].items[3].x + shifts[3].items[1].x;
+
+			y2++;  // = y*2 + 2
+			dstd[y2][x2].y += shifts[2].items[2].y;
+			dstd[y2][x2].x += shifts[2].items[2].x;
+
+			dstd[y2][x2 + 1].y += shifts[2].items[3].y + shifts[3].items[2].y;
+			dstd[y2][x2 + 1].x += shifts[2].items[3].x + shifts[3].items[2].x;
+
+			dstd[y2][x2 + 2].y += shifts[3].items[3].y;
+			dstd[y2][x2 + 2].x += shifts[3].items[3].x;
+
 		}); // parallel_for_each(srcd.extent,
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak(){

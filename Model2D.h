@@ -5,24 +5,18 @@
 #include <DirectXMath.h>
 #include "DXInterOp.h"
 #include "Sz2D.h"
-//using namespace std;
-//struct DirItem{
-//	float
-//		x0[4] = {0,0,0,0},
-//		x1[4] = {0,0,0,0},
-//		x2[4] = {0,0,0,0},
-//		x3[4] = {0,0,0,0},
-//		y0[4] = {0,0,0,0},
-//		y1[4] = {0,0,0,0},
-//		y2[4] = {0,0,0,0},
-//		y3[4] = {0,0,0,0};
-//};
+//def in Model2D.h
+// float x,y
+struct FLT2{
+	float y, x;
+	FLT2() : x(0), y(0){}
+	FLT2(float X, float Y) : x(X), y(Y){}
+	void operator +=(FLT2& other){ x+= other.x; y+= other.y;}
+}; // ********************************************************************************************
+
 struct DrShiftQuadro{
 	struct DrQuadro{
-		struct DrItem{
-			float x, y;
-		}; // ********************************************************************************************
-		DrItem items[4];
+		FLT2 items[4];
 	}; // ********************************************************************************************
 	DrQuadro shifts[4];
 }; // ********************************************************************************************
@@ -32,13 +26,16 @@ public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DrShiftQuadro>> v_dirs;
+	std::vector<FLT2> last_dirs;
 
 	std::vector<int> lastArea(){ return v_areas[v_areas.size() - 1]; }
 	std::vector<Vertex2D> lastPoss(){ return v_poss[v_poss.size() - 1]; }
 
 	std::vector<Sz2D> vsz;
 	int sizeY(int nlay){ return vsz[nlay].y; }
+	int sizeY(){ return vsz[vsz.size() - 1].y; }
 	int sizeX(int nlay){ return vsz[nlay].x; }
+	int sizeX(){ return vsz[vsz.size() - 1].x; }
 	int LaysCnt(){ return v_areas.size(); }
 	std::vector<int>* dataArea(int nlay){ return &v_areas[nlay]; }
 
@@ -74,7 +71,9 @@ public:
 		vsz.push_back(sz);
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea));
-		v_dirs.push_back(std::vector<DrShiftQuadro>(szarea));
+		v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // TODO: not use. Use last_dirs
+		last_dirs.resize(szarea, FLT2(0, 0));
+
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
 
 		v_poss.push_back(std::vector<Vertex2D>());
@@ -95,6 +94,7 @@ public:
 
 			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
 		} // 	while(v_poss[nlay].size() < szpos)
+
 	} // //////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
 
