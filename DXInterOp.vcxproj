@@ -234,6 +234,7 @@
     <ClInclude Include="Sz2D.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Amp2.cpp" />
     <ClCompile Include="DXInterOp.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
     </ClCompile>
