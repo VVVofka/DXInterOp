@@ -98,7 +98,7 @@ public:
 			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runAlast(array<int, 2>& src, array<int, 2>& dst){
+	void runAlast(array<int, 2> & src, array<int, 2> & dst){
 		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			const int mask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
@@ -131,7 +131,7 @@ public:
 			dst[y][x] = (sum << 1) | mask[cc + bc + cr + br];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runA(array<int, 2>& src, array<int, 2>& dst){
+	void runA(array<int, 2> & src, array<int, 2> & dst){
 		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			const int mask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
@@ -153,9 +153,9 @@ public:
 			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runD(array<DrShiftQuadro, 2>& srcd,
-			  array<DrShiftQuadro, 2>& dstd, array<int, 2>& dsta,
-			  array<float, 1>& dirxmasks, array<float, 1>& dirymasks){
+	void runD(array<DrShiftQuadro, 2> & srcd,
+			  array<DrShiftQuadro, 2> & dstd, array<int, 2> & dsta,
+			  array<float, 1> & dirxmasks, array<float, 1> & dirymasks){
 		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			int mask[4]; // shift
 			const int y = idx[0];
@@ -188,9 +188,9 @@ public:
 			}
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runDlast(array<DrShiftQuadro, 2>& srcd,
-				  array<int, 2>& dsta,
-				  array<FLT2, 2>& dstd){
+	void runDlast(array<DrShiftQuadro, 2> & srcd,
+				  array<int, 2> & dsta,
+				  array<FLT2, 2> & dstd){
 		for(int nshift = 0; nshift < 4; nshift++){
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
@@ -198,12 +198,43 @@ public:
 				const int y = idx[0];
 				const int x = idx[1];
 				auto q = srcd[y][x].shifts[nshift].items;
-				int y2 = mad(y,  2,  yshift); // y*2+yshift
-				int x2 = mad(x,  2,  xshift);
+				int y2 = mad(y, 2, yshift); // y*2+yshift
+				int x2 = mad(x, 2, xshift);
 
 				dstd[y2][x2].y += q->y;
 				dstd[y2][x2].x += q->x;
 
+				dstd[y2][x2 + 1].y += (++q)->y;
+				dstd[y2][x2 + 1].x += q->x;
+
+				dstd[y2 + 1][x2].y += (++q)->y;
+				dstd[y2 + 1][x2].x += q->x;
+
+				dstd[y2 + 1][x2 + 1].y += (++q)->y;
+				dstd[y2 + 1][x2 + 1].x += q->x;
+
+				//int z = sign(2.f);
+			}); // parallel_for_each(srcd.extent,
+		} // for(nshift
+		for(int nshift = 0; nshift < 4; nshift++){
+			int yshift = nshift / 2;
+			int xshift = nshift % 2;
+			parallel_for_each(srcd.extent, [=, &dsta, &dstd](index<2> idx) restrict(amp){
+				int y2 = idx[0] * 2 + yshift;
+				int x2 = idx[1] * 2 + xshift;
+
+				if(dsta[y2][x2] > 0){
+					float diry = dstd[y2][x2].y;
+					float absdiry = abs(diry);
+					float dirx = dstd[y2][x2].x;
+					float absdirx = abs(dirx);
+					if(absdirx > 2 * absdiry)
+						diry = 0;
+					else if(absdiry > 2 * absdirx)
+						dirx = 0;
+					//int idirx = sign()
+					if(nshift == 0 && diry >= 0 && dirx >=0)
+				}
 				dstd[y2][x2 + 1].y += (++q)->y;
 				dstd[y2][x2 + 1].x += q->x;
 
@@ -226,7 +257,7 @@ public:
 			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	std::vector<Vertex2D>* return_data(std::vector<Vertex2D>* vreturn){
+	std::vector<Vertex2D>* return_data(std::vector<Vertex2D> * vreturn){
 		concurrency::copy(*m_data, begin(*vreturn));
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
