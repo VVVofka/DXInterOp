@@ -74,6 +74,7 @@ public:
 		array<FLT2, 2>& dirs = *last_dirs;
 		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay];
 		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
+		array<Vertex2D, 1>& data_ref = *m_data;
 		runAlast(src, dst);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			src = dst;
@@ -88,9 +89,8 @@ public:
 		}
 		src = dst;
 		dst = *var_areas[nlastlay];
-		runDlast(srcd, dst, dirs);
+		runDlast(srcd, data_ref, dst, dirs);
 
-		array<Vertex2D, 1>& data_ref = *m_data;
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
 			// Rotate the vertex by angle THETA
 			DirectX::XMFLOAT2 pos = data_ref[idx].Pos;
@@ -189,8 +189,7 @@ public:
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runDlast(array<DrShiftQuadro, 2> & srcd,
-				  //array<int, 2> & srca,
-				  array<Vertex2D, 1> dstpos,
+				  array<Vertex2D, 1> & dstpos,
 				  array<int, 2> & dsta,
 				  array<FLT2, 2> & dstd){
 		for(int nshift = 0; nshift < 4; nshift++){
@@ -217,7 +216,7 @@ public:
 		for(int nshift = 0; nshift < 4; nshift++){
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
-			parallel_for_each(srcd.extent, [=, &dsta, &dstd](index<2> idx) restrict(amp){
+			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 				int y2 = idx[0] * 2 + yshift;
 				int x2 = idx[1] * 2 + xshift;
 
@@ -239,13 +238,16 @@ public:
 					int adrx = (xitem << 2) + sign((int)dirx) + 1;
 					int newy = y2 + mask[adry];
 					int newx = x2 + mask[adrx];
-					auto tmp = dsta[newy][newx];
+					int tmp = dsta[newy][newx];
+					if(tmp >= 0){
+						dstpos[tmp].Pos.y = newy / dsta.get_extent().size() extent.size(); // , dstpos[tmp].Pos.x = newx;
+
+					}
 					dsta[newy][newx] = dsta[y2][x2];
 					dsta[y2][x2] = tmp;
 
 					dstd[y2][x2].y = dstd[y2][x2].x = 0;
 					dstd[newy][newx].y = dstd[newy][newx].x = 0;
-
 				}
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift

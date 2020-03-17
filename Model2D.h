@@ -90,7 +90,7 @@ public:
 
 			float y = (((2 * curpos) / vsz[nlay].x) - vsz[nlay].y) / float(vsz[nlay].y);
 			float x = ((2 * (curpos % vsz[nlay].x)) - vsz[nlay].x) / float(vsz[nlay].x);
-			v_poss[nlay].push_back(Vertex2D(x, y));
+			v_poss[nlay].push_back(Vertex2D(y, x));
 
 			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
 		} // 	while(v_poss[nlay].size() < szpos)
