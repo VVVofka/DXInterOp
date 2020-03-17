@@ -240,7 +240,7 @@ public:
 					int newx = x2 + mask[adrx];
 					int tmp = dsta[newy][newx];
 					if(tmp >= 0){
-						dstpos[tmp].Pos.y = newy / dsta.get_extent().size() extent.size(); // , dstpos[tmp].Pos.x = newx;
+						dstpos[tmp].Pos.y = newy /  dsta.get_extent().size() extent.size(); // , dstpos[tmp].Pos.x = newx;
 
 					}
 					dsta[newy][newx] = dsta[y2][x2];
