@@ -189,17 +189,17 @@ public:
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runDlast(array<DrShiftQuadro, 2> & srcd,
+				  //array<int, 2> & srca,
+				  array<Vertex2D, 1> dstpos,
 				  array<int, 2> & dsta,
 				  array<FLT2, 2> & dstd){
 		for(int nshift = 0; nshift < 4; nshift++){
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
 			parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
-				const int y = idx[0];
-				const int x = idx[1];
-				auto q = srcd[y][x].shifts[nshift].items;
-				int y2 = mad(y, 2, yshift); // y*2+yshift
-				int x2 = mad(x, 2, xshift);
+				auto q = srcd[idx[0]][idx[1]].shifts[nshift].items;
+				int y2 = mad(idx[0], 2, yshift); // y*2+yshift
+				int x2 = mad(idx[1], 2, xshift);
 
 				dstd[y2][x2].y += q->y;
 				dstd[y2][x2].x += q->x;
@@ -212,8 +212,6 @@ public:
 
 				dstd[y2 + 1][x2 + 1].y += (++q)->y;
 				dstd[y2 + 1][x2 + 1].x += q->x;
-
-				//int z = sign(2.f);
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift
 		for(int nshift = 0; nshift < 4; nshift++){
@@ -223,28 +221,32 @@ public:
 				int y2 = idx[0] * 2 + yshift;
 				int x2 = idx[1] * 2 + xshift;
 
-				if(dsta[y2][x2] > 0){
-					float diry = dstd[y2][x2].y;
-					float absdiry = abs(diry);
-					float dirx = dstd[y2][x2].x;
-					float absdirx = abs(dirx);
+				for(int nitem = 0; nitem < 4; nitem++){
+					const int mask[7] = {0,0,1, 9, 0,1,1};
+					int yitem = nitem / 2;
+					int xitem = nitem % 2;
+					int y = y2 + yitem;
+					int x = x2 + xitem;
+					float diry = dstd[y][x].y;
+					float absdiry = fabsf(diry);
+					float dirx = dstd[y][x].x;
+					float absdirx = fabsf(dirx);
 					if(absdirx > 2 * absdiry)
 						diry = 0;
 					else if(absdiry > 2 * absdirx)
 						dirx = 0;
-					//int idirx = sign()
-					if(nshift == 0 && diry >= 0 && dirx >=0)
+					int adry = (yitem << 2) + sign((int)diry) + 1; // 0..1 | 0..2
+					int adrx = (xitem << 2) + sign((int)dirx) + 1;
+					int newy = y2 + mask[adry];
+					int newx = x2 + mask[adrx];
+					auto tmp = dsta[newy][newx];
+					dsta[newy][newx] = dsta[y2][x2];
+					dsta[y2][x2] = tmp;
+
+					dstd[y2][x2].y = dstd[y2][x2].x = 0;
+					dstd[newy][newx].y = dstd[newy][newx].x = 0;
+
 				}
-				dstd[y2][x2 + 1].y += (++q)->y;
-				dstd[y2][x2 + 1].x += q->x;
-
-				dstd[y2 + 1][x2].y += (++q)->y;
-				dstd[y2 + 1][x2].x += q->x;
-
-				dstd[y2 + 1][x2 + 1].y += (++q)->y;
-				dstd[y2 + 1][x2 + 1].x += q->x;
-
-				//int z = sign(2.f);
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
