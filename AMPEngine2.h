@@ -71,8 +71,8 @@ public:
 		int nlastlay = model.LaysCnt() - 1;
 		array<int, 2>& src = *var_areas[nlastlay];
 		array<int, 2>& dst = *var_areas[nlastlay - 1];
-		array<FLT2, 2>& dirs = *last_dirs;
-		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay];
+		
+		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay-1];
 		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		array<Vertex2D, 1>& data_ref = *m_data;
 		runAlast(src, dst);
@@ -89,6 +89,7 @@ public:
 		}
 		src = dst;
 		dst = *var_areas[nlastlay];
+		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(srcd, data_ref, dst, dirs);
 
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
@@ -240,7 +241,7 @@ public:
 					int newx = x2 + mask[adrx];
 					int tmp = dsta[newy][newx];
 					if(tmp >= 0){
-						dstpos[tmp].Pos.y = newy /  dsta.get_extent().size() extent.size(); // , dstpos[tmp].Pos.x = newx;
+						//dstpos[tmp].Pos.y = newy /  dsta.get_extent().size() extent.size(); // , dstpos[tmp].Pos.x = newx;
 
 					}
 					dsta[newy][newx] = dsta[y2][x2];
