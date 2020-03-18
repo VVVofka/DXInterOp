@@ -38,51 +38,12 @@ class AMPEngine2{
 	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
 
 public:
-	AMPEngine2(ID3D11Device* d3ddevice) //  : m_accl_view(create_accelerator_view(d3ddevice))
-	{
-		list_all_accelerators();
-		default_properties();
-		//m_accl_view = create_accelerator_view(d3ddevice);
-		m_accl_view = create_accelerator_view(accelerator::direct3d_ref);
-		m_accl_view.accelerator.
-	}
+	AMPEngine2(ID3D11Device* d3ddevice)   : m_accl_view(create_accelerator_view(d3ddevice)){}
 #ifndef MYAREA
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 #else
-	void default_properties(){
-		std::wstring sw;
-		accelerator default_acc;
-		sw = default_acc.direct3d_ref;
-		default_acc.description;
-		sw =  default_acc.device_path;
-		_RPT1(0,"default %s\n%s\n", sw.c_str());
-		std::wcout << default_acc.dedicated_memory << "\n";
-		std::wcout << (default_acc.supports_cpu_shared_memory ?
-					   "CPU shared memory: true" : "CPU shared memory: false") << "\n";
-		std::wcout << (default_acc.supports_double_precision ?
-					   "double precision: true" : "double precision: false") << "\n";
-		std::wcout << (default_acc.supports_limited_double_precision ?
-					   "limited double precision: true" : "limited double precision: false") << "\n";
-	} // ///////////////////////////////////////////////////////////////////////////////////////////
-	void list_all_accelerators(){
-		std::vector<accelerator> accs = accelerator::get_all();
-		std::wstring s;
-		std::string ss;
-		for(size_t i = 0; i < accs.size(); i++){
-			s = accs[i].device_path;
-			s = accs[i].dedicated_memory;
-			ss = (accs[i].supports_cpu_shared_memory ?
-						   "CPU shared memory: true" : "CPU shared memory: false");
-			ss = (accs[i].supports_double_precision ?
-						   "double precision: true" : "double precision: false");
-			ss = (accs[i].supports_limited_double_precision ?
-						   "limited double precision: true" : "limited double precision: false");
-		}
-	} // //////////////////////////////////////////////////////////////////////////////////
 	void initialize_data(){
-		list_all_accelerators();
-		default_properties();
 		auto layscnt = model.v_areas.size();
 		for(size_t nlay = 0; nlay < layscnt; nlay++){
 			int sizey = model.sizeY(nlay);
@@ -114,6 +75,10 @@ public:
 		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay-1];
 		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		array<Vertex2D, 1>& data_ref = *m_data;
+		parallel_for_each(dst.extent, [&](index<2> idx) restrict(amp){
+			int i = idx[0];
+		});
+		return;
 		runAlast(src, dst);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			src = dst;

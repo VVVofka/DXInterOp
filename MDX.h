@@ -93,11 +93,11 @@ protected:
         sd.Windowed = TRUE;
 
         for(UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++){
-            g_driverType = driverTypes[driverTypeIndex];
+           g_driverType = driverTypes[driverTypeIndex];
+            //g_driverType = driverTypes[2];
             hr = D3D11CreateDeviceAndSwapChain(NULL, g_driverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
                                                D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &g_featureLevel, &g_pImmediateContext);
-            if(SUCCEEDED(hr))
-                break;
+            if(SUCCEEDED(hr)) break;
         }
         RETURN_IF_FAIL(hr);
 
