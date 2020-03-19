@@ -58,29 +58,15 @@ public:
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
 		int nlastlay = model.LaysCnt() - 1;
-		//array<int, 2>& src = *var_areas[nlastlay];
-		//array<int, 2>& dst = *var_areas[nlastlay - 1];
-		//array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay - 1];
-		//array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
-		array<Vertex2D, 1>& data_ref = *m_data;
 		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1]);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			runA(*var_areas[nlay], *var_areas[nlay - 1]);
 		}
 		for(int nlay = 1; nlay < nlastlay; nlay++){
-			//runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], dirXMasks, dirYMasks);
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 		}
-		return;
 		array<FLT2, 2>& dirs = *last_dirs;
-		runDlast(*var_dirs[nlastlay - 1], data_ref, *var_areas[nlastlay], dirs);
-
-		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
-			// Rotate the vertex by angle THETA
-			DirectX::XMFLOAT2 pos = data_ref[idx].Pos;
-			data_ref[idx].Pos.y = pos.y * cos(THETA) - pos.x * sin(THETA);
-			data_ref[idx].Pos.x = pos.y * sin(THETA) + pos.x * cos(THETA);
-		});
+		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runAlast(array<int, 2> & src, array<int, 2> & dst){
 		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
@@ -202,7 +188,6 @@ public:
 					int yitem = y2 + qSrc / 2;
 					int xitem = x2 + qSrc % 2;
 					auto item = &dstd[yitem][xitem].shifts[shift];
-					//auto item = &dstd[0][0].shifts[shift];
 					for(int qDst = 0; qDst < 4; qDst++){
 						auto dst = &item->items[qDst];
 						dst->x = src.x + vdirsX[nmask];
@@ -302,44 +287,6 @@ public:
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 private:
-	// TODO: del
-	const float vdirsX[16 * 16] = {
--1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1,
--0,-0,-0,-0,-0,-1,-0,-1,+1,+1,+1,+1,-0,-1,-0,-1,
-+1,-0,+1,-0,-0,-0,-0,-0,+1,-0,+1,-0,-1,-1,-1,-1,
--0,-0,-0,-0,-0,-0,-0,-0,-1,-1,-1,-1,+1,+1,+1,+1,
-+1,+1,+1,+1,-0,-1,-0,-1,-0,-0,-0,-0,-0,-1,-0,-1,
--0,-0,-0,-0,-1,-1,-0,-1,-0,-0,-0,-0,-0,-1,-1,-1,
-+1,+1,-1,+1,-0,-0,-0,-0,-0,-0,-0,-0,-1,+1,-1,-1,
--0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,+1,+1,-1,+1,
-+1,-0,+1,-0,-1,-1,-1,-1,+1,-0,+1,-0,-0,-0,-0,-0,
--0,-0,-0,-0,-1,-1,-1,+1,-1,+1,+1,+1,-0,-0,-0,-0,
-+1,+1,+1,-0,-0,-0,-0,-0,+1,-0,+1,+1,-0,-0,-0,-0,
--0,-0,-0,-0,-0,-0,-0,-0,-1,-1,-1,+1,-0,-0,-0,-0,
--1,-1,-1,-1,+1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
--0,-0,-0,-0,-1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
--1,+1,-1,-1,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,
--1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1};
-	const float vdirsY[16 * 16] = {
--1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1,
--0,-0,-0,-0,+1,+1,+1,+1,-0,-0,-1,-1,-0,-0,-1,-1,
-+1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-1,-1,-0,-0,-1,-1,
--0,-0,-0,-0,-0,-0,-0,-0,-1,-0,-1,-1,-0,-1,-1,-1,
-+1,+1,-0,-0,+1,+1,-0,-0,-0,-0,-0,-0,-1,-1,-1,-1,
--0,-0,-0,-0,-1,-1,-1,-1,-0,-0,-0,-0,+1,+1,+1,+1,
-+1,-1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,-1,-1,+1,-1,
--0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,+1,-1,+1,+1,
-+1,+1,-0,-0,+1,+1,-0,-0,-1,-1,-1,-1,-0,-0,-0,-0,
--0,-0,-0,-0,-1,+1,+1,+1,-1,-1,-1,+1,-0,-0,-0,-0,
--1,-1,-1,-1,-0,-0,-0,-0,+1,+1,+1,+1,-0,-0,-0,-0,
--0,-0,-0,-0,-0,-0,-0,-0,-1,+1,+1,+1,-0,-0,-0,-0,
-+1,+1,+1,-0,+1,+1,-0,+1,-0,-0,-0,-0,-0,-0,-0,-0,
--0,-0,-0,-0,-1,-1,-1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
--1,-1,+1,-1,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,
--1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1};
-	array<float, 1> dirXMasks = array<float, 1>(16 * 16, vdirsX);
-	array<float, 1> dirYMasks = array<float, 1>(16 * 16, vdirsY);
-
 }; // ******************************************************************************************************
 
 //void moveQuad(
