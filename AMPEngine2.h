@@ -27,7 +27,7 @@ class AMPEngine2{
 	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
 
 public:
-	AMPEngine2(ID3D11Device* d3ddevice)   : m_accl_view(create_accelerator_view(d3ddevice)){}
+	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 #ifndef MYAREA
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
@@ -60,8 +60,7 @@ public:
 		int nlastlay = model.LaysCnt() - 1;
 		array<int, 2>& src = *var_areas[nlastlay];
 		array<int, 2>& dst = *var_areas[nlastlay - 1];
-		return;
-		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay-1];
+		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay - 1];
 		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		array<Vertex2D, 1>& data_ref = *m_data;
 		runAlast(src, dst);
@@ -71,11 +70,12 @@ public:
 			runA(src, dst);
 		}
 		for(int nlay = 1; nlay < nlastlay; nlay++){
-			srcd = *var_dirs[nlay - 1];
-			dstd = *var_dirs[nlay];
-			dst = *var_areas[nlay];
-			runD(srcd, dstd, dst, dirXMasks, dirYMasks);
+			//srcd = *var_dirs[nlay - 1];
+			//dstd = *var_dirs[nlay];
+			//dst = *var_areas[nlay];
+			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], dirXMasks, dirYMasks);
 		}
+		return;
 		src = dst;
 		dst = *var_areas[nlastlay];
 		array<FLT2, 2>& dirs = *last_dirs;
@@ -181,6 +181,7 @@ public:
 				  array<Vertex2D, 1> & dstpos,
 				  array<int, 2> & dsta,
 				  array<FLT2, 2> & dstd){
+		int szy = model.sizeY(), szx = model.sizeX();
 		for(int nshift = 0; nshift < 4; nshift++){
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
@@ -208,6 +209,8 @@ public:
 			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 				int y2 = idx[0] * 2 + yshift;
 				int x2 = idx[1] * 2 + xshift;
+				float ky = 2.f / szy;	
+				float kx = 2.f / szx;
 
 				for(int nitem = 0; nitem < 4; nitem++){
 					const int mask[7] = {0,0,1, 9, 0,1,1};
@@ -228,18 +231,24 @@ public:
 
 					int newy = y2 + mask[adry];
 					int newx = x2 + mask[adrx];
+					
 					int tmp1 = dsta[newy][newx];
+					dsta[y2][x2] = tmp1;
+
 					int tmp2 = dsta[y2][x2];
 					dsta[newy][newx] = tmp2;
-					dsta[y2][x2] = tmp1;
+					
+					if(tmp1 >= 0){
+						dstpos[tmp1].Pos.y = ky * y2 - 1.0f;
+						dstpos[tmp1].Pos.x = kx * x2 - 1.0f;
+					}
+					if(tmp2 >= 0){
+						dstpos[tmp2].Pos.y = ky * newy - 1.0f;
+						dstpos[tmp2].Pos.x = kx * newx - 1.0f;
+					}
 
 					dstd[y2][x2].y = dstd[y2][x2].x = 0;
 					dstd[newy][newx].y = dstd[newy][newx].x = 0;
-
-					dstpos[tmp1].Pos.y = y2;
-					dstpos[tmp1].Pos.x = x2;
-					dstpos[tmp2].Pos.y = newy;
-					dstpos[tmp2].Pos.x = newx;
 				}
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift
