@@ -62,6 +62,7 @@ public:
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			runA(*var_areas[nlay], *var_areas[nlay - 1]);
 		}
+		// Back to down
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 		}
