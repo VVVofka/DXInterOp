@@ -58,28 +58,22 @@ public:
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
 		int nlastlay = model.LaysCnt() - 1;
-		array<int, 2>& src = *var_areas[nlastlay];
-		array<int, 2>& dst = *var_areas[nlastlay - 1];
-		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay - 1];
-		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
+		//array<int, 2>& src = *var_areas[nlastlay];
+		//array<int, 2>& dst = *var_areas[nlastlay - 1];
+		//array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay - 1];
+		//array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		array<Vertex2D, 1>& data_ref = *m_data;
-		runAlast(src, dst);
+		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1]);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
-			src = dst;
-			dst = *var_areas[nlay - 1];
-			runA(src, dst);
+			runA(*var_areas[nlay], *var_areas[nlay - 1]);
 		}
 		for(int nlay = 1; nlay < nlastlay; nlay++){
-			//srcd = *var_dirs[nlay - 1];
-			//dstd = *var_dirs[nlay];
-			//dst = *var_areas[nlay];
-			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], dirXMasks, dirYMasks);
+			//runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], dirXMasks, dirYMasks);
+			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 		}
 		return;
-		src = dst;
-		dst = *var_areas[nlastlay];
 		array<FLT2, 2>& dirs = *last_dirs;
-		runDlast(srcd, data_ref, dst, dirs);
+		runDlast(*var_dirs[nlastlay - 1], data_ref, *var_areas[nlastlay], dirs);
 
 		parallel_for_each(m_data->extent, [=, &data_ref](index<1> idx) restrict(amp){
 			// Rotate the vertex by angle THETA
@@ -143,9 +137,47 @@ public:
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runD(array<DrShiftQuadro, 2> & srcd,
-			  array<DrShiftQuadro, 2> & dstd, array<int, 2> & dsta,
-			  array<float, 1> & dirxmasks, array<float, 1> & dirymasks){
-		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+			  array<DrShiftQuadro, 2> & dstd, array<int, 2> & dsta
+			  //array<float, 1> & dirxmasks, array<float, 1> & dirymasks
+			  //float* dirmx
+			  ){
+		//parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+			const float vdirsX[16 * 16] = {
+		-1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1,
+		-0,-0,-0,-0,-0,-1,-0,-1,+1,+1,+1,+1,-0,-1,-0,-1,
+		+1,-0,+1,-0,-0,-0,-0,-0,+1,-0,+1,-0,-1,-1,-1,-1,
+		-0,-0,-0,-0,-0,-0,-0,-0,-1,-1,-1,-1,+1,+1,+1,+1,
+		+1,+1,+1,+1,-0,-1,-0,-1,-0,-0,-0,-0,-0,-1,-0,-1,
+		-0,-0,-0,-0,-1,-1,-0,-1,-0,-0,-0,-0,-0,-1,-1,-1,
+		+1,+1,-1,+1,-0,-0,-0,-0,-0,-0,-0,-0,-1,+1,-1,-1,
+		-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,+1,+1,-1,+1,
+		+1,-0,+1,-0,-1,-1,-1,-1,+1,-0,+1,-0,-0,-0,-0,-0,
+		-0,-0,-0,-0,-1,-1,-1,+1,-1,+1,+1,+1,-0,-0,-0,-0,
+		+1,+1,+1,-0,-0,-0,-0,-0,+1,-0,+1,+1,-0,-0,-0,-0,
+		-0,-0,-0,-0,-0,-0,-0,-0,-1,-1,-1,+1,-0,-0,-0,-0,
+		-1,-1,-1,-1,+1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
+		-0,-0,-0,-0,-1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
+		-1,+1,-1,-1,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,
+		-1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1};
+			const float vdirsY[16 * 16] = {
+		-1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1,
+		-0,-0,-0,-0,+1,+1,+1,+1,-0,-0,-1,-1,-0,-0,-1,-1,
+		+1,+1,+1,+1,-0,-0,-0,-0,-0,-0,-1,-1,-0,-0,-1,-1,
+		-0,-0,-0,-0,-0,-0,-0,-0,-1,-0,-1,-1,-0,-1,-1,-1,
+		+1,+1,-0,-0,+1,+1,-0,-0,-0,-0,-0,-0,-1,-1,-1,-1,
+		-0,-0,-0,-0,-1,-1,-1,-1,-0,-0,-0,-0,+1,+1,+1,+1,
+		+1,-1,+1,+1,-0,-0,-0,-0,-0,-0,-0,-0,-1,-1,+1,-1,
+		-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,+1,-1,+1,+1,
+		+1,+1,-0,-0,+1,+1,-0,-0,-1,-1,-1,-1,-0,-0,-0,-0,
+		-0,-0,-0,-0,-1,+1,+1,+1,-1,-1,-1,+1,-0,-0,-0,-0,
+		-1,-1,-1,-1,-0,-0,-0,-0,+1,+1,+1,+1,-0,-0,-0,-0,
+		-0,-0,-0,-0,-0,-0,-0,-0,-1,+1,+1,+1,-0,-0,-0,-0,
+		+1,+1,+1,-0,+1,+1,-0,+1,-0,-0,-0,-0,-0,-0,-0,-0,
+		-0,-0,-0,-0,-1,-1,-1,+1,-0,-0,-0,-0,-0,-0,-0,-0,
+		-1,-1,+1,-1,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,-0,
+		-1,-1,-0,-1,-1,-1,-1,-0,-0,+1,+1,+1,+1,-0,+1,+1};
+
 			int mask[4]; // shift
 			const int y = idx[0];
 			const int x = idx[1];
@@ -167,11 +199,14 @@ public:
 				auto srcsh = &srcd[y][x].shifts[shift];
 				for(int qSrc = 0; qSrc < 4; qSrc++){
 					auto src = srcsh->items[qSrc];
-					auto item = &dstd[y2 + qSrc / 2][x2 + qSrc % 2].shifts[shift];
+					int yitem = y2 + qSrc / 2;
+					int xitem = x2 + qSrc % 2;
+					auto item = &dstd[yitem][xitem].shifts[shift];
+					//auto item = &dstd[0][0].shifts[shift];
 					for(int qDst = 0; qDst < 4; qDst++){
 						auto dst = &item->items[qDst];
-						dst->x = src.x + dirxmasks[nmask];
-						dst->y = src.y + dirymasks[nmask++];
+						dst->x = src.x + vdirsX[nmask];
+						dst->y = src.y + vdirsY[nmask++];
 					}
 				}
 			}
@@ -209,7 +244,7 @@ public:
 			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 				int y2 = idx[0] * 2 + yshift;
 				int x2 = idx[1] * 2 + xshift;
-				float ky = 2.f / szy;	
+				float ky = 2.f / szy;
 				float kx = 2.f / szx;
 
 				for(int nitem = 0; nitem < 4; nitem++){
@@ -231,13 +266,13 @@ public:
 
 					int newy = y2 + mask[adry];
 					int newx = x2 + mask[adrx];
-					
+
 					int tmp1 = dsta[newy][newx];
 					dsta[y2][x2] = tmp1;
 
 					int tmp2 = dsta[y2][x2];
 					dsta[newy][newx] = tmp2;
-					
+
 					if(tmp1 >= 0){
 						dstpos[tmp1].Pos.y = ky * y2 - 1.0f;
 						dstpos[tmp1].Pos.x = kx * x2 - 1.0f;
@@ -267,6 +302,7 @@ public:
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 private:
+	// TODO: del
 	const float vdirsX[16 * 16] = {
 -1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1,
 -0,-0,-0,-0,-0,-1,-0,-1,+1,+1,+1,+1,-0,-1,-0,-1,
