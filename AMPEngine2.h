@@ -4,11 +4,11 @@
 #include <amp_math.h>
 #include <amp_graphics.h>
 #include "DXInterOp.h"
-//#include <ppl.h>
 #include <numeric>
 #include "Model2D.h"
 #include "Masks.h"
 #include <DirectXMath.h>
+//#include <ppl.h>
 
 #define THETA 3.1415f/1024  
 extern Model2D model;
@@ -16,17 +16,6 @@ extern Model2D model;
 using namespace concurrency;
 using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;
-
-//inline void getMaskDir(const int y2, const int x2, array<int, 2>& dsta, int* mask)  restrict(amp);
-//void moveQuad(const int y, const int x, array<int, 2>& dsta, DrShiftQuadro::DrQuadro& dir) restrict(amp);
-//void moveQuad(
-//	const int y, const int x,
-//	const int y2, const int x2, 
-//	array<int, 2>& dsta,
-//	array<DrShiftQuadro, 2>& srcd,
-//	int shift
-//) restrict(amp);
-
 
 class AMPEngine2{
 	accelerator_view					m_accl_view;
@@ -71,14 +60,10 @@ public:
 		int nlastlay = model.LaysCnt() - 1;
 		array<int, 2>& src = *var_areas[nlastlay];
 		array<int, 2>& dst = *var_areas[nlastlay - 1];
-		
+		return;
 		array<DrShiftQuadro, 2>& srcd = *var_dirs[nlastlay-1];
 		array<DrShiftQuadro, 2>& dstd = *var_dirs[nlastlay - 1];
 		array<Vertex2D, 1>& data_ref = *m_data;
-		parallel_for_each(dst.extent, [&](index<2> idx) restrict(amp){
-			int i = idx[0];
-		});
-		return;
 		runAlast(src, dst);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			src = dst;
@@ -109,7 +94,6 @@ public:
 			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
 			//00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
 			//0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
-
 			// yx: c-centre, l-left, r-right
 			const int y = idx[0];
 			const int y2t = y * 2;
@@ -241,18 +225,21 @@ public:
 						dirx = 0;
 					int adry = (yitem << 2) + sign((int)diry) + 1; // 0..1 | 0..2
 					int adrx = (xitem << 2) + sign((int)dirx) + 1;
+
 					int newy = y2 + mask[adry];
 					int newx = x2 + mask[adrx];
-					int tmp = dsta[newy][newx];
-					if(tmp >= 0){
-						//dstpos[tmp].Pos.y = newy /  dsta.get_extent().size() extent.size(); // , dstpos[tmp].Pos.x = newx;
-
-					}
-					dsta[newy][newx] = dsta[y2][x2];
-					dsta[y2][x2] = tmp;
+					int tmp1 = dsta[newy][newx];
+					int tmp2 = dsta[y2][x2];
+					dsta[newy][newx] = tmp2;
+					dsta[y2][x2] = tmp1;
 
 					dstd[y2][x2].y = dstd[y2][x2].x = 0;
 					dstd[newy][newx].y = dstd[newy][newx].x = 0;
+
+					dstpos[tmp1].Pos.y = y2;
+					dstpos[tmp1].Pos.x = x2;
+					dstpos[tmp2].Pos.y = newy;
+					dstpos[tmp2].Pos.x = newx;
 				}
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift
