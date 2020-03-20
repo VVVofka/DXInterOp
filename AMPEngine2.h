@@ -51,11 +51,36 @@ public:
 		auto v = model.v_poss[model.v_poss.size() - 1];
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
+		dumpA(0);
+		dumpA(1);
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void dumpA(int nlay){
+#pragma warning(disable : 4996)
+		if(::GetConsoleWindow() == NULL){
+			if(::AllocConsole()){
+				(void)freopen("CONIN$", "r", stdin);
+				(void)freopen("CONOUT$", "w", stdout);
+				(void)freopen("CONOUT$", "w", stderr);
+				SetFocus(::GetConsoleWindow());
+			}
+		}
+		std::cout << " Y*X:" << model.sizeY(nlay) << " * " << model.sizeX(nlay) << std::endl;
+		//int* p = model.v_areas[nlay].data();
+		for(int y = 0; y < model.sizeY(nlay); y++){
+			for(int x = 0; x < model.sizeX(nlay); x++){
+				int val = model.v_areas[nlay][y * model.sizeX(nlay) + x];
+				//printf("%c", *p >= 0 ? '*' : '.');
+				printf("%c", val >= 0 ? '*' : '.');
+				//p++;
+			}
+			printf("\n");
+		}
+		model.v_areas[nlay];
+	} // ////////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
 		int nlastlay = model.LaysCnt() - 1;
 		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1]);

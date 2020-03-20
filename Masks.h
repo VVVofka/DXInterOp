@@ -51,7 +51,7 @@ struct CellItem{
 	std::string dump(int en, int dir){
 		if(en == 1)
 			return dir == 0 ? "-1" : "+1";
-		return dir == 0 ? "-0": "+0";
+		return dir == 0 ? "-0" : "+0";
 	} // //////////////////////////////////////////////////////////////////
 	CellItem reflectHor(){
 		int x = b2i(enx, dirx);
@@ -115,7 +115,8 @@ struct Cell2D{
 	} // /////////////////////////////////////////////////////////////////
 	void setDir(int nItem, int dirX, int dirY){
 		assert(nItem < 4);
-		dirs[nItem].set(dirX, dirY);
+		if(nItem < 4)
+			dirs[nItem].set(dirX, dirY);
 	} // /////////////////////////////////////////////////////////////
 	Cell2D reflectHor(){
 		Cell2D ret;
@@ -204,7 +205,8 @@ struct Block2D2{
 	} // /////////////////////////////////////////////////////////////////////////////
 	void setDir(int nCell, int nItem, int dirX, int dirY){
 		assert(nCell < 4);
-		v[nCell].setDir(nItem, dirX, dirY);
+		if(nCell < 4)
+			v[nCell].setDir(nItem, dirX, dirY);
 	} // /////////////////////////////////////////////////////////////////////////
 	Block2D2 reflectHor(){
 		Block2D2 ret;
@@ -247,7 +249,7 @@ struct Blocks2D2{
 			 int dirx02, int diry02, int dirx03, int diry03, int dirx12, int diry12, int dirx13, int diry13,
 			 int dirx20, int diry20, int dirx21, int diry21, int dirx30, int diry30, int dirx31, int diry31,
 			 int dirx22, int diry22, int dirx23, int diry23, int dirx32, int diry32, int dirx33, int diry33
-	){
+			 ){
 		v[index] = Block2D2((index >> 3) & 1, (index >> 2) & 1, (index >> 1) & 1, index & 1);
 		int nItem = 0, nCell = 0;
 		v[index].setDir(nCell, nItem++, dirx00, diry00);
@@ -292,42 +294,42 @@ struct Blocks2D2{
 
 			-1, 0, -1, 1, 1, 1, 1, 0,
 			-1, 1, 0, 1, 0, 1, 1, 1
-		);
+			);
 		Add(0b0001,
 			0, 0, 0, 0, 0, 1, -1, 1,  // 1 0
 			0, 0, 0, 0, 0, 1, -1, 1,  // 0 0
 
 			1, 0, 1, 0, 0, 0, -1, 0,
 			1, -1, 1, -1, 0, -1, -1, -1
-		);
+			);
 		Add(0b0011,
 			0, 0, 0, 0, 0, 0, 0, 0,   // 1 1
 			0, 0, 0, 0, 0, 0, 0, 0,   // 0 0
 
 			-1, -1, -1, 0, 1, 0, 1, -1,
 			-1, -1, -1, -1, 1, -1, 1, -1
-		);
+			);
 		Add(0b0110,
 			1, 1, 1, -1, 0, 0, 0, 0,   // 0 1
 			-1, 1, 1, 1, 0, 0, 0, 0,   // 1 0
 
 			0, 0, 0, 0, -1, -1, 1, -1,
 			0, 0, 0, 0, -1, 1, -1, -1
-		);
+			);
 		Add(0b0111,
 			0, 0, 0, 0, 0, 0, 0, 0,   // 1 1
 			0, 0, 0, 0, 0, 0, 0, 0,   // 1 0
 
 			0, 0, 0, 0, 1, 1, 1, -1,
 			0, 0, 0, 0, -1, 1, 1, 1
-		);
+			);
 		Add(0b1111,
 			-1, -1, 0, -1, 0, -1, 1, -1,  // 1 1
 			-1, 0, -1, -1, 1, -1, 1, 0,  // 1 1
 
 			-1, 0, -1, 1, 1, 1, 1, 0,
 			-1, 1, 0, 1, 0, 1, 1, 1
-		);
+			);
 		/* Formatted
 	Add( 0b0000,
 		-1,-1,  0,-1,   0,-1,  1,-1,  // 0 0

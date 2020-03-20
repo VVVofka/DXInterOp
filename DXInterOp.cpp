@@ -71,17 +71,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		return E_FAIL;
 	}
 #else 
-	model.Create(Sz2D(3, 4), 100, 0.73);
+	model.Create(Sz2D(3, 4), 100, 0.5);
 	if (FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))) {
 		mdx.CleanupDevice();
 		return E_FAIL;
 	}
 #endif // MY2D
 
-	Blocks2D2 blks;	//_RPT0(0, blks.dump().c_str());
-	blks.dumpx();
-	_RPT0(0, "\n Y \n");
-	blks.dumpy();
+	Blocks2D2 blks;	
+	//blks.dumpx();	_RPT0(0, "\n Y \n");	blks.dumpy();
 
 	// Main message loop
 	MSG msg = { 0 };
