@@ -11,7 +11,7 @@ struct FLT2{
 	float y, x;
 	FLT2() : x(0), y(0){}
 	FLT2(float X, float Y) : x(X), y(Y){}
-	void operator +=(FLT2& other){ x+= other.x; y+= other.y;}
+	void operator +=(FLT2& other){ x += other.x; y += other.y; }
 }; // ********************************************************************************************
 
 struct DrShiftQuadro{
@@ -65,19 +65,22 @@ public:
 		} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 
 		 // Last lay
-		vsz.push_back(sz);
+		vsz.push_back(Sz2D(sz.y + 1, sz.x + 1));
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		//v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // not use. Use last_dirs
 		last_dirs.resize(szarea, FLT2(0, 0));
 
 		// fill v_poss (for screen only) & v_areas for the last lay
-		fillrnd(nlay, szarea, 0.5);
+		//fillrnd(nlay, szarea, 0.5);
 		v_poss.push_back(std::vector<Vertex2D>());
+		filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, Sz2D sizes){
-		float y = (((2 * curpos) / sizes.x) - sizes.y) / float(sizes.y);
-		float x = ((2 * (curpos % sizes.x)) - sizes.x) / float(sizes.x);
+		int iy = curpos / sizes.x;
+		float y = sizes.y <= 1 ? 0 : 2.f * iy / (sizes.y - 1.f) - 1.f;
+		int ix = curpos % sizes.x;
+		float x = sizes.x <= 1 ? 0 : 2.f * ix / (sizes.x - 1.f) - 1.f;
 		return Vertex2D(y, x);
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void fillrnd(int nlay, size_t szarea, double kFill){
@@ -86,7 +89,6 @@ public:
 		std::uniform_int_distribution<int> dist(0, szarea - 1);
 		size_t szpos = int(szarea * kFill + 0.5);
 		v_poss[nlay].reserve(szpos);
-
 		while(v_poss[nlay].size() < szpos){
 			int curpos;
 			do{
@@ -97,6 +99,14 @@ public:
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);
 			v_poss[nlay].push_back(vert2);
 		} // 	while(v_poss[nlay].size() < szpos)
+	} // /////////////////////////////////////////////////////////////////////////////////
+	void filltest(int nlay){
+		int vcurpos[] = {0, 1, 9, 11, 19, 29, 37, 44};
+		for(auto curpos : vcurpos){
+			v_areas[nlay][curpos] = v_poss[nlay].size();
+			Vertex2D vert2 = norm(curpos, vsz[nlay]);
+			v_poss[nlay].push_back(vert2);
+		}
 	} // /////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
 
