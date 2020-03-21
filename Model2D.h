@@ -39,7 +39,7 @@ public:
 	int LaysCnt(){ return v_areas.size(); }
 	std::vector<int>* dataArea(int nlay){ return &v_areas[nlay]; }
 
-	void Create(Sz2D minsz, int maxszXY, double kFill){
+	void Create(Sz2D minsz, int maxszXY){
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
@@ -53,7 +53,7 @@ public:
 			vsz.push_back(sz);
 
 			size_t szarea = sz.x * sz.y;
-			v_areas.push_back(std::vector<int>(szarea));
+			v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 			for(auto q : v_areas[nlay]) q = -1;
 
 			v_dirs.push_back(std::vector<DrShiftQuadro>(szarea));
@@ -65,18 +65,25 @@ public:
 		} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 
 		 // Last lay
-		std::random_device rd;   // non-deterministic generator
-		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
-
 		vsz.push_back(sz);
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
-		v_areas.push_back(std::vector<int>(szarea));
-		v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // TODO: not use. Use last_dirs
+		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
+		//v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // not use. Use last_dirs
 		last_dirs.resize(szarea, FLT2(0, 0));
 
-		std::uniform_int_distribution<int> dist(0, szarea - 1);
-
+		// fill v_poss (for screen only) & v_areas for the last lay
+		fillrnd(nlay, szarea, 0.5);
 		v_poss.push_back(std::vector<Vertex2D>());
+	} // //////////////////////////////////////////////////////////////////////////////////
+	Vertex2D norm(int curpos, Sz2D sizes){
+		float y = (((2 * curpos) / sizes.x) - sizes.y) / float(sizes.y);
+		float x = ((2 * (curpos % sizes.x)) - sizes.x) / float(sizes.x);
+		return Vertex2D(y, x);
+	} // /////////////////////////////////////////////////////////////////////////////////
+	void fillrnd(int nlay, size_t szarea, double kFill){
+		std::random_device rd;   // non-deterministic generator
+		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
+		std::uniform_int_distribution<int> dist(0, szarea - 1);
 		size_t szpos = int(szarea * kFill + 0.5);
 		v_poss[nlay].reserve(szpos);
 
@@ -84,17 +91,12 @@ public:
 			int curpos;
 			do{
 				curpos = dist(gen);
-			} while(v_areas[nlay][curpos] < 0);
+			} while(v_areas[nlay][curpos] >= 0);
+			v_areas[nlay][curpos] = v_poss[nlay].size(); // 0 ... szpos-1
 
-			v_areas[nlay][curpos] = v_poss[nlay].size();
-
-			float y = (((2 * curpos) / vsz[nlay].x) - vsz[nlay].y) / float(vsz[nlay].y);
-			float x = ((2 * (curpos % vsz[nlay].x)) - vsz[nlay].x) / float(vsz[nlay].x);
-			v_poss[nlay].push_back(Vertex2D(y, x));
-
-			//_RPT4(0, "%d \tpos:%d \t %f õ %f\n", v_pos.size(), curpos, x, y);
+			Vertex2D vert2 = norm(curpos, vsz[nlay]);
+			v_poss[nlay].push_back(vert2);
 		} // 	while(v_poss[nlay].size() < szpos)
-
-	} // //////////////////////////////////////////////////////////////////////////////////
+	} // /////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
 

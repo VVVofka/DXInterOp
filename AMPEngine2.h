@@ -79,7 +79,7 @@ public:
 			}
 			printf("\n");
 		}
-		model.v_areas[nlay];
+		//model.v_areas[nlay];
 	} // ////////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
 		int nlastlay = model.LaysCnt() - 1;
