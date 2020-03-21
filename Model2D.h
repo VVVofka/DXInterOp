@@ -8,17 +8,37 @@
 //def in Model2D.h
 // float x,y
 struct FLT2{
-	float y, x;
-	FLT2() : x(0), y(0){}
-	FLT2(float X, float Y) : x(X), y(Y){}
+	float y;
+	float x;
+	FLT2() : y(0), x(0){}
+	FLT2(float Y, float X) : x(X), y(Y){}
+	FLT2(float YX) : x(YX), y(YX){}
 	void operator +=(FLT2& other){ x += other.x; y += other.y; }
+	bool not0(){return x != 0 || y != 0;}
+	void dump(){
+		std::cout << "y:" << y << " x:" << x;
+	}
 }; // ********************************************************************************************
 
 struct DrShiftQuadro{
 	struct DrQuadro{
 		FLT2 items[4];
+		bool not0(){return items[0].not0() || items[1].not0() ||items[2].not0() ||items[3].not0();}
+		void dump(){
+			for(int i=0; i<4; i++){
+				std::cout << "item:" << i << " y:" << items[i].y << " x:" << items[i].x << "\t";
+			}
+		} // ///////////////////////////////////////////////////////////////////////////////////////
 	}; // ********************************************************************************************
 	DrQuadro shifts[4];
+	bool not0(){return shifts[0].not0() || shifts[1].not0() || shifts[2].not0() || shifts[3].not0();}
+	void dump(){
+		for(int sh = 0; sh < 4; sh++){
+			std::cout << "shift:" << sh << " ";
+			shifts[sh].dump();
+			std::cout << std::endl;
+		}
+	} // //////////////////////////////////////////////////////////////////////////////////////////
 }; // ********************************************************************************************
 
 class Model2D{
@@ -37,7 +57,6 @@ public:
 	int sizeX(int nlay){ return vsz[nlay].x; }
 	int sizeX(){ return vsz[vsz.size() - 1].x; }
 	int LaysCnt(){ return v_areas.size(); }
-	std::vector<int>* dataArea(int nlay){ return &v_areas[nlay]; }
 
 	void Create(Sz2D minsz, int maxszXY){
 		const int RESERV_LAYS_CNT = 16;
@@ -69,7 +88,7 @@ public:
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		//v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // not use. Use last_dirs
-		last_dirs.resize(szarea, FLT2(0, 0));
+		last_dirs.resize(szarea, FLT2(0));
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		//fillrnd(nlay, szarea, 0.5);
@@ -108,5 +127,27 @@ public:
 			v_poss[nlay].push_back(vert2);
 		}
 	} // /////////////////////////////////////////////////////////////////////////////////
+	void dumpA(int nlay){
+		setConsole();
+		std::cout << " y*x: " << sizeY(nlay) << "*" << sizeX(nlay) << std::endl;
+		for(int y = 0; y < sizeY(nlay); y++){
+			for(int x = 0; x < sizeX(nlay); x++){
+				int val = v_areas[nlay][y * sizeX(nlay) + x];
+				printf(" %c", val >= 0 ? '*' : '.');
+			}
+			printf("\n");
+		}
+	} // ////////////////////////////////////////////////////////////////////////////////////////////////
+	void dumpD(int nlay){
+		setConsole();
+		std::cout << " y*x: " << sizeY(nlay) << "*" << sizeX(nlay) << std::endl;
+		for(int y = 0; y < sizeY(nlay); y++){
+			for(int x = 0; x < sizeX(nlay); x++){
+				int val = v_areas[nlay][y * sizeX(nlay) + x];
+				printf(" %c", val >= 0 ? '*' : '.');
+			}
+			printf("\n");
+		}
+	} // ////////////////////////////////////////////////////////////////////////////////////////////////
 }; // *****************************************************************************
 

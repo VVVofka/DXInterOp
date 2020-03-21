@@ -28,6 +28,21 @@ class AMPEngine2{
 
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
+	void dumpA(int nlay){
+		if(nlay < 0) nlay = model.LaysCnt() - 1;
+		setConsole();
+		array<int,2> av(*var_areas[nlay].get());
+		std::cout << "nLay=" << nlay << " y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++)
+				std::cout << av[y][x] << "\t";
+			std::cout << std::endl;
+		}
+	} // ////////////////////////////////////////////////////////////////
+	void dumpA(){
+		for(int nlay = 0; nlay < model.LaysCnt(); nlay++)
+			dumpA(nlay);
+	} // ////////////////////////////////////////////////////////////////////////////////////////
 #ifndef MYAREA
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
@@ -51,36 +66,13 @@ public:
 		auto v = model.v_poss[model.v_poss.size() - 1];
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
-		dumpA(0);
-		dumpA(1);
+
+		dumpA();
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void dumpA(int nlay){
-#pragma warning(disable : 4996)
-		if(::GetConsoleWindow() == NULL){
-			if(::AllocConsole()){
-				(void)freopen("CONIN$", "r", stdin);
-				(void)freopen("CONOUT$", "w", stdout);
-				(void)freopen("CONOUT$", "w", stderr);
-				SetFocus(::GetConsoleWindow());
-			}
-		}
-		std::cout << " Y*X:" << model.sizeY(nlay) << " * " << model.sizeX(nlay) << std::endl;
-		//int* p = model.v_areas[nlay].data();
-		for(int y = 0; y < model.sizeY(nlay); y++){
-			for(int x = 0; x < model.sizeX(nlay); x++){
-				int val = model.v_areas[nlay][y * model.sizeX(nlay) + x];
-				//printf("%c", *p >= 0 ? '*' : '.');
-				printf("%c", val >= 0 ? '*' : '.');
-				//p++;
-			}
-			printf("\n");
-		}
-		//model.v_areas[nlay];
-	} // ////////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
 		int nlastlay = model.LaysCnt() - 1;
 		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1]);
@@ -312,4 +304,4 @@ public:
 		concurrency::copy(*m_data, begin(*vreturn));
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-}; // ******************************************************************************************************
+	}; // ******************************************************************************************************

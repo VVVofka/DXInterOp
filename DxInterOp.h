@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------------------------
 #pragma once
 #include <DirectXMath.h>
+#include <Windows.h>
 #define MYAREA
 //#define MY2D
 //#define MY3D
@@ -35,3 +36,18 @@ struct Vertex2D{
 struct Vertex3D {
     DirectX::XMFLOAT3 Pos;
 };
+void setConsole(){
+#pragma warning(push)
+#pragma warning(disable : 4996)
+	if(::GetConsoleWindow() == NULL){
+		if(::AllocConsole()){
+			(void)freopen("CONIN$", "r", stdin);
+			(void)freopen("CONOUT$", "w", stdout);
+			(void)freopen("CONOUT$", "w", stderr);
+			SetFocus(::GetConsoleWindow());
+		}
+	}
+#pragma warning(pop)
+} // ///////////////////////////////////////////////////////////////////////////
+void setConsole();
+
