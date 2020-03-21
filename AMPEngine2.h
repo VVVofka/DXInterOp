@@ -31,8 +31,8 @@ public:
 	void dumpA(int nlay){
 		if(nlay < 0) nlay = model.LaysCnt() - 1;
 		setConsole();
-		array<int,2> av(*var_areas[nlay].get());
-		std::cout << "nLay=" << nlay << " y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		array<int, 2> av(*var_areas[nlay].get());
+		std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
 		for(int y = 0; y < av.extent[0]; y++){
 			for(int x = 0; x < av.extent[1]; x++)
 				std::cout << av[y][x] << "\t";
@@ -42,6 +42,38 @@ public:
 	void dumpA(){
 		for(int nlay = 0; nlay < model.LaysCnt(); nlay++)
 			dumpA(nlay);
+	} // ////////////////////////////////////////////////////////////////////////////////////////
+	void dumpD(int nlay){
+		if(nlay < 0) nlay = model.LaysCnt() - 1;
+		setConsole();
+		array<DrShiftQuadro, 2> av(*var_dirs[nlay].get());
+		std::cout << "Dirs[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++)
+				if(av[y][x].not0()){
+					av[y][x].dump();
+					std::cout << std::endl;
+				}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	} // ////////////////////////////////////////////////////////////////
+	void dumpD(){
+		for(int nlay = 0; nlay < model.LaysCnt() - 1; nlay++)
+			dumpD(nlay);
+		array<FLT2, 2> av(*last_dirs);
+		std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++){
+				if(av[y][x].not0()){
+					std::cout << "y=" << y << " x=" << x << std::endl;
+					av[y][x].dump();
+					std::cout << std::endl;
+				}
+				std::cout << std::endl;
+			}
+			std::cout << std::endl;
+		}
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 #ifndef MYAREA
 	void initialize_data(const std::vector<Vertex2D>& data){
@@ -68,6 +100,7 @@ public:
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 
 		dumpA();
+		dumpD();
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{

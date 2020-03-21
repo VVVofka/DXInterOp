@@ -23,7 +23,7 @@ struct FLT2{
 struct DrShiftQuadro{
 	struct DrQuadro{
 		FLT2 items[4];
-		bool not0(){return items[0].not0() || items[1].not0() ||items[2].not0() ||items[3].not0();}
+		bool not0(){return items[0].not0() || items[1].not0() || items[2].not0() || items[3].not0();}
 		void dump(){
 			for(int i=0; i<4; i++){
 				std::cout << "item:" << i << " y:" << items[i].y << " x:" << items[i].x << "\t";
