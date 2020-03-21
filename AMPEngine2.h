@@ -35,7 +35,10 @@ public:
 		std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
 		for(int y = 0; y < av.extent[0]; y++){
 			for(int x = 0; x < av.extent[1]; x++)
-				std::cout << av[y][x] << "\t";
+				if(av[y][x] < 0)
+					std::cout << ".\t";
+				else
+					std::cout << av[y][x] << "\t";
 			std::cout << std::endl;
 		}
 	} // ////////////////////////////////////////////////////////////////
@@ -70,9 +73,9 @@ public:
 					av[y][x].dump();
 					std::cout << std::endl;
 				}
-				std::cout << std::endl;
+				//std::cout << std::endl;
 			}
-			std::cout << std::endl;
+			//std::cout << std::endl;
 		}
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 #ifndef MYAREA
@@ -98,9 +101,6 @@ public:
 		auto v = model.v_poss[model.v_poss.size() - 1];
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
-
-		dumpA();
-		dumpD();
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
@@ -113,11 +113,14 @@ public:
 			runA(*var_areas[nlay], *var_areas[nlay - 1]);
 		}
 		// Back to down
+		dumpA();
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 		}
 		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
+		dumpD();
+		dumpA();
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runAlast(array<int, 2> & src, array<int, 2> & dst){
 		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
