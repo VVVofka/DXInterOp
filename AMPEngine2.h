@@ -97,15 +97,16 @@ public:
 			const int tc = src[y2t][x2c] < 0 ? 0 : 2;  // << 1
 			const int cl = src[y2c][x2l] < 0 ? 0 : 4;  // << 2
 			const int tl = src[y2t][x2l] < 0 ? 0 : 8;  // << 3
-			int sum = mask[cc + tc + cl + tl];
+
+			const int br = src[y2b][x2r] < 0 ? 0 : 8;
 			const int cr = src[y2c][x2r] < 0 ? 0 : 4;
-			const int tr = src[y2t][x2r] < 0 ? 0 : 8;
-			sum = (sum << 1) | mask[cc + tc + cr + tr];
 			const int bc = src[y2b][x2c] < 0 ? 0 : 2;
+			int sum = mask[cc + bc + cr + br];
 			const int bl = src[y2b][x2l] < 0 ? 0 : 8;
 			sum = (sum << 1) | mask[cc + bc + cl + bl];
-			const int br = src[y2b][x2r] < 0 ? 0 : 8;
-			dst[y][x] = (sum << 1) | mask[cc + bc + cr + br];
+			const int tr = src[y2t][x2r] < 0 ? 0 : 8;
+			sum = (sum << 1) | mask[cc + tc + cr + tr];
+			dst[y][x] = (sum << 1) | mask[cc + tc + cl + tl];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runA(array<int, 2> & src, array<int, 2> & dst, array<int, 1> & mask){
@@ -306,8 +307,11 @@ public:
 		}
 	} // ////////////////////////////////////////////////////////////////
 	void dumpA(){
-		for(int nlay = 0; nlay < model.LaysCnt(); nlay++)
+		setConsole();
+		for(int nlay = 0; nlay < model.LaysCnt(); nlay++){
 			dumpA(nlay);
+			std::cout << std::endl;
+		}
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 	void dumpD(int nlay){
 		if(nlay < 0) nlay = model.LaysCnt() - 1;

@@ -120,7 +120,7 @@ public:
 		} // 	while(v_poss[nlay].size() < szpos)
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void filltest(int nlay){
-		int vcurpos[] = {0, 1, 3, 9, 11, 12, 19, 29, 44}; // 37, 
+		int vcurpos[] = {0, 1, 3, 9, 11, 12, 19, 29, 34, 44}; // 37, 
 		for(auto curpos : vcurpos){
 			v_areas[nlay][curpos] = v_poss[nlay].size();
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);
