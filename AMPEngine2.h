@@ -26,6 +26,12 @@ class AMPEngine2{
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
 	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
 
+						// 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
+						// 00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
+						// 00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
+	const int AMask[16] = {0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1};
+	std::unique_ptr<array<int, 1>> amask;
+
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
 #ifndef MYAREA
@@ -51,6 +57,8 @@ public:
 		auto v = model.v_poss[model.v_poss.size() - 1];
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
+		amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, AMask, m_accl_view));
+
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
@@ -58,9 +66,9 @@ public:
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
 		int nlastlay = model.LaysCnt() - 1;
-		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1]);
+		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
-			runA(*var_areas[nlay], *var_areas[nlay - 1]);
+			runA(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 		}
 		// Back to down
 		dumpA();
@@ -72,12 +80,8 @@ public:
 		dumpD();
 		dumpA();
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runAlast(array<int, 2> & src, array<int, 2> & dst){
-		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
-			const int mask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
-			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
-			//00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
-			//0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
+	void runAlast(array<int, 2> & src, array<int, 2> & dst, array<int, 1> & mask){
+		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
 			// yx: c-centre, l-left, r-right
 			const int y = idx[0];
 			const int y2t = y * 2;
@@ -89,27 +93,23 @@ public:
 			const int x2c = x2l + 1;
 			const int x2r = x2c + 1;
 
-			const int cc = src[y2c][x2c] & 1;
-			const int tc = (src[y2t][x2c] & 1) << 1;
-			const int cl = (src[y2c][x2l] & 1) << 2;
-			const int tl = (src[y2t][x2l] & 1) << 3;
+			const int cc = src[y2c][x2c] < 0 ? 0 : 1;  // << 0
+			const int tc = src[y2t][x2c] < 0 ? 0 : 2;  // << 1
+			const int cl = src[y2c][x2l] < 0 ? 0 : 4;  // << 2
+			const int tl = src[y2t][x2l] < 0 ? 0 : 8;  // << 3
 			int sum = mask[cc + tc + cl + tl];
-			const int cr = (src[y2c][x2r] & 1) << 2;
-			const int tr = (src[y2t][x2r] & 1) << 3;
+			const int cr = src[y2c][x2r] < 0 ? 0 : 4;
+			const int tr = src[y2t][x2r] < 0 ? 0 : 8;
 			sum = (sum << 1) | mask[cc + tc + cr + tr];
-			const int bc = (src[y2b][x2c] & 1) << 1;
-			const int bl = (src[y2b][x2l] & 1) << 3;
+			const int bc = src[y2b][x2c] < 0 ? 0 : 2;
+			const int bl = src[y2b][x2l] < 0 ? 0 : 8;
 			sum = (sum << 1) | mask[cc + bc + cl + bl];
-			const int br = (src[y2b][x2r] & 1) << 3;
+			const int br = src[y2b][x2r] < 0 ? 0 : 8;
 			dst[y][x] = (sum << 1) | mask[cc + bc + cr + br];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runA(array<int, 2> & src, array<int, 2> & dst){
-		parallel_for_each(dst.extent, [&dst, &src](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
-			const int mask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
-			//00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
-			//00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
-			//0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
+	void runA(array<int, 2> & src, array<int, 2> & dst, array<int, 1> & mask){
+		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
 			const int y = idx[0];
 			const int y2 = y * 2;
 			const int x = idx[1];
@@ -126,13 +126,8 @@ public:
 			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runD(array<DrShiftQuadro, 2> & srcd,
-			  array<DrShiftQuadro, 2> & dstd, array<int, 2> & dsta
-			  //array<float, 1> & dirxmasks, array<float, 1> & dirymasks
-			  //float* dirmx
-			  ){
-		//parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &dirxmasks, &dirymasks](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
-		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+	void runD(array<DrShiftQuadro, 2> & srcd, array<DrShiftQuadro, 2> & dstd, array<int, 2> & dsta){
+		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta](index<2> idx) restrict(amp){
 			const float vdirsX[16 * 16] = {
 		-1,-0,-1,-1,-0,+1,+1,+1,-1,-1,-1,-0,+1,+1,-0,+1,
 		-0,-0,-0,-0,-0,-1,-0,-1,+1,+1,+1,+1,-0,-1,-0,-1,
@@ -291,16 +286,22 @@ public:
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void dumpA(int nlay){
+		const char separ[] = " ";
 		if(nlay < 0) nlay = model.LaysCnt() - 1;
 		setConsole();
 		array<int, 2> av(*var_areas[nlay].get());
 		std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
 		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++)
-				if(av[y][x] < 0)
-					std::cout << ".\t";
+			for(int x = 0; x < av.extent[1]; x++){
+				int q = av[y][x];
+				if(q < 0)
+					std::cout << ". ";
 				else
-					std::cout << av[y][x] << "\t";
+					if(nlay == int(var_areas.size() - 1))
+						std::cout << q << " ";
+					else
+						std::cout << (q >> 3) << (1 & (q >> 2)) << (1 & (q >> 1)) << (1 & q) << separ;
+			}
 			std::cout << std::endl;
 		}
 	} // ////////////////////////////////////////////////////////////////
@@ -314,12 +315,13 @@ public:
 		array<DrShiftQuadro, 2> av(*var_dirs[nlay].get());
 		std::cout << "Dirs[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
 		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++)
+			for(int x = 0; x < av.extent[1]; x++){
 				if(av[y][x].not0()){
+					std::cout << " Y=" << y << " X=" << x << std::endl;
 					av[y][x].dump();
 					std::cout << std::endl;
 				}
-			std::cout << std::endl;
+			}
 		}
 		std::cout << std::endl;
 	} // ////////////////////////////////////////////////////////////////
@@ -335,10 +337,8 @@ public:
 					av[y][x].dump();
 					std::cout << std::endl;
 				}
-				//std::cout << std::endl;
 			}
-			//std::cout << std::endl;
 		}
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 
-	}; // ******************************************************************************************************
+}; // ******************************************************************************************************
