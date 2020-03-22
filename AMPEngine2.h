@@ -28,56 +28,6 @@ class AMPEngine2{
 
 public:
 	AMPEngine2(ID3D11Device* d3ddevice) : m_accl_view(create_accelerator_view(d3ddevice)){}
-	void dumpA(int nlay){
-		if(nlay < 0) nlay = model.LaysCnt() - 1;
-		setConsole();
-		array<int, 2> av(*var_areas[nlay].get());
-		std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
-		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++)
-				if(av[y][x] < 0)
-					std::cout << ".\t";
-				else
-					std::cout << av[y][x] << "\t";
-			std::cout << std::endl;
-		}
-	} // ////////////////////////////////////////////////////////////////
-	void dumpA(){
-		for(int nlay = 0; nlay < model.LaysCnt(); nlay++)
-			dumpA(nlay);
-	} // ////////////////////////////////////////////////////////////////////////////////////////
-	void dumpD(int nlay){
-		if(nlay < 0) nlay = model.LaysCnt() - 1;
-		setConsole();
-		array<DrShiftQuadro, 2> av(*var_dirs[nlay].get());
-		std::cout << "Dirs[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
-		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++)
-				if(av[y][x].not0()){
-					av[y][x].dump();
-					std::cout << std::endl;
-				}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	} // ////////////////////////////////////////////////////////////////
-	void dumpD(){
-		for(int nlay = 0; nlay < model.LaysCnt() - 1; nlay++)
-			dumpD(nlay);
-		array<FLT2, 2> av(*last_dirs);
-		std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
-		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++){
-				if(av[y][x].not0()){
-					std::cout << "y=" << y << " x=" << x << std::endl;
-					av[y][x].dump();
-					std::cout << std::endl;
-				}
-				//std::cout << std::endl;
-			}
-			//std::cout << std::endl;
-		}
-	} // ////////////////////////////////////////////////////////////////////////////////////////
 #ifndef MYAREA
 	void initialize_data(const std::vector<Vertex2D>& data){
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
@@ -340,4 +290,55 @@ public:
 		concurrency::copy(*m_data, begin(*vreturn));
 		return vreturn;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void dumpA(int nlay){
+		if(nlay < 0) nlay = model.LaysCnt() - 1;
+		setConsole();
+		array<int, 2> av(*var_areas[nlay].get());
+		std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++)
+				if(av[y][x] < 0)
+					std::cout << ".\t";
+				else
+					std::cout << av[y][x] << "\t";
+			std::cout << std::endl;
+		}
+	} // ////////////////////////////////////////////////////////////////
+	void dumpA(){
+		for(int nlay = 0; nlay < model.LaysCnt(); nlay++)
+			dumpA(nlay);
+	} // ////////////////////////////////////////////////////////////////////////////////////////
+	void dumpD(int nlay){
+		if(nlay < 0) nlay = model.LaysCnt() - 1;
+		setConsole();
+		array<DrShiftQuadro, 2> av(*var_dirs[nlay].get());
+		std::cout << "Dirs[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++)
+				if(av[y][x].not0()){
+					av[y][x].dump();
+					std::cout << std::endl;
+				}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	} // ////////////////////////////////////////////////////////////////
+	void dumpD(){
+		for(int nlay = 0; nlay < model.LaysCnt() - 1; nlay++)
+			dumpD(nlay);
+		array<FLT2, 2> av(*last_dirs);
+		std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++){
+				if(av[y][x].not0()){
+					std::cout << "y=" << y << " x=" << x << std::endl;
+					av[y][x].dump();
+					std::cout << std::endl;
+				}
+				//std::cout << std::endl;
+			}
+			//std::cout << std::endl;
+		}
+	} // ////////////////////////////////////////////////////////////////////////////////////////
+
 	}; // ******************************************************************************************************
