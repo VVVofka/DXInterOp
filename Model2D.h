@@ -26,7 +26,7 @@ struct DrShiftQuadro{
 		bool not0(){return items[0].not0() || items[1].not0() || items[2].not0() || items[3].not0();}
 		void dump(){
 			for(int i=0; i<4; i++){
-				std::cout << "item:" << i << " y:" << items[i].y << " x:" << items[i].x << "\t";
+				printf("\ti:%d y:%+.1f x:%+.1f", i, items[i].y, items[i].x);
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////
 	}; // ********************************************************************************************
@@ -120,7 +120,7 @@ public:
 		} // 	while(v_poss[nlay].size() < szpos)
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void filltest(int nlay){
-		int vcurpos[] = {0, 1, 3, 9, 11, 12, 19, 29, 34, 44}; // 37, 
+		int vcurpos[] = {1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44}; // 37, 
 		for(auto curpos : vcurpos){
 			v_areas[nlay][curpos] = v_poss[nlay].size();
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);

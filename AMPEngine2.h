@@ -8,6 +8,7 @@
 #include "Model2D.h"
 #include "Masks.h"
 #include <DirectXMath.h>
+#include <iomanip>
 //#include <ppl.h>
 
 #define THETA 3.1415f/1024  
@@ -121,10 +122,12 @@ public:
 			int tr = src[y2][x2 + 1];
 			int bl = src[y2 + 1][x2];
 			int br = src[y2 + 1][x2 + 1];
-			int sum = mask[(tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3)];
-			sum = (sum << 1) | mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
-			sum = (sum << 1) | mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
-			dst[y][x] = (sum << 1) | mask[((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3)];
+
+			int sum0 = mask[(tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3)];
+			int sum1 = mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
+			int sum2 = mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
+			int sum3 = mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
+			dst[y][x] = (sum3 << 3) | (sum2 << 2) | (sum1 << 1) | sum0;
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runD(array<DrShiftQuadro, 2> & srcd, array<DrShiftQuadro, 2> & dstd, array<int, 2> & dsta){
@@ -292,18 +295,30 @@ public:
 		setConsole();
 		array<int, 2> av(*var_areas[nlay].get());
 		std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
-		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++){
-				int q = av[y][x];
-				if(q < 0)
-					std::cout << ". ";
-				else
-					if(nlay == int(var_areas.size() - 1))
-						std::cout << q << " ";
+		if(nlay == int(var_areas.size() - 1)){
+			//std::cout << std::setiosflags(std::ios::left) << std::setw(2);
+			for(int y = 0; y < av.extent[0]; y++){
+				for(int x = 0; x < av.extent[1]; x++){
+					int q = av[y][x];
+					if(q < 0)
+						std::cout << " . ";
+					else
+						printf("%2d ", q);
+//						std::cout << q << "";
+				}
+				std::cout << std::endl;
+			}
+		} else{
+			for(int y = 0; y < av.extent[0]; y++){
+				for(int x = 0; x < av.extent[1]; x++){
+					int q = av[y][x];
+					if(q < 0)
+						std::cout << ". ";
 					else
 						std::cout << (q >> 3) << (1 & (q >> 2)) << (1 & (q >> 1)) << (1 & q) << separ;
+				}
+				std::cout << std::endl;
 			}
-			std::cout << std::endl;
 		}
 	} // ////////////////////////////////////////////////////////////////
 	void dumpA(){
@@ -337,7 +352,7 @@ public:
 		for(int y = 0; y < av.extent[0]; y++){
 			for(int x = 0; x < av.extent[1]; x++){
 				if(av[y][x].not0()){
-					std::cout << "y=" << y << " x=" << x << std::endl;
+					std::cout << "Y=" << y << " X=" << x << "\t ";
 					av[y][x].dump();
 					std::cout << std::endl;
 				}
