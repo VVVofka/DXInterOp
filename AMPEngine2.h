@@ -73,8 +73,6 @@ public:
 		}
 		// Back to down
 		dumpA();
-//		dumpD(0);
-//		dumpD(1);
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 			dumpD(nlay);
@@ -84,8 +82,8 @@ public:
 		dumpD();
 		dumpA();
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runAlast(array<int, 2> & src, array<int, 2> & dst, array<int, 1> & mask){
-		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){ // TODO: dst.extent var_areas[lastlay - 1]->extent
+	void runAlast(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
+		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){ 
 			// yx: c-centre, l-left, r-right
 			const int y = idx[0];
 			const int y2t = y * 2;
@@ -113,7 +111,7 @@ public:
 			dst[y][x] = (sum << 1) | mask[cc + tc + cl + tl];
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runA(array<int, 2> & src, array<int, 2> & dst, array<int, 1> & mask){
+	void runA(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
 		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
 			const int y = idx[0];
 			const int y2 = y * 2;
@@ -133,19 +131,8 @@ public:
 			dst[y][x] = (sum3 << 3) | (sum2 << 2) | (sum1 << 1) | sum0;
 		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	struct DbgStruct{
-		int shift = -999, i = -999;
-		int X = -999, Y = -999;
-		float x = -999.f, y = -999.f;
-		int x2 = -999, y2 = -999;
-	};
 	void runD(const array<DrShiftQuadro, 2> & srcd, array<DrShiftQuadro, 2> & dstd, const array<int, 2> & dsta){
-//		std::unique_ptr<array<int, 1>> dbg = std::unique_ptr<array<int, 1>>(new array<int, 1>(5));
-		std::vector<DbgStruct> v(4 * 4 * 4 * dstd.extent.size());
-		//std::iota(v.begin(), v.end(), -555);
-		array_view<DbgStruct, 1> av(v.size(), v);
-
-		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, av](index<2> idx) restrict(amp){
+		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta](index<2> idx) restrict(amp){
 			const float vdirsX[16 * 16] = {
 		-1,-0,-1,-1, -0,+1,+1,+1,  -1,-1,-1,-0, +1,+1,-0,+1, //0000
 		-0,-0,-0,-0, -0,-1,-0,-1,  +1,+1,+1,+1, -0,-1,-0,-1, //0001
@@ -181,60 +168,38 @@ public:
 		-1,-1,+1,-1, -0,-0,-0,-0,  -0,-0,-0,-0, -0,-0,-0,-0, //1110
 		-1,-1,-0,-1, -1,-1,-1,-0,  -0,+1,+1,+1, +1,-0,+1,+1};//1111
 
-			int mask[4]; // shift
 			const int y = idx[0];
 			const int x = idx[1];
 			const int y2 = y * 2;
 			const int x2 = x * 2;
-			//getMaskDir(y2, x2, dsta, mask);
-			{
-				int tl = dsta[y2][x2];
-				int tr = dsta[y2][x2 + 1];
-				int bl = dsta[y2 + 1][x2];
-				int br = dsta[y2 + 1][x2 + 1];
-
-				mask[0] = ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
-				mask[1] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
-				mask[2] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
-				//mask[3] = (((tl >> 1) & 1) + (((tr >> 1) & 1) << 1) + (((bl >> 1) & 1) << 2) + (((br >> 1) & 1) << 3));
-				mask[3] = ((tl >> 1) + ((tr >> 1) << 1) + ((bl >> 1) << 2) + ((br >> 1) << 3));
-				// TODO: del & 1 ?
-			}
-			int ndbg = 0;
+			
+			int tl = dsta[y2][x2];
+			int tr = dsta[y2][x2 + 1];
+			int bl = dsta[y2 + 1][x2];
+			int br = dsta[y2 + 1][x2 + 1];
+			int mask[4]; // shift
+			mask[0] = ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
+			mask[1] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+			mask[2] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+			mask[3] = ((tl >> 1) + ((tr >> 1) << 1) + ((bl >> 1) << 2) + ((br >> 1) << 3));
+			
+			auto srcditem = &srcd[y][x];
 			for(int shift = 0; shift < 4; shift++){
 				int nmask = 16 * mask[shift];
-				auto srcsh = &srcd[y][x].shifts[shift];
-				for(int qSrc = 0; qSrc < 4; qSrc++){
-					FLT2 src = srcsh->items[qSrc];
-					int yitem = y2 + qSrc / 2;
-					int xitem = x2 + qSrc % 2;
-					//auto item = &dstd[yitem][xitem].shifts[shift];
-					for(int i = 0; i < 4; i++){
-						//FLT2* dst = &item->items[i];
-						//dst->x = src.x + vdirsX[nmask];
-						//dst->y = src.y + vdirsY[nmask];
-						dstd[yitem][xitem].shifts[shift].items[i].x = src.x + vdirsX[nmask];
-						dstd[yitem][xitem].shifts[shift].items[i].y = src.y + vdirsY[nmask];
-
-						av[ndbg].X = xitem;
-						av[ndbg].Y = yitem;
-						av[ndbg].x2 = x2;
-						av[ndbg].y2 = y2;
-						av[ndbg].shift = shift;
-						av[ndbg].i = i;
-						av[ndbg].x = dstd[yitem][xitem].shifts[shift].items[i].x; // (shift << 4) || (qSrc << 2) || i
-						av[ndbg].y = dstd[yitem][xitem].shifts[shift].items[i].y;
-						ndbg++;
-												//}
-						nmask++;
+				auto srcsh = &srcditem->shifts[shift];
+				for(int ncell = 0; ncell < 4; ncell++){
+					FLT2 src = srcsh->items[ncell];
+					auto item = &dstd[y2 + ncell / 2][x2 + ncell % 2].shifts[shift];
+					for(int i = 0; i < 4; i++){  // TODO: expand i
+						FLT2* dst = &item->items[i];
+						dst->x = src.x + vdirsX[nmask];
+						dst->y = src.y + vdirsY[nmask++];
 					}
 				}
 			}
 		});
-		av.synchronize();
-		//printf("%d\n", av[0]);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runDlast(array<DrShiftQuadro, 2> & srcd,
+	void runDlast(const array<DrShiftQuadro, 2> & srcd,
 				  array<Vertex2D, 1> & dstpos,
 				  array<int, 2> & dsta,
 				  array<FLT2, 2> & dstd){
