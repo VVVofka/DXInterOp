@@ -75,15 +75,15 @@ public:
 		dumpA();
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
-			dumpD(nlay);
+			//dumpD(nlay);
 		}
 		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
-		dumpD();
+		dumpDLast();
 		dumpA();
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runAlast(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
-		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){ 
+		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
 			// yx: c-centre, l-left, r-right
 			const int y = idx[0];
 			const int y2t = y * 2;
@@ -172,7 +172,7 @@ public:
 			const int x = idx[1];
 			const int y2 = y * 2;
 			const int x2 = x * 2;
-			
+
 			int tl = dsta[y2][x2];
 			int tr = dsta[y2][x2 + 1];
 			int bl = dsta[y2 + 1][x2];
@@ -182,19 +182,18 @@ public:
 			mask[1] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
 			mask[2] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
 			mask[3] = ((tl >> 1) + ((tr >> 1) << 1) + ((bl >> 1) << 2) + ((br >> 1) << 3));
-			
-			auto srcditem = &srcd[y][x];
+
+			auto srcdcell = &srcd[y][x];
 			for(int shift = 0; shift < 4; shift++){
 				int nmask = 16 * mask[shift];
-				auto srcsh = &srcditem->shifts[shift];
+				auto srcsh = &srcdcell->shifts[shift];
 				for(int ncell = 0; ncell < 4; ncell++){
 					FLT2 src = srcsh->items[ncell];
 					auto item = &dstd[y2 + ncell / 2][x2 + ncell % 2].shifts[shift];
-					for(int i = 0; i < 4; i++){  // TODO: expand i
-						FLT2* dst = &item->items[i];
-						dst->x = src.x + vdirsX[nmask];
-						dst->y = src.y + vdirsY[nmask++];
-					}
+					{FLT2* dst = &item->items[0]; dst->x = src.x + vdirsX[nmask]; dst->y = src.y + vdirsY[nmask++]; }
+					{FLT2* dst = &item->items[1]; dst->x = src.x + vdirsX[nmask]; dst->y = src.y + vdirsY[nmask++]; }
+					{FLT2* dst = &item->items[2]; dst->x = src.x + vdirsX[nmask]; dst->y = src.y + vdirsY[nmask++]; }
+					{FLT2* dst = &item->items[3]; dst->x = src.x + vdirsX[nmask]; dst->y = src.y + vdirsY[nmask++]; }
 				}
 			}
 		});
@@ -203,14 +202,13 @@ public:
 				  array<Vertex2D, 1> & dstpos,
 				  array<int, 2> & dsta,
 				  array<FLT2, 2> & dstd){
-		int szy = model.sizeY(), szx = model.sizeX();
-		for(int nshift = 0; nshift < 4; nshift++){
-			int yshift = nshift / 2;
-			int xshift = nshift % 2;
-			parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
-				auto q = srcd[idx[0]][idx[1]].shifts[nshift].items;
-				int y2 = mad(idx[0], 2, yshift); // y*2+yshift
-				int x2 = mad(idx[1], 2, xshift);
+		parallel_for_each(srcd.extent, [&srcd, &dstd](index<2> idx) restrict(amp){
+			const int y = idx[0];
+			const int x = idx[1];
+			for(int nshift = 0; nshift < 4; nshift++){
+				auto q = srcd[y][x].shifts[nshift].items;
+				const int y2 = y * 2 + nshift / 2; // y*2+yshift
+				const int x2 = x * 2 + nshift % 2;
 
 				dstd[y2][x2].y += q->y;
 				dstd[y2][x2].x += q->x;
@@ -223,12 +221,20 @@ public:
 
 				dstd[y2 + 1][x2 + 1].y += (++q)->y;
 				dstd[y2 + 1][x2 + 1].x += q->x;
-			}); // parallel_for_each(srcd.extent,
-		} // for(nshift
-		for(int nshift = 0; nshift < 4; nshift++){
-			int yshift = nshift / 2;
-			int xshift = nshift % 2;
-			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
+			} // for(nshift
+		}); // parallel_for_each(srcd.extent,
+
+		struct MyStruct{
+			FLT2 v;
+		};
+		std::vector<MyStruct> dbg(dstd.extent.size());
+		array_view<MyStruct, 2> av = array_view<MyStruct, 2>(dstd.extent[0], dstd.extent[1], dbg);
+
+		const int szy = model.sizeY(), szx = model.sizeX();
+		parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
+			for(int nshift = 0; nshift < 4; nshift++){
+				int yshift = nshift / 2;
+				int xshift = nshift % 2;
 				int y2 = idx[0] * 2 + yshift;
 				int x2 = idx[1] * 2 + xshift;
 				float ky = 2.f / szy;
@@ -272,8 +278,9 @@ public:
 					dstd[y2][x2].y = dstd[y2][x2].x = 0;
 					dstd[newy][newx].y = dstd[newy][newx].x = 0;
 				}
-			}); // parallel_for_each(srcd.extent,
-		} // for(nshift
+			} // for(nshift
+		}); // parallel_for_each(srcd.extent,
+		av.synchronize();
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak(){
 		array<Vertex2D, 1>& data_ref = *m_data;
@@ -344,17 +351,19 @@ public:
 	void dumpD(){
 		for(int nlay = 0; nlay < model.LaysCnt() - 1; nlay++)
 			dumpD(nlay);
+		dumpDLast();
+	} // ////////////////////////////////////////////////////////////////////////////////////////
+	void dumpDLast(){
 		array<FLT2, 2> av(*last_dirs);
 		std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
 		for(int y = 0; y < av.extent[0]; y++){
 			for(int x = 0; x < av.extent[1]; x++){
-				if(av[y][x].not0()){
-					std::cout << "Y=" << y << " X=" << x << "\t ";
-					av[y][x].dump();
-					std::cout << std::endl;
-				}
+				//if(av[y][x].not0()){
+				std::cout << "Y=" << y << " X=" << x << "\t ";
+				av[y][x].dump();
+				std::cout << std::endl;
+			//}
 			}
 		}
-	} // ////////////////////////////////////////////////////////////////////////////////////////
-
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 }; // ******************************************************************************************************
