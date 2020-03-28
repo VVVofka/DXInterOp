@@ -282,7 +282,8 @@ public:
 		std::vector<int> dbg3(dsta.extent.size(), -1);
 		array_view<int, 2> av3 = array_view<int, 2>(dsta.extent[0], dsta.extent[1], dbg3);
 		struct myStruct4{
-			int y2, x2, y, x, newy, newx;
+			int y, x, newy, newx, aold, anew;
+			FLT2 dirold, dirnew;
 		};
 		std::vector<myStruct4> dbg4(dsta.extent.size());
 		array_view<myStruct4, 2> av4 = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg4);
@@ -294,45 +295,45 @@ public:
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
 			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
-				int y2 = idx[0] * 2 + yshift;
-				int x2 = idx[1] * 2 + xshift;
-
-				for(int nitem = 0; nitem < 4; nitem++){
-					const int mask[7] = {0,0,1, 9, 0,1,1};
-					int yitem = nitem / 2;
-					int xitem = nitem % 2;
-					int y = y2 + yitem;
-					int x = x2 + xitem;
-					int adry = (yitem << 2) + sign(int(dstd[y][x].y)) + 1; // 0..1 | 0..2
-					int adrx = (xitem << 2) + sign(int(dstd[y][x].x)) + 1;
-
+				const int mask[7] = {0,0,1, 9, -1,0,0};
+				int y0 = idx[0] * 2 + yshift;
+				int x0 = idx[1] * 2 + xshift;
+				for(int ncell = 0; ncell < 3; ncell++){
+					int y = y0 + ncell / 2;
+					int x = x0 + ncell % 2;
+					int adry = yshift * 4 + sign(int(dstd[y][x].y)) + 1; // 0..1 | 0..2
+					int adrx = xshift * 4 + sign(int(dstd[y][x].x)) + 1;
 					int newy = y + mask[adry];
 					int newx = x + mask[adrx];
-					av4[y][x].x = x;
-					av4[y][x].y = y;
-					av4[y][x].y2 = y2;
-					av4[y][x].x2 = x2;
-					av4[y][x].newy = newy;
-					av4[y][x].newx = newx;
 
 					int anew = dsta[newy][newx];
 					int aold = dsta[y][x];
+
+					av4[y][x].x = x;
+					av4[y][x].y = y;
+					av4[y][x].newy = newy;
+					av4[y][x].newx = newx;
+					av4[y][x].aold = aold;
+					av4[y][x].anew = anew;
+					av4[y][x].dirold.y = dstd[y][x].y;
+					av4[y][x].dirold.x = dstd[y][x].x;
+					av4[y][x].dirnew.y = dstd[newy][newx].y;
+					av4[y][x].dirnew.x = dstd[newy][newx].x;
+
+					av3[y][x] = anew;
+					av3[newy][newx] = aold;
+
 					if(anew != aold){
 						dsta[y][x] = anew;
 						dsta[newy][newx] = aold;
-
-						av3[y][x] = anew;
-						av3[newy][newx] = aold;
-
+						dstd[newy][newx].y = dstd[newy][newx].x = dstd[y][x].y = dstd[y][x].x = -1;
 						if(anew >= 0){
 							dstpos[anew].Pos.y = ky * y - 1.0f;
 							dstpos[anew].Pos.x = kx * x - 1.0f;
-						}
-						if(aold >= 0){
+						} else{              // if(aold >= 0)
 							dstpos[aold].Pos.y = ky * newy - 1.0f;
 							dstpos[aold].Pos.x = kx * newx - 1.0f;
 						}
-						dstd[y][x].y = dstd[y][x].x = dstd[newy][newx].y = dstd[newy][newx].x = -1;
 					}
 				}
 			}); // parallel_for_each(srcd.extent,
