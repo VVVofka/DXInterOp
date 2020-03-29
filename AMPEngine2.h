@@ -202,9 +202,6 @@ public:
 				  array<Vertex2D, 1> & dstpos,
 				  array<int, 2> & dsta,
 				  array<FLT2, 2> & dstd){
-		std::vector<FLT2> dbg(dstd.extent.size());
-		array_view<FLT2, 2> av = array_view<FLT2, 2>(dstd.extent[0], dstd.extent[1], dbg);
-
 		for(int nshift = 0; nshift < 4; nshift++){
 			parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
 				const int y = idx[0];
@@ -215,42 +212,19 @@ public:
 
 				dstd[y2][x2].y += q->y;
 				dstd[y2][x2].x += q->x;
-				av[y2][x2].x += q->x;
-				av[y2][x2].y += q->y;
 
 				dstd[y2][x2 + 1].y += (++q)->y;
 				dstd[y2][x2 + 1].x += q->x;
-				av[y2][x2 + 1].x += q->x;
-				av[y2][x2 + 1].y += q->y;
 
 				dstd[y2 + 1][x2].y += (++q)->y;
 				dstd[y2 + 1][x2].x += q->x;
-				av[y2 + 1][x2].x += q->x;
-				av[y2 + 1][x2].y += q->y;
-
 
 				dstd[y2 + 1][x2 + 1].y += (++q)->y;
 				dstd[y2 + 1][x2 + 1].x += q->x;
-				av[y2 + 1][x2 + 1].x += q->x;
-				av[y2 + 1][x2 + 1].y += q->y;
-
 			}); // parallel_for_each(srcd.extent,
 		} // for(nshift
-		av.synchronize();
-		for(int y = 0, j = 0; y < dstd.extent[0]; y++){
-			for(int x = 0; x < dstd.extent[1]; x++){
-				printf("%+.2f\t", dbg[j + x].y);
-			}
-			printf("\n");
-			for(int x = 0; x < dstd.extent[1]; x++){
-				printf("%+.2f\t", dbg[j++].x);
-			}
-			printf("\n\n");
-		}
 
-		std::vector<FLT2> dbg2(dstd.extent.size());
-		array_view<FLT2, 2> av2 = array_view<FLT2, 2>(dstd.extent[0], dstd.extent[1], dbg2);
-		parallel_for_each(dstd.extent, [&dstd, av2](index<2> idx) restrict(amp){
+		parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
 			int y = idx[0];
 			int x = idx[1];
 			float diry = dstd[y][x].y;
@@ -263,32 +237,16 @@ public:
 				dirx = 0;
 			dstd[y][x].y = diry;
 			dstd[y][x].x = dirx;
-
-			av2[y][x].y = dstd[y][x].y;
-			av2[y][x].x = dstd[y][x].x;
 		}); // parallel_for_each(srcd.extent,
-
-		av2.synchronize();
-		for(int y = 0, j = 0; y < dstd.extent[0]; y++){
-			printf("\n");
-			for(int x = 0; x < dstd.extent[1]; x++)
-				printf("%+.2f\t", dbg2[j + x].y);
-			printf("\n");
-			for(int x = 0; x < dstd.extent[1]; x++)
-				printf("%+.2f\t", dbg2[j++].x);
-			printf("\n");
-		}
 		dumpA(-1);
+		dumpDLast();
 
-		std::vector<int> dbg3(dsta.extent.size(), -1);
-		array_view<int, 2> av3 = array_view<int, 2>(dsta.extent[0], dsta.extent[1], dbg3);
-		copy(dsta, av3);
 		struct myStruct4{
 			int y, x, newy, newx, aold, anew;
 			FLT2 dirold, dirnew;
 		};
 		std::vector<myStruct4> dbg4(dsta.extent.size());
-		array_view<myStruct4, 2> av4 = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg4);
+		array_view<myStruct4, 2> av = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg4);
 
 		const int szy = model.sizeY(), szx = model.sizeX();
 		float ky = 2.f / szy;
@@ -296,6 +254,7 @@ public:
 		for(int nshift = 0; nshift < 4; nshift++){
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
+			printf("\nshift = %d\n", nshift);
 			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 				const int mask[7] = {0,0,1, 9, -1,0,0};
 				int y0 = idx[0] * 2 + yshift;
@@ -307,54 +266,38 @@ public:
 					int x = x0 + xcell;
 					int aold = dsta[y][x];
 
-					av4[y][x].dirold.y = dstd[y][x].y;
-					av4[y][x].dirold.x = dstd[y][x].x;
-					av4[y][x].x = x;
-					av4[y][x].y = y;
-					av4[y][x].aold = aold;
+					av[y][x].dirold.y = dstd[y][x].y;
+					av[y][x].dirold.x = dstd[y][x].x;
+					av[y][x].x = x;
+					av[y][x].y = y;
+					av[y][x].aold = aold;
 					if(aold < 0) continue;
 					int adry = ycell * 4 + sign(int(dstd[y][x].y)) + 1; // 0..1 | 0..2
 					int adrx = xcell * 4 + sign(int(dstd[y][x].x)) + 1;
 					int newy = y + mask[adry];
 					int newx = x + mask[adrx];
 					int anew = dsta[newy][newx];
-					av4[y][x].newy = newy;
-					av4[y][x].newx = newx;
-					av4[y][x].anew = anew;
-					av4[y][x].dirnew.y = dstd[newy][newx].y;
-					av4[y][x].dirnew.x = dstd[newy][newx].x;
+					av[y][x].newy = newy;
+					av[y][x].newx = newx;
+					av[y][x].anew = anew;
+					av[y][x].dirnew.y = dstd[newy][newx].y;
+					av[y][x].dirnew.x = dstd[newy][newx].x;
 					if(anew >= 0) continue;
 
 					dsta[y][x] = anew;
 					dsta[newy][newx] = aold;
 
-					av3[y][x] = anew;
-					av3[newy][newx] = aold;
+					//dstd[newy][newx].y = dstd[newy][newx].x = -1;
+					dstd[y][x].y = dstd[y][x].x = -1;
 
-					dstd[newy][newx].y = dstd[newy][newx].x = dstd[y][x].y = dstd[y][x].x = -1;
-					if(anew >= 0){
-						dstpos[anew].Pos.y = ky * y - 1.0f;
-						dstpos[anew].Pos.x = kx * x - 1.0f;
-					} else{              // if(aold >= 0)
-						dstpos[aold].Pos.y = ky * newy - 1.0f;
-						dstpos[aold].Pos.x = kx * newx - 1.0f;
-					}
+					dstpos[aold].Pos.y = ky * newy - 1.0f;
+					dstpos[aold].Pos.x = kx * newx - 1.0f;
 				}
 			}); // parallel_for_each(srcd.extent,
-			av3.synchronize();
-			av4.synchronize();
-			printf("\nshift = %d\n", nshift);
-			for(int y = 0, j = 0; y < dsta.extent[0]; y++){
-				for(int x = 0; x < dsta.extent[1]; x++, j++)
-					if(dbg3[j] < 0)
-						printf("   .\t");
-					else
-						printf("%4d\t", dbg3[j]);
-				printf("\n");
-			}
+			av.synchronize();
 			dumpA(-1);
+			dumpDLast();
 		} // for(nshift
-
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak(){
 		array<Vertex2D, 1>& data_ref = *m_data;
@@ -428,16 +371,20 @@ public:
 		dumpDLast();
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 	void dumpDLast(){
+		int szy = last_dirs->extent[0],
+			szx = last_dirs->extent[1];
+		if(szy <= 0 || szx <= 0) return;
 		array<FLT2, 2> av(*last_dirs);
-		std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
-		for(int y = 0; y < av.extent[0]; y++){
-			for(int x = 0; x < av.extent[1]; x++){
-				//if(av[y][x].not0()){
-				std::cout << "Y=" << y << " X=" << x << "\t ";
-				av[y][x].dump();
-				std::cout << std::endl;
-			//}
-			}
+		std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << szy << "*" << szx;
+		for(int y = 0; y < szy; y++){
+			printf("\n%+.2f", av[0][0].y);
+			for(int x = 1; x < szx; x++)
+				printf("  %+.2f", av[y][x].y);
+
+			printf("\n%+.2f", av[0][0].x);
+			for(int x = 1; x < szx; x++)
+				printf("  %+.2f", av[y][x].x);
+			printf("\n");
 		}
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 }; // ******************************************************************************************************
