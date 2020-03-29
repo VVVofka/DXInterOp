@@ -71,15 +71,22 @@ public:
 			runA(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 		}
 		// Back to down
-		//dumpA();
+#ifdef AMPDBG
+		dumpA();
+#endif
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
-			//dumpD(nlay);
+#ifdef AMPDBG
+			dumpD(nlay);
+#endif
 		}
 		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
+#ifdef AMPDBG
+		dumpPos();
 		//dumpDLast();
 		//dumpA();
+#endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runAlast(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
 		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
@@ -245,8 +252,10 @@ public:
 			int y, x, adry, adrx, newy, newx, aold, anew;
 			FLT2 dirold, dirnew;
 		};
-		std::vector<myStruct4> dbg4(dsta.extent.size());
-		array_view<myStruct4, 2> av = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg4);
+		std::vector<myStruct4> dbg(dsta.extent.size());
+		array_view<myStruct4, 2> av = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg);
+		std::vector<Vertex2D> dbgpos(dstpos.extent.size());
+		array_view<Vertex2D, 1> avpos = array_view<Vertex2D, 1>(dstpos.extent[0], dbgpos);
 #endif
 		const int szy = model.sizeY(), szx = model.sizeX();
 		float ky = float(2. / szy);
@@ -300,12 +309,19 @@ public:
 
 					dstpos[aold].Pos.y = ky * newy - 1.0f;
 					dstpos[aold].Pos.x = kx * newx - 1.0f;
+					avpos[aold].Pos.y = ky * newy - 1.0f;
+					avpos[aold].Pos.x = kx * newx - 1.0f;
 				}
 			}); // parallel_for_each(srcd.extent,
 #ifdef AMPDBG
 			av.synchronize();
+			avpos.synchronize();
 			dumpA(-1);
 			dumpDLast();
+			for(int n = 0; n < (int)dbgpos.size(); n++){
+				auto p = dbgpos[n].Pos;
+				printf("%+.2f %+.2f\n", p.y, p.x);
+			}
 #endif
 		} // for(nshift
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,6 +413,12 @@ public:
 			printf("\n");
 		}
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void dumpPos(){
+		array<Vertex2D, 1> av(*m_data);
+		for(int n = 0; n < av.extent[0]; n++){
+			printf("%+.2f \t %+.2f\n", av[n].Pos.x, av[n].Pos.y);
+		}
+	} // ////////////////////////////////////////////////////////////////////////////////////////
 }; // ******************************************************************************************************
 #ifdef AMPDBG
 #undef AMPDBG
