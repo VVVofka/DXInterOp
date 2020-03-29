@@ -71,7 +71,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		return E_FAIL;
 	}
 #else 
-	model.Create(Sz2D(1, 2), 9);
+	model.Create(Sz2D(1, 2), 17); //9 - AMPDBG
 	if (FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))) {
 		mdx.CleanupDevice();
 		return E_FAIL;

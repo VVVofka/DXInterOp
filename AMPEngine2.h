@@ -10,7 +10,7 @@
 #include <DirectXMath.h>
 #include <iomanip>
 //#include <ppl.h>
-
+#define AMPDBG
 #define THETA 3.1415f/1024  
 extern Model2D model;
 
@@ -59,7 +59,6 @@ public:
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 		amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, AMask, m_accl_view));
-
 #endif
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
@@ -72,15 +71,15 @@ public:
 			runA(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 		}
 		// Back to down
-		dumpA();
+		//dumpA();
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 			//dumpD(nlay);
 		}
 		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
-		dumpDLast();
-		dumpA();
+		//dumpDLast();
+		//dumpA();
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runAlast(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
 		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
@@ -238,19 +237,20 @@ public:
 			dstd[y][x].y = diry;
 			dstd[y][x].x = dirx;
 		}); // parallel_for_each(srcd.extent,
+
+#ifdef AMPDBG
 		dumpA(-1);
 		dumpDLast();
-
 		struct myStruct4{
-			int y, x, newy, newx, aold, anew;
+			int y, x, adry, adrx, newy, newx, aold, anew;
 			FLT2 dirold, dirnew;
 		};
 		std::vector<myStruct4> dbg4(dsta.extent.size());
 		array_view<myStruct4, 2> av = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg4);
-
+#endif
 		const int szy = model.sizeY(), szx = model.sizeX();
-		float ky = 2.f / szy;
-		float kx = 2.f / szx;
+		float ky = float(2. / szy);
+		float kx = float(2. / szx);
 		for(int nshift = 0; nshift < 4; nshift++){
 			int yshift = nshift / 2;
 			int xshift = nshift % 2;
@@ -265,38 +265,48 @@ public:
 					int y = y0 + ycell;
 					int x = x0 + xcell;
 					int aold = dsta[y][x];
-
+#ifdef AMPDBG
 					av[y][x].dirold.y = dstd[y][x].y;
 					av[y][x].dirold.x = dstd[y][x].x;
 					av[y][x].x = x;
 					av[y][x].y = y;
 					av[y][x].aold = aold;
+#endif
 					if(aold < 0) continue;
-					int adry = ycell * 4 + sign(int(dstd[y][x].y)) + 1; // 0..1 | 0..2
-					int adrx = xcell * 4 + sign(int(dstd[y][x].x)) + 1;
+					int signy = sign(int(dstd[y][x].y));
+					int signx = sign(int(dstd[y][x].x));
+					if((signx == xcell * 2 - 1) || (signy == ycell * 2 - 1)) continue;
+					int adry = ycell * 4 + signy + 1; // 0..1 | 0..2
+					int adrx = xcell * 4 + signx + 1;
 					int newy = y + mask[adry];
 					int newx = x + mask[adrx];
 					int anew = dsta[newy][newx];
+#ifdef AMPDBG
+					av[y][x].adry = adry;
+					av[y][x].adrx = adrx;
 					av[y][x].newy = newy;
 					av[y][x].newx = newx;
 					av[y][x].anew = anew;
 					av[y][x].dirnew.y = dstd[newy][newx].y;
 					av[y][x].dirnew.x = dstd[newy][newx].x;
+#endif
 					if(anew >= 0) continue;
 
 					dsta[y][x] = anew;
 					dsta[newy][newx] = aold;
 
-					//dstd[newy][newx].y = dstd[newy][newx].x = -1;
-					dstd[y][x].y = dstd[y][x].x = -1;
+					//dstd[newy][newx].y = dstd[newy][newx].x = 0; // Block next moves by ncell
+					dstd[y][x].y = dstd[y][x].x = 0;
 
 					dstpos[aold].Pos.y = ky * newy - 1.0f;
 					dstpos[aold].Pos.x = kx * newx - 1.0f;
 				}
 			}); // parallel_for_each(srcd.extent,
+#ifdef AMPDBG
 			av.synchronize();
 			dumpA(-1);
 			dumpDLast();
+#endif
 		} // for(nshift
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runbak(){
@@ -388,3 +398,6 @@ public:
 		}
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 }; // ******************************************************************************************************
+#ifdef AMPDBG
+#undef AMPDBG
+#endif
