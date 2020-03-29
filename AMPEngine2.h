@@ -278,9 +278,11 @@ public:
 				printf("%+.2f\t", dbg2[j++].x);
 			printf("\n");
 		}
+		dumpA(-1);
 
 		std::vector<int> dbg3(dsta.extent.size(), -1);
 		array_view<int, 2> av3 = array_view<int, 2>(dsta.extent[0], dsta.extent[1], dbg3);
+		copy(dsta, av3);
 		struct myStruct4{
 			int y, x, newy, newx, aold, anew;
 			FLT2 dirold, dirnew;
@@ -298,42 +300,44 @@ public:
 				const int mask[7] = {0,0,1, 9, -1,0,0};
 				int y0 = idx[0] * 2 + yshift;
 				int x0 = idx[1] * 2 + xshift;
-				for(int ncell = 0; ncell < 3; ncell++){
-					int y = y0 + ncell / 2;
-					int x = x0 + ncell % 2;
-					int adry = yshift * 4 + sign(int(dstd[y][x].y)) + 1; // 0..1 | 0..2
-					int adrx = xshift * 4 + sign(int(dstd[y][x].x)) + 1;
-					int newy = y + mask[adry];
-					int newx = x + mask[adrx];
-
-					int anew = dsta[newy][newx];
+				for(int ncell = 0; ncell < 4; ncell++){
+					int ycell = ncell / 2;
+					int xcell = ncell % 2;
+					int y = y0 + ycell;
+					int x = x0 + xcell;
 					int aold = dsta[y][x];
 
-					av4[y][x].x = x;
-					av4[y][x].y = y;
-					av4[y][x].newy = newy;
-					av4[y][x].newx = newx;
-					av4[y][x].aold = aold;
-					av4[y][x].anew = anew;
 					av4[y][x].dirold.y = dstd[y][x].y;
 					av4[y][x].dirold.x = dstd[y][x].x;
+					av4[y][x].x = x;
+					av4[y][x].y = y;
+					av4[y][x].aold = aold;
+					if(aold < 0) continue;
+					int adry = ycell * 4 + sign(int(dstd[y][x].y)) + 1; // 0..1 | 0..2
+					int adrx = xcell * 4 + sign(int(dstd[y][x].x)) + 1;
+					int newy = y + mask[adry];
+					int newx = x + mask[adrx];
+					int anew = dsta[newy][newx];
+					av4[y][x].newy = newy;
+					av4[y][x].newx = newx;
+					av4[y][x].anew = anew;
 					av4[y][x].dirnew.y = dstd[newy][newx].y;
 					av4[y][x].dirnew.x = dstd[newy][newx].x;
+					if(anew >= 0) continue;
+
+					dsta[y][x] = anew;
+					dsta[newy][newx] = aold;
 
 					av3[y][x] = anew;
 					av3[newy][newx] = aold;
 
-					if(anew != aold){
-						dsta[y][x] = anew;
-						dsta[newy][newx] = aold;
-						dstd[newy][newx].y = dstd[newy][newx].x = dstd[y][x].y = dstd[y][x].x = -1;
-						if(anew >= 0){
-							dstpos[anew].Pos.y = ky * y - 1.0f;
-							dstpos[anew].Pos.x = kx * x - 1.0f;
-						} else{              // if(aold >= 0)
-							dstpos[aold].Pos.y = ky * newy - 1.0f;
-							dstpos[aold].Pos.x = kx * newx - 1.0f;
-						}
+					dstd[newy][newx].y = dstd[newy][newx].x = dstd[y][x].y = dstd[y][x].x = -1;
+					if(anew >= 0){
+						dstpos[anew].Pos.y = ky * y - 1.0f;
+						dstpos[anew].Pos.x = kx * x - 1.0f;
+					} else{              // if(aold >= 0)
+						dstpos[aold].Pos.y = ky * newy - 1.0f;
+						dstpos[aold].Pos.x = kx * newx - 1.0f;
 					}
 				}
 			}); // parallel_for_each(srcd.extent,
@@ -348,6 +352,7 @@ public:
 						printf("%4d\t", dbg3[j]);
 				printf("\n");
 			}
+			dumpA(-1);
 		} // for(nshift
 
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
