@@ -58,7 +58,7 @@ public:
 	int sizeX(){ return vsz[vsz.size() - 1].x; }
 	int LaysCnt(){ return v_areas.size(); }
 
-	void Create(Sz2D minsz, int maxszXY){
+	void Create(Sz2D& minsz, int maxszXY){
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
@@ -120,7 +120,8 @@ public:
 		} // 	while(v_poss[nlay].size() < szpos)
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void filltest(int nlay){
-		int vcurpos[] = {1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44}; // 37, 
+		//int vcurpos[] = {1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44}; // 37, 
+		int vcurpos[] = {1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44, 54, 69, 78, 80, 94, 97, 101, 106, 117, 125, 131, 139, 143, 146, 147, 149, 151, 152}; // 37, 
 		for(auto curpos : vcurpos){
 			v_areas[nlay][curpos] = v_poss[nlay].size();
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);

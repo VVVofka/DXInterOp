@@ -10,7 +10,7 @@
 #include <DirectXMath.h>
 #include <iomanip>
 //#include <ppl.h>
-#define AMPDBG
+//#define AMPDBG
 #define THETA 3.1415f/1024  
 extern Model2D model;
 
@@ -21,7 +21,10 @@ using namespace concurrency::direct3d;
 class AMPEngine2{
 	accelerator_view					m_accl_view;
 	//std::unique_ptr<array<int, 2>>      ar_area;
+
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
+	std::vector<Vertex2D> vpos;
+
 	std::unique_ptr<array<FLT2, 2>> last_dirs;
 
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
@@ -55,8 +58,8 @@ public:
 					(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
 			}
 		}
-		auto v = model.v_poss[model.v_poss.size() - 1];
-		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(v.size(), v.begin(), m_accl_view));
+		vpos = model.v_poss[model.v_poss.size() - 1];
+		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(vpos.size(), vpos.begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 		amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, AMask, m_accl_view));
 #endif
@@ -72,18 +75,18 @@ public:
 		}
 		// Back to down
 #ifdef AMPDBG
-		dumpA();
+		//dumpA();
 #endif
 		for(int nlay = 1; nlay < nlastlay; nlay++){
 			runD(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay]);
 #ifdef AMPDBG
-			dumpD(nlay);
+			//dumpD(nlay);
 #endif
 		}
 		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
 #ifdef AMPDBG
-		dumpPos();
+		//dumpPos();
 		//dumpDLast();
 		//dumpA();
 #endif
@@ -246,24 +249,28 @@ public:
 		}); // parallel_for_each(srcd.extent,
 
 #ifdef AMPDBG
+		setConsole();
+		printf("Before move:\n");
 		dumpA(-1);
 		dumpDLast();
+		dumpPos();
 		struct myStruct4{
 			int y, x, adry, adrx, newy, newx, aold, anew;
 			FLT2 dirold, dirnew;
 		};
 		std::vector<myStruct4> dbg(dsta.extent.size());
 		array_view<myStruct4, 2> av = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg);
-		std::vector<Vertex2D> dbgpos(dstpos.extent.size());
-		array_view<Vertex2D, 1> avpos = array_view<Vertex2D, 1>(dstpos.extent[0], dbgpos);
 #endif
 		const int szy = model.sizeY(), szx = model.sizeX();
-		float ky = float(2. / szy);
-		float kx = float(2. / szx);
+		const int leny = szy - 1, lenx = szx - 1;
+		const float ky = (leny <= 0) ? 0 : 2.f / float(leny);
+		const float kx = (lenx <= 0) ? 0 : 2.f / float(lenx);
 		for(int nshift = 0; nshift < 4; nshift++){
-			int yshift = nshift / 2;
-			int xshift = nshift % 2;
+			const int yshift = nshift / 2;
+			const int xshift = nshift % 2;
+#ifdef AMPDBG
 			printf("\nshift = %d\n", nshift);
+#endif
 			parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 				const int mask[7] = {0,0,1, 9, -1,0,0};
 				int y0 = idx[0] * 2 + yshift;
@@ -307,21 +314,19 @@ public:
 					//dstd[newy][newx].y = dstd[newy][newx].x = 0; // Block next moves by ncell
 					dstd[y][x].y = dstd[y][x].x = 0;
 
-					dstpos[aold].Pos.y = ky * newy - 1.0f;
+					dstpos[aold].Pos.y = -(ky * newy - 1.0f);
 					dstpos[aold].Pos.x = kx * newx - 1.0f;
-					avpos[aold].Pos.y = ky * newy - 1.0f;
-					avpos[aold].Pos.x = kx * newx - 1.0f;
+					//avpos[aold].Pos.y = float(newy);
+					//avpos[aold].Pos.x = float(newx);
 				}
 			}); // parallel_for_each(srcd.extent,
 #ifdef AMPDBG
 			av.synchronize();
-			avpos.synchronize();
+			//avpos.synchronize();
+			printf("After move:\n");
 			dumpA(-1);
-			dumpDLast();
-			for(int n = 0; n < (int)dbgpos.size(); n++){
-				auto p = dbgpos[n].Pos;
-				printf("%+.2f %+.2f\n", p.y, p.x);
-			}
+			//dumpDLast();
+			//dumpPos();
 #endif
 		} // for(nshift
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,9 +419,11 @@ public:
 		}
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void dumpPos(){
-		array<Vertex2D, 1> av(*m_data);
-		for(int n = 0; n < av.extent[0]; n++){
-			printf("%+.2f \t %+.2f\n", av[n].Pos.x, av[n].Pos.y);
+		array_view<Vertex2D, 1> avpos(m_data->extent[0]);
+		m_data.get()->copy_to(avpos);
+		for(int n = 0; n < (int)avpos.extent[0]; n++){
+			auto p = avpos[n].Pos;
+			printf("%d:\t%+.3f %+.3f\n", n, p.y, p.x);
 		}
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 }; // ******************************************************************************************************
