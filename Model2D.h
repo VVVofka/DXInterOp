@@ -7,6 +7,10 @@
 #include "Sz2D.h"
 //def in Model2D.h
 // float x,y
+float normal(int pos, int width) restrict(amp, cpu){
+	return float(2 * pos + 1) / width - 1.f;
+} // //////////////////////////////////////////////////////////////////////////////////////////////
+float normal(int pos, int width) restrict(amp, cpu);
 struct FLT2{
 	float y;
 	float x;
@@ -57,6 +61,7 @@ public:
 	int sizeX(int nlay){ return vsz[nlay].x; }
 	int sizeX(){ return vsz[vsz.size() - 1].x; }
 	int LaysCnt(){ return v_areas.size(); }
+	std::vector<Vertex2D>* posLast(){return &v_poss[v_poss.size()-1];}
 
 	void Create(Sz2D& minsz, int maxszXY){
 		const int RESERV_LAYS_CNT = 16;
@@ -91,15 +96,17 @@ public:
 		last_dirs.resize(szarea, FLT2(0));
 
 		// fill v_poss (for screen only) & v_areas for the last lay
-		//fillrnd(nlay, szarea, 0.5);
 		v_poss.push_back(std::vector<Vertex2D>());
-		filltest(nlay);
+		fillrnd(nlay, szarea, 0.25);
+		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, Sz2D sizes){
 		int iy = curpos / sizes.x;
-		float y = sizes.y <= 1 ? 0 : 2.f * iy / (sizes.y - 1.f) - 1.f;
+		//float y = sizes.y <= 1 ? 0 : 2.f * iy / (sizes.y - 1.f) - 1.f;
+		float y = normal(iy, sizes.y);
 		int ix = curpos % sizes.x;
-		float x = sizes.x <= 1 ? 0 : 2.f * ix / (sizes.x - 1.f) - 1.f;
+		//float x = sizes.x <= 1 ? 0 : 2.f * ix / (sizes.x - 1.f) - 1.f;
+		float x = normal(ix, sizes.x);
 		return Vertex2D(y, x);
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void fillrnd(int nlay, size_t szarea, double kFill){
@@ -120,8 +127,9 @@ public:
 		} // 	while(v_poss[nlay].size() < szpos)
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void filltest(int nlay){
-		//int vcurpos[] = {1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44}; // 37, 
-		int vcurpos[] = {1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44, 54, 69, 78, 80, 94, 97, 101, 106, 117, 125, 131, 139, 143, 146, 147, 149, 151, 152}; // 37, 
+		int vcurpos[] =
+		//{1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44};
+		{0, 8, 16, 4*17, 4*17+8, 4*17+16, 8*17, 8*17+8, 8*17+16};
 		for(auto curpos : vcurpos){
 			v_areas[nlay][curpos] = v_poss[nlay].size();
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);

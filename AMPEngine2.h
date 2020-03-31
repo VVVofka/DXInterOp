@@ -23,7 +23,6 @@ class AMPEngine2{
 	//std::unique_ptr<array<int, 2>>      ar_area;
 
 	std::unique_ptr<array<Vertex2D, 1>>	m_data;
-	std::vector<Vertex2D> vpos;
 
 	std::unique_ptr<array<FLT2, 2>> last_dirs;
 
@@ -43,6 +42,7 @@ public:
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(data.size(), data.begin(), m_accl_view));
 #else
 	void initialize_data(){
+		//setConsole();
 		auto layscnt = model.v_areas.size();
 		for(size_t nlay = 0; nlay < layscnt; nlay++){
 			int sizey = model.sizeY(nlay);
@@ -58,8 +58,7 @@ public:
 					(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
 			}
 		}
-		vpos = model.v_poss[model.v_poss.size() - 1];
-		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(vpos.size(), vpos.begin(), m_accl_view));
+		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(model.posLast()->size(), model.posLast()->begin(), m_accl_view));
 		last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 		amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, AMask, m_accl_view));
 #endif
@@ -68,6 +67,7 @@ public:
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
+		//return;
 		int nlastlay = model.LaysCnt() - 1;
 		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
@@ -85,6 +85,8 @@ public:
 		}
 		array<FLT2, 2>& dirs = *last_dirs;
 		runDlast(*var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs);
+        //concurrency::copy(*m_data, vpos.data());
+		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 #ifdef AMPDBG
 		//dumpPos();
 		//dumpDLast();
@@ -252,7 +254,7 @@ public:
 		setConsole();
 		printf("Before move:\n");
 		dumpA(-1);
-		dumpDLast();
+		//dumpDLast();
 		dumpPos();
 		struct myStruct4{
 			int y, x, adry, adrx, newy, newx, aold, anew;
@@ -262,6 +264,7 @@ public:
 		array_view<myStruct4, 2> av = array_view<myStruct4, 2>(dsta.extent[0], dsta.extent[1], dbg);
 #endif
 		const int szy = model.sizeY(), szx = model.sizeX();
+		const float kwidthy = float(szy-1) / szy, kwidthx = float(szx - 1) / szx;
 		const int leny = szy - 1, lenx = szx - 1;
 		const float ky = (leny <= 0) ? 0 : 2.f / float(leny);
 		const float kx = (lenx <= 0) ? 0 : 2.f / float(lenx);
@@ -314,19 +317,18 @@ public:
 					//dstd[newy][newx].y = dstd[newy][newx].x = 0; // Block next moves by ncell
 					dstd[y][x].y = dstd[y][x].x = 0;
 
-					dstpos[aold].Pos.y = -(ky * newy - 1.0f);
-					dstpos[aold].Pos.x = kx * newx - 1.0f;
-					//avpos[aold].Pos.y = float(newy);
-					//avpos[aold].Pos.x = float(newx);
+					//dstpos[aold].Pos.y = (+(ky * newy - 1.0f)) * kwidthy;
+					//dstpos[aold].Pos.x = (kx * newx - 1.0f) * kwidthx;
+					dstpos[aold].Pos.y = normal(newy, szy);
+					dstpos[aold].Pos.x = normal(newx, szx);
 				}
 			}); // parallel_for_each(srcd.extent,
 #ifdef AMPDBG
 			av.synchronize();
 			//avpos.synchronize();
-			printf("After move:\n");
 			dumpA(-1);
 			//dumpDLast();
-			//dumpPos();
+			dumpPos();
 #endif
 		} // for(nshift
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
