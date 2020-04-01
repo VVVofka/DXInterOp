@@ -2,6 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="DXInterOp.cpp" />
+    <ClCompile Include="RunA.cpp">
+      <Filter>Run</Filter>
+    </ClCompile>
+    <ClCompile Include="RunD.cpp">
+      <Filter>Run</Filter>
+    </ClCompile>
+    <ClCompile Include="RunDlast.cpp">
+      <Filter>Run</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine2.h" />
@@ -22,8 +31,10 @@
     <ClInclude Include="RunD.h">
       <Filter>Run</Filter>
     </ClInclude>
-    <ClInclude Include="RunDlast.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="RunDlast.h">
+      <Filter>Run</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl" />

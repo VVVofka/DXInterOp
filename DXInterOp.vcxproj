@@ -244,6 +244,9 @@
     <ClCompile Include="DXInterOp.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
     </ClCompile>
+    <ClCompile Include="RunA.cpp" />
+    <ClCompile Include="RunD.cpp" />
+    <ClCompile Include="RunDlast.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl">

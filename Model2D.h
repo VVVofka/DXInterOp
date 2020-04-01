@@ -9,10 +9,6 @@
 #include <FLT2.h>
 //def in Model2D.h
 // float x,y
-float normal(int pos, int width) restrict(amp, cpu){
-	return float(2 * pos + 1) / width - 1.f;
-} // //////////////////////////////////////////////////////////////////////////////////////////////
-float normal(int pos, int width) restrict(amp, cpu);
 
 class Model2D{
 public:
