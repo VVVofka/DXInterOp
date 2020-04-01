@@ -232,6 +232,7 @@
     <ClInclude Include="MDX3.h" />
     <ClInclude Include="Model2D.h" />
     <ClInclude Include="RunA.h" />
+    <ClInclude Include="RunAlast.h" />
     <ClInclude Include="Sz2D.h" />
   </ItemGroup>
   <ItemGroup>

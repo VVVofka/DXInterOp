@@ -10,6 +10,7 @@
 #include <DirectXMath.h>
 #include <iomanip>
 #include "RunA.h"
+#include "runAlast.h"
 //#include <ppl.h>
 //#define AMPDBG
 #define THETA 3.1415f/1024  
@@ -68,13 +69,13 @@ public:
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
-		RunA runa;
 		//return;
 		int nlastlay = model.LaysCnt() - 1;
-		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+		//runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+		RunAlast::run(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			//runA(*var_areas[nlay], *var_areas[nlay - 1], *amask);
-			runa.Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
+			RunA::run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 		}
 		// Back to down
 #ifdef AMPDBG
@@ -95,55 +96,6 @@ public:
 		//dumpDLast();
 		//dumpA();
 #endif
-	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runAlast(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
-		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
-			// yx: c-centre, l-left, r-right
-			const int y = idx[0];
-			const int y2t = y * 2;
-			const int y2c = y2t + 1;
-			const int y2b = y2c + 1;
-
-			const int x = idx[1];
-			const int x2l = x * 2;
-			const int x2c = x2l + 1;
-			const int x2r = x2c + 1;
-
-			const int cc = src[y2c][x2c] < 0 ? 0 : 1;  // << 0
-			const int tc = src[y2t][x2c] < 0 ? 0 : 2;  // << 1
-			const int cl = src[y2c][x2l] < 0 ? 0 : 4;  // << 2
-			const int tl = src[y2t][x2l] < 0 ? 0 : 8;  // << 3
-
-			const int br = src[y2b][x2r] < 0 ? 0 : 8;
-			const int cr = src[y2c][x2r] < 0 ? 0 : 4;
-			const int bc = src[y2b][x2c] < 0 ? 0 : 2;
-			int sum = mask[cc + bc + cr + br];
-			const int bl = src[y2b][x2l] < 0 ? 0 : 8;
-			sum = (sum << 1) | mask[cc + bc + cl + bl];
-			const int tr = src[y2t][x2r] < 0 ? 0 : 8;
-			sum = (sum << 1) | mask[cc + tc + cr + tr];
-			dst[y][x] = (sum << 1) | mask[cc + tc + cl + tl];
-		});
-	} // ///////////////////////////////////////////////////////////////////////////////////////////////
-	void runA(const array<int, 2> & src, array<int, 2> & dst, const array<int, 1> & mask){
-		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
-			const int y = idx[0];
-			const int y2 = y * 2;
-			const int x = idx[1];
-			const int x2 = x * 2;
-
-			// yx: l-left, r-right
-			int tl = src[y2][x2];
-			int tr = src[y2][x2 + 1];
-			int bl = src[y2 + 1][x2];
-			int br = src[y2 + 1][x2 + 1];
-
-			int sum0 = mask[(tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3)];
-			int sum1 = mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
-			int sum2 = mask[((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3)];
-			int sum3 = mask[(tl >> 1) + ((tr >> 1) << 1) + ((bl >> 1) << 2) + ((br >> 1) << 3)];
-			dst[y][x] = (sum3 << 3) | (sum2 << 2) | (sum1 << 1) | sum0;
-		});
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void runD(const array<DrShiftQuadro, 2> & srcd, array<DrShiftQuadro, 2> & dstd, const array<int, 2> & dsta){
 		parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta](index<2> idx) restrict(amp){

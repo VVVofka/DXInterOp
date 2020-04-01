@@ -7,7 +7,7 @@ using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;
 class RunA{
 	public:
-	void Run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
+	static void run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
 		parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
 			const int y = idx[0];
 			const int y2 = y * 2;
