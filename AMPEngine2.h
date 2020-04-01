@@ -9,6 +9,7 @@
 #include "Masks.h"
 #include <DirectXMath.h>
 #include <iomanip>
+#include "RunA.h"
 //#include <ppl.h>
 //#define AMPDBG
 #define THETA 3.1415f/1024  
@@ -67,11 +68,13 @@ public:
 		return get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	void run(){
+		RunA runa;
 		//return;
 		int nlastlay = model.LaysCnt() - 1;
 		runAlast(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
-			runA(*var_areas[nlay], *var_areas[nlay - 1], *amask);
+			//runA(*var_areas[nlay], *var_areas[nlay - 1], *amask);
+			runa.Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 		}
 		// Back to down
 #ifdef AMPDBG
