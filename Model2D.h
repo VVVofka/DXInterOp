@@ -5,45 +5,14 @@
 #include <DirectXMath.h>
 #include "DXInterOp.h"
 #include "Sz2D.h"
+#include <DrShiftQuadro.h>
+#include <FLT2.h>
 //def in Model2D.h
 // float x,y
 float normal(int pos, int width) restrict(amp, cpu){
 	return float(2 * pos + 1) / width - 1.f;
 } // //////////////////////////////////////////////////////////////////////////////////////////////
 float normal(int pos, int width) restrict(amp, cpu);
-struct FLT2{
-	float y;
-	float x;
-	FLT2() : y(0), x(0){}
-	FLT2(float Y, float X) : x(X), y(Y){}
-	FLT2(float YX) : x(YX), y(YX){}
-	void operator +=(FLT2& other){ x += other.x; y += other.y; }
-	bool not0(){return x != 0 || y != 0;}
-	void dump(){
-		std::cout << "y:" << y << " x:" << x;
-	}
-}; // ********************************************************************************************
-
-struct DrShiftQuadro{
-	struct DrQuadro{
-		FLT2 items[4];
-		bool not0(){return items[0].not0() || items[1].not0() || items[2].not0() || items[3].not0();}
-		void dump(){
-			for(int i=0; i<4; i++){
-				printf("\ti:%d y:%+.1f x:%+.1f", i, items[i].y, items[i].x);
-			}
-		} // ///////////////////////////////////////////////////////////////////////////////////////
-	}; // ********************************************************************************************
-	DrQuadro shifts[4];
-	bool not0(){return shifts[0].not0() || shifts[1].not0() || shifts[2].not0() || shifts[3].not0();}
-	void dump(){
-		for(int sh = 0; sh < 4; sh++){
-			std::cout << "shift:" << sh << "\t";
-			shifts[sh].dump();
-			std::cout << std::endl;
-		}
-	} // //////////////////////////////////////////////////////////////////////////////////////////
-}; // ********************************************************************************************
 
 class Model2D{
 public:

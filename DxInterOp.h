@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 #pragma once
-#include <DirectXMath.h>
 #include <Windows.h>
 #define MYAREA
 //#define MY2D
@@ -28,14 +27,6 @@
     #define RETURN_IF_FAIL(x)    { HRESULT thr = (x); if (FAILED(thr)) { return E_FAIL; } }
 #endif
 
-struct Vertex2D{
-    Vertex2D(){Pos.x = Pos.y = 0;}
-    Vertex2D(float y, float x){ Pos.x = x; Pos.y = y; }
-    DirectX::XMFLOAT2 Pos;
-};
-struct Vertex3D {
-    DirectX::XMFLOAT3 Pos;
-};
 void setConsole(){
 #pragma warning(push)
 #pragma warning(disable : 4996)

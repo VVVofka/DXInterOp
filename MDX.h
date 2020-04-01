@@ -10,6 +10,7 @@
 #include <iterator>
 #include <exception>
 #include "DXInterOp.h"
+#include "Vertex.h"
 
 class MDX{
 protected:

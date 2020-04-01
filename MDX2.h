@@ -1,6 +1,7 @@
 #pragma once
 #include "MDX.h"
 #include "AMPEngine2.h"
+#include "Vertex.h"
 
 class MDX2 : public MDX {
 	AMPEngine2* g_pAMPComputeEngine = NULL;

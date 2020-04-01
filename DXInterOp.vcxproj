@@ -225,7 +225,9 @@
   <ItemGroup>
     <ClInclude Include="AMPEngine2.h" />
     <ClInclude Include="AMPEngine3.h" />
+    <ClInclude Include="DrShiftQuadro.h" />
     <ClInclude Include="DxInterOp.h" />
+    <ClInclude Include="FLT2.h" />
     <ClInclude Include="Masks.h" />
     <ClInclude Include="MDX.h" />
     <ClInclude Include="MDX2.h" />
@@ -233,7 +235,10 @@
     <ClInclude Include="Model2D.h" />
     <ClInclude Include="RunA.h" />
     <ClInclude Include="RunAlast.h" />
+    <ClInclude Include="RunD.h" />
+    <ClInclude Include="RunDlast.h" />
     <ClInclude Include="Sz2D.h" />
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXInterOp.cpp">
