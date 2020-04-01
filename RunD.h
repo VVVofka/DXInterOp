@@ -2,8 +2,8 @@
 #include <amp.h>
 #include <amp_math.h>
 #include <amp_graphics.h>
-#include <FLT2.h>
-#include <DrShiftQuadro.h>
+#include "Utils.h"
+#include "DrShiftQuadro.h"
 using namespace concurrency;
 using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;

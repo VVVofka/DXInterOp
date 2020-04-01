@@ -11,6 +11,8 @@
     <ClCompile Include="RunDlast.cpp">
       <Filter>Run</Filter>
     </ClCompile>
+    <ClCompile Include="AMPEng2.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine2.h" />
@@ -35,6 +37,9 @@
     <ClInclude Include="RunDlast.h">
       <Filter>Run</Filter>
     </ClInclude>
+    <ClInclude Include="DrShiftQuadro.h" />
+    <ClInclude Include="AMPEng2.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl" />

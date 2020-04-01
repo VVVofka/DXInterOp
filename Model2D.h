@@ -5,8 +5,9 @@
 #include <DirectXMath.h>
 #include "DXInterOp.h"
 #include "Sz2D.h"
-#include <DrShiftQuadro.h>
-#include <FLT2.h>
+#include "DrShiftQuadro.h"
+#include "Utils.h"
+
 //def in Model2D.h
 // float x,y
 
@@ -58,7 +59,7 @@ public:
 		size_t szarea = (sz.x + 1) * (sz.y + 1);
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		//v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // not use. Use last_dirs
-		last_dirs.resize(szarea, FLT2(0));
+		last_dirs.resize(szarea, FLT2(0, 0));
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		v_poss.push_back(std::vector<Vertex2D>());

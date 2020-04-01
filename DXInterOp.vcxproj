@@ -223,11 +223,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AMPEng2.h" />
     <ClInclude Include="AMPEngine2.h" />
     <ClInclude Include="AMPEngine3.h" />
     <ClInclude Include="DrShiftQuadro.h" />
     <ClInclude Include="DxInterOp.h" />
-    <ClInclude Include="FLT2.h" />
     <ClInclude Include="Masks.h" />
     <ClInclude Include="MDX.h" />
     <ClInclude Include="MDX2.h" />
@@ -238,15 +238,18 @@
     <ClInclude Include="RunD.h" />
     <ClInclude Include="RunDlast.h" />
     <ClInclude Include="Sz2D.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AMPEng2.cpp" />
     <ClCompile Include="DXInterOp.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
     </ClCompile>
     <ClCompile Include="RunA.cpp" />
     <ClCompile Include="RunD.cpp" />
     <ClCompile Include="RunDlast.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl">
