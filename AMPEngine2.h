@@ -10,7 +10,6 @@
 #include "Model2D.h"
 #include "Masks.h"
 #include "RunA.h"
-#include "RunAlast.h"
 #include "RunD.h"
 #include "RunDlast.h"
 //#include <ppl.h>
@@ -73,7 +72,7 @@ public:
 	void run(){
 		//return;
 		int nlastlay = model.LaysCnt() - 1;
-		RunAlast::run(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+		RunA::runlast(*var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 		for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 			RunA::run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 		}

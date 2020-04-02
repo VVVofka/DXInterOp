@@ -8,5 +8,9 @@ using namespace concurrency::direct3d;
 class RunA{
 	public:
 		static void run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
+		static void runlast(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
+
+		static void Run(int shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
+		static void RunLast(int shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
 }; // *********************************************************************************************************
 

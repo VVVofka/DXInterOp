@@ -7,6 +7,7 @@
 #include "Sz2D.h"
 #include "DrShiftQuadro.h"
 #include "Utils.h"
+#include "Vertex.h"
 
 //def in Model2D.h
 // float x,y

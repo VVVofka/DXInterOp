@@ -11,8 +11,10 @@
     <ClCompile Include="RunDlast.cpp">
       <Filter>Run</Filter>
     </ClCompile>
-    <ClCompile Include="AMPEng2.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="AMPEng2.cpp">
+      <Filter>Run</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine2.h" />
@@ -27,9 +29,6 @@
     <ClInclude Include="RunA.h">
       <Filter>Run</Filter>
     </ClInclude>
-    <ClInclude Include="RunAlast.h">
-      <Filter>Run</Filter>
-    </ClInclude>
     <ClInclude Include="RunD.h">
       <Filter>Run</Filter>
     </ClInclude>
@@ -38,8 +37,10 @@
       <Filter>Run</Filter>
     </ClInclude>
     <ClInclude Include="DrShiftQuadro.h" />
-    <ClInclude Include="AMPEng2.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="AMPEng2.h">
+      <Filter>Run</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl" />
