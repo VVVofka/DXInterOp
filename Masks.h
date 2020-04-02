@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 #include <string>
+#include "Utils.h"
 struct CellItem{
 	int diry;
 	int dirx;
@@ -47,11 +48,17 @@ struct CellItem{
 	std::string dumpx(){ return dump(enx, dirx); }
 	std::string dumpy(){ return dump(eny, diry); }
 	std::string dump(){ return dumpx() + dumpy(); }
+	FLT2 getFLT2(){ return FLT2(getfloat(eny, diry), getfloat(enx, dirx)); }
 	// ///////////////////////////////////////////////////////////
 	std::string dump(int en, int dir){
 		if(en == 1)
 			return dir == 0 ? "-1" : "+1";
 		return dir == 0 ? "-0" : "+0";
+	} // //////////////////////////////////////////////////////////////////
+	float getfloat(int en, int dir){
+		if(en == 1)
+			return dir == 0 ? -1.f : +1.f;
+		return 0.f;
 	} // //////////////////////////////////////////////////////////////////
 	CellItem reflectHor(){
 		int x = b2i(enx, dirx);
@@ -243,92 +250,50 @@ struct Block2D2{
 }; // **************************************************************************
 
 struct Blocks2D2{
+	FLT2 vin[16 * 16];
 	Block2D2 v[16] = {};
-	void Add(int index,
-			 int dirx00, int diry00, int dirx01, int diry01, int dirx10, int diry10, int dirx11, int diry11,
-			 int dirx02, int diry02, int dirx03, int diry03, int dirx12, int diry12, int dirx13, int diry13,
-			 int dirx20, int diry20, int dirx21, int diry21, int dirx30, int diry30, int dirx31, int diry31,
-			 int dirx22, int diry22, int dirx23, int diry23, int dirx32, int diry32, int dirx33, int diry33
-			 ){
-		v[index] = Block2D2((index >> 3) & 1, (index >> 2) & 1, (index >> 1) & 1, index & 1);
-		int nItem = 0, nCell = 0;
-		v[index].setDir(nCell, nItem++, dirx00, diry00);
-		v[index].setDir(nCell, nItem++, dirx01, diry01);
-		v[index].setDir(nCell, nItem++, dirx02, diry02);
-		v[index].setDir(nCell++, nItem, dirx03, diry03);
-		nItem = 0;
-		v[index].setDir(nCell, nItem++, dirx10, diry10);
-		v[index].setDir(nCell, nItem++, dirx11, diry11);
-		v[index].setDir(nCell, nItem++, dirx12, diry12);
-		v[index].setDir(nCell++, nItem, dirx13, diry13);
-		nItem = 0;
-		v[index].setDir(nCell, nItem++, dirx20, diry20);
-		v[index].setDir(nCell, nItem++, dirx21, diry21);
-		v[index].setDir(nCell, nItem++, dirx22, diry22);
-		v[index].setDir(nCell++, nItem, dirx23, diry23);
-		nItem = 0;
-		v[index].setDir(nCell, nItem++, dirx30, diry30);
-		v[index].setDir(nCell, nItem++, dirx31, diry31);
-		v[index].setDir(nCell, nItem++, dirx32, diry32);
-		v[index].setDir(nCell++, nItem, dirx33, diry33);
-		v[index].Dump("Main:");
-
-		Block2D2 hor = v[index].reflectHor();
-		Block2D2 ver = v[index].reflectVer();
-		Block2D2 dgl1 = v[index].reflectDiag1();
-		Block2D2 dgl2 = v[index].reflectDiag2();
-
-		Block2D2 vmodifs[7] = {hor, ver, dgl1, dgl2,
-				   hor.reflectDiag2(), ver.reflectDiag2(), dgl1.reflectDiag2()};
-
-		for(int m = 0; m < 7; m++){
-			int a = vmodifs[m].A();
-			v[a] = vmodifs[m];
-			//v[a].Dump(" add \tm:" + std::to_string(m) + " \ta:");
-		}
-	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	Blocks2D2(){  // x, y !!!
-	Add( 0b0000,
-		-1,-1,  0,-1,   0,-1,  1,-1,  // 0 0
-		-1, 0, -1,-1,   1,-1,  1, 0,
+		Add(0b0000,
+			-1, -1, 0, -1, 0, -1, 1, -1,  // 0 0
+			-1, 0, -1, -1, 1, -1, 1, 0,
 
-		-1, 0, -1, 1,   1, 1,  1, 0,  // 0 0
-		-1, 1,  0, 1,   0, 1,  1, 1
+			-1, 0, -1, 1, 1, 1, 1, 0,  // 0 0
+			-1, 1, 0, 1, 0, 1, 1, 1
 		);
-	Add( 0b0001,
-		 0, 0,  0, 0,   0, 1, -1, 1,  // 1 0
-		 0, 0,  0, 0,   0, 0, -1, 1,
+		Add(0b0001,
+			 0, 0,  0, 0,   0, 1, -1, 1,
+			 0, 0,  0, 0,   0, 0, -1, 1,  // 1 0
 
-		 1, 0,  0, 0,   0, 0, -1, 0,  // 0 0
-		 1,-1,  1,-1,   0,-1, -1,-1
+			 1, 0,  0, 0,   0, 0, -1, 0,  // 0 0
+			 1,-1,  1,-1,   0,-1, -1,-1
 		);
-	Add( 0b0011,
-		 0, 0,  0, 0,   0, 0,  0, 0,   // 1 1
-		 0, 0,  0, 0,   0, 0,  0, 0,
+		Add(0b0011,
+			 0, 0,  0, 0,   0, 0,  0, 0,
+			 0, 0,  0, 0,   0, 0,  0, 0,   // 1 1
 
-		-1, 0, -1, 0,   1, 0,  1, 0,   // 0 0
-		-1,-1, -1,-1,   1,-1,  1,-1
+			-1, 0, -1, 0,   1, 0,  1, 0,   // 0 0
+			-1,-1, -1,-1,   1,-1,  1,-1
 		);
-	Add( 0b0110,
-		 1, 1,  1,-1,   0, 0,  0, 0,   // 0 1
-		-1, 1,  1, 1,   0, 0,  0, 0,
+		Add(0b0110,
+			 1, 1, 1, -1, 0, 0, 0, 0,   // 0 1
+			-1, 1, 1, 1, 0, 0, 0, 0,
 
-		 0, 0,  0, 0,  -1,-1,  1,-1,   // 1 0
-		 0, 0,  0, 0,  -1, 1, -1,-1
+			 0, 0, 0, 0, -1, -1, 1, -1,   // 1 0
+			 0, 0, 0, 0, -1, 1, -1, -1
 		);
-	Add( 0b0111,
-		 0, 0,  0, 0,   0, 0,  0, 0,   // 1 1
-		 0, 0,  0, 0,   0, 0,  0, 0,
+		Add(0b0111,
+			 0, 0, 0, 0, 0, 0, 0, 0,   // 1 1
+			 0, 0, 0, 0, 0, 0, 0, 0,
 
-		 0, 0,  0, 0,   1, 1,  1,-1,   // 1 0
-		 0, 0,  0, 0,  -1, 1,  1, 1
+			 0, 0, 0, 0, 1, 1, 1, -1,   // 1 0
+			 0, 0, 0, 0, -1, 1, 1, 1
 		);
-	Add( 0b1111,
-		-1,-1,  0,-1,   0,-1,  1,-1,  // 1 1
-		-1, 0, -1,-1,   1,-1,  1, 0,
+		Add(0b1111,
+			-1, -1, 0, -1, 0, -1, 1, -1,  // 1 1
+			-1, 0, -1, -1, 1, -1, 1, 0,
 
-		-1, 0, -1, 1,   1, 1,  1, 0,  // 1 1
-		-1, 1,  0, 1,   0, 1,  1, 1
+			-1, 0, -1, 1, 1, 1, 1, 0,  // 1 1
+			-1, 1, 0, 1, 0, 1, 1, 1
 		);
 
 		/* Formatted
@@ -376,6 +341,53 @@ struct Blocks2D2{
 		);
 
 		*/
+		for(int n = 0, j = 0; n < 16; n++)
+			for(int ncell = 0; ncell < 4; ncell++)
+				for(int nitem = 0; nitem < 4; nitem++)
+					vin[j++] = v[n].v[ncell].dirs[nitem].getFLT2();
+	} // ///////////////////////////////////////////////////////////////////////////////////////////////
+	void Add(int index,
+			 int dirx00, int diry00, int dirx01, int diry01, int dirx10, int diry10, int dirx11, int diry11,
+			 int dirx02, int diry02, int dirx03, int diry03, int dirx12, int diry12, int dirx13, int diry13,
+			 int dirx20, int diry20, int dirx21, int diry21, int dirx30, int diry30, int dirx31, int diry31,
+			 int dirx22, int diry22, int dirx23, int diry23, int dirx32, int diry32, int dirx33, int diry33
+	){
+		v[index] = Block2D2((index >> 3) & 1, (index >> 2) & 1, (index >> 1) & 1, index & 1);
+		int nItem = 0, nCell = 0;
+		v[index].setDir(nCell, nItem++, dirx00, diry00);
+		v[index].setDir(nCell, nItem++, dirx01, diry01);
+		v[index].setDir(nCell, nItem++, dirx02, diry02);
+		v[index].setDir(nCell++, nItem, dirx03, diry03);
+		nItem = 0;
+		v[index].setDir(nCell, nItem++, dirx10, diry10);
+		v[index].setDir(nCell, nItem++, dirx11, diry11);
+		v[index].setDir(nCell, nItem++, dirx12, diry12);
+		v[index].setDir(nCell++, nItem, dirx13, diry13);
+		nItem = 0;
+		v[index].setDir(nCell, nItem++, dirx20, diry20);
+		v[index].setDir(nCell, nItem++, dirx21, diry21);
+		v[index].setDir(nCell, nItem++, dirx22, diry22);
+		v[index].setDir(nCell++, nItem, dirx23, diry23);
+		nItem = 0;
+		v[index].setDir(nCell, nItem++, dirx30, diry30);
+		v[index].setDir(nCell, nItem++, dirx31, diry31);
+		v[index].setDir(nCell, nItem++, dirx32, diry32);
+		v[index].setDir(nCell++, nItem, dirx33, diry33);
+		//v[index].Dump("Main:");
+
+		Block2D2 hor = v[index].reflectHor();
+		Block2D2 ver = v[index].reflectVer();
+		Block2D2 dgl1 = v[index].reflectDiag1();
+		Block2D2 dgl2 = v[index].reflectDiag2();
+
+		Block2D2 vmodifs[7] = {hor, ver, dgl1, dgl2,
+				   hor.reflectDiag2(), ver.reflectDiag2(), dgl1.reflectDiag2()};
+
+		for(int m = 0; m < 7; m++){
+			int a = vmodifs[m].A();
+			v[a] = vmodifs[m];
+			//v[a].Dump(" add \tm:" + std::to_string(m) + " \ta:");
+		}
 	} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	std::string dump(){
 		std::string ret;

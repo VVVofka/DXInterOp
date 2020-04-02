@@ -69,3 +69,38 @@ void RunD::run(const array<DrShiftQuadro, 2>& srcd, array<DrShiftQuadro, 2>& dst
 		}
 	});
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
+void RunD::Run(const array<DrShiftQuadro, 2>& srcd, 
+               array<DrShiftQuadro, 2>& dstd, 
+               const array<int, 2>& dsta, 
+               const array<FLT2, 1>& masksD){
+	parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &masksD](index<2> idx) restrict(amp){
+		const int y = idx[0];
+		const int x = idx[1];
+		const int y2 = y * 2;
+		const int x2 = x * 2;
+
+		int tl = dsta[y2][x2];
+		int tr = dsta[y2][x2 + 1];
+		int bl = dsta[y2 + 1][x2];
+		int br = dsta[y2 + 1][x2 + 1];
+		int mask[4]; // shift
+		mask[0] = ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
+		mask[1] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+		mask[2] = (((tl >>= 1) & 1) + (((tr >>= 1) & 1) << 1) + (((bl >>= 1) & 1) << 2) + (((br >>= 1) & 1) << 3));
+		mask[3] = ((tl >> 1) + ((tr >> 1) << 1) + ((bl >> 1) << 2) + ((br >> 1) << 3));
+
+		auto srcdcell = &srcd[y][x];
+		for(int shift = 0; shift < 4; shift++){
+			int nmask = 16 * mask[shift];
+			auto srcsh = &srcdcell->shifts[shift];
+			for(int ncell = 0; ncell < 4; ncell++){
+				FLT2 src = srcsh->items[ncell];
+				auto item = &dstd[y2 + ncell / 2][x2 + ncell % 2].shifts[shift];
+				{FLT2* dst = &item->items[0]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
+				{FLT2* dst = &item->items[1]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
+				{FLT2* dst = &item->items[2]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
+				{FLT2* dst = &item->items[3]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
+			}
+		}
+	});
+} // ///////////////////////////////////////////////////////////////////////////////////////////////

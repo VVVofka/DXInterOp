@@ -10,6 +10,7 @@
 #include "RunA.h"
 #include "RunD.h"
 #include "RunDlast.h"
+#include "Masks.h"
 
 extern Model2D model;
 
@@ -24,6 +25,7 @@ class AMPEng2{
 	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
 	std::unique_ptr<array<FLT2, 2>> last_dirs;
 	std::unique_ptr<array<int, 1>> amask;
+	std::unique_ptr<array<FLT2, 1>> dmask;
 
 public:
 	AMPEng2(ID3D11Device* d3ddevice) : m_accl_view(Concurrency::direct3d::create_accelerator_view(d3ddevice)){
@@ -46,5 +48,6 @@ private:
 	std::uniform_int_distribution<int> distLastAY, distLastAX;
 	int nlastlay;  // N last lay
 	const int AMask[16] = {0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1};
+	Blocks2D2 blocks2D2;
 }; // *******************************************************************************************************
 
