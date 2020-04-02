@@ -26,7 +26,8 @@ class AMPEng2{
 	std::unique_ptr<array<int, 1>> amask;
 
 public:
-	AMPEng2(ID3D11Device* d3ddevice) : m_accl_view(Concurrency::direct3d::create_accelerator_view(d3ddevice)){}
+	AMPEng2(ID3D11Device* d3ddevice) : m_accl_view(Concurrency::direct3d::create_accelerator_view(d3ddevice)){
+	} // /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void initialize_data();
 	void run();
@@ -39,7 +40,11 @@ private:
 						// 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
 						// 00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
 						// 00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
+	
+	std::random_device rd;   // non-deterministic generator
+	std::mt19937 gen;  // to seed mersenne twister. rand: gen(rd())
+	std::uniform_int_distribution<int> distLastAY, distLastAX;
+	int nlastlay;  // N last lay
 	const int AMask[16] = {0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1};
-	std::vector<int> shifts;
 }; // *******************************************************************************************************
 

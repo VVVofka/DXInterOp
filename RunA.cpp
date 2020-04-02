@@ -51,17 +51,15 @@ void RunA::runlast(const array<int, 2>& src, array<int, 2>& dst, const array<int
 	});
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-void RunA::RunLast(int shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
-	assert(shift < 4);
-	const int shifty = shift >> 1;
-	const int shiftx = shift & 1;
+void RunA::RunLast(INT2 shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
+	int shifty = shift.y, shiftx = shift.x;
 	parallel_for_each(dst.extent, [&dst, &src, &mask, shifty, shiftx](index<2> idx) restrict(amp){
 		const int y = idx[0];
-		const int y0 = y * 2 + shifty;
+		const int y0 = (y * 2 + shifty) % src.extent[0];
 		const int y1 = (y0 + 1) % src.extent[0];
 
 		const int x = idx[1];
-		const int x0 = x * 2 + shiftx;
+		const int x0 = (x * 2 + shiftx) % src.extent[1];
 		const int x1 = (x0 + 1) % src.extent[1];
 
 		// yx: l-left, r-right, t - top, b - bottom
@@ -72,17 +70,14 @@ void RunA::RunLast(int shift, const array<int, 2>& src, array<int, 2>& dst, cons
 		dst[y][x] = mask[tl + tr + bl + br];
 	});
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
-void RunA::Run(int shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
-	assert(shift < 4);
-	const int shifty = shift >> 1;
-	const int shiftx = shift & 1;
-	parallel_for_each(dst.extent, [&dst, &src, &mask, shifty, shiftx](index<2> idx) restrict(amp){
+void RunA::Run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
+	parallel_for_each(dst.extent, [&dst, &src, &mask](index<2> idx) restrict(amp){
 		const int y = idx[0];
-		const int y0 = y * 2 + shifty;
+		const int y0 = y * 2;
 		const int y1 = (y0 + 1) % src.extent[0];
 
 		const int x = idx[1];
-		const int x0 = x * 2 + shiftx;
+		const int x0 = x * 2;
 		const int x1 = (x0 + 1) % src.extent[1];
 
 		int adr = (((((src[y1][x1] << 1) | src[y1][x0]) << 1) | src[y0][x1]) << 1) | src[y0][x0];

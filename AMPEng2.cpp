@@ -1,9 +1,12 @@
 #include "AMPEng2.h"
 void AMPEng2::initialize_data(){
+	gen = std::mt19937(2020);  // to seed mersenne twister. rand: gen(rd())
+	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY());
+	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX());
+	nlastlay = model.LaysCnt() - 1; // N last lay
+
 	//setConsole();
 	auto layscnt = model.v_areas.size();
-	shifts.clear();
-	shifts.resize(layscnt);
 	for(size_t nlay = 0; nlay < layscnt; nlay++){
 		int sizey = model.sizeY(nlay);
 		int sizex = model.sizeX(nlay);
@@ -24,18 +27,11 @@ void AMPEng2::initialize_data(){
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 void AMPEng2::run(){
 	//return;
-	std::random_device rd;   // non-deterministic generator
-	std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
-	std::uniform_int_distribution<int> dist(0, 3);
-
-	int nlastlay = model.LaysCnt() - 1;
-	int rnd = dist(gen);
-	shifts[nlastlay] = rnd;
+	INT2 rnd = INT2(distLastAY(gen), distLastAX(gen));
 	RunA::RunLast(rnd, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+
 	for(int nlay = nlastlay - 1; nlay > 0; nlay--){
-		rnd = dist(gen);
-		shifts[nlay] = rnd;
-		RunA::Run(rnd, *var_areas[nlay], *var_areas[nlay - 1], *amask);
+		RunA::Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 	}
 	// Back to down
 	for(int nlay = 1; nlay < nlastlay; nlay++){
