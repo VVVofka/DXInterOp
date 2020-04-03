@@ -16,7 +16,7 @@ class Model2D{
 public:
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
-	std::vector<std::vector<DrShiftQuadro>> v_shiftdirs;
+	//std::vector<std::vector<DrShiftQuadro>> v_shiftdirs;
 	std::vector<std::vector<DrQuadro>> v_dirs;
 	std::vector<FLT2> last_dirs;
 
@@ -35,7 +35,8 @@ public:
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
-		v_shiftdirs.reserve(RESERV_LAYS_CNT);
+		//v_shiftdirs.reserve(RESERV_LAYS_CNT);
+		v_dirs.reserve(RESERV_LAYS_CNT);
 		vsz.reserve(RESERV_LAYS_CNT);
 		int nlay = 0;
 		Sz2D sz(minsz);
@@ -48,7 +49,8 @@ public:
 			v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 			for(auto q : v_areas[nlay]) q = -1;
 
-			v_shiftdirs.push_back(std::vector<DrShiftQuadro>(szarea));
+			//v_shiftdirs.push_back(std::vector<DrShiftQuadro>(szarea));
+			v_dirs.push_back(std::vector<DrQuadro>(szarea));
 
 			v_poss.push_back(std::vector<Vertex2D>());
 
