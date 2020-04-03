@@ -28,7 +28,7 @@ public:
 	int sizeY(){ return vsz[vsz.size() - 1].y; }
 	int sizeX(int nlay){ return vsz[nlay].x; }
 	int sizeX(){ return vsz[vsz.size() - 1].x; }
-	int LaysCnt(){ return v_areas.size(); }
+	int LaysCnt(){ return (int)v_areas.size(); }
 	std::vector<Vertex2D>* posLast(){return &v_poss[v_poss.size()-1];}
 
 	void Create(Sz2D& minsz, int maxszXY){
@@ -45,7 +45,7 @@ public:
 		while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
 			vsz.push_back(sz);
 
-			size_t szarea = sz.x * sz.y;
+			size_t szarea = size_t(sz.x * sz.y);
 			v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 			for(auto q : v_areas[nlay]) q = -1;
 
@@ -67,7 +67,7 @@ public:
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		v_poss.push_back(std::vector<Vertex2D>());
-		fillrnd(nlay, szarea, 0.05);
+		fillrnd(nlay, szarea, 0.06);
 		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, Sz2D sizes){
@@ -82,15 +82,15 @@ public:
 	void fillrnd(int nlay, size_t szarea, double kFill){
 		std::random_device rd;   // non-deterministic generator
 		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
-		std::uniform_int_distribution<int> dist(0, szarea - 1);
-		size_t szpos = int(szarea * kFill + 0.5);
+		std::uniform_int_distribution<int> dist(0, int(szarea) - 1);
+		size_t szpos = size_t(szarea * kFill + 0.5);
 		v_poss[nlay].reserve(szpos);
 		while(v_poss[nlay].size() < szpos){
 			int curpos;
 			do{
 				curpos = dist(gen);
 			} while(v_areas[nlay][curpos] >= 0);
-			v_areas[nlay][curpos] = v_poss[nlay].size(); // 0 ... szpos-1
+			v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size(); // 0 ... szpos-1
 
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);
 			v_poss[nlay].push_back(vert2);
@@ -101,7 +101,7 @@ public:
 		//{1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44};
 		{0, 8, 16, 4*17, 4*17+8, 4*17+16, 8*17, 8*17+8, 8*17+16};
 		for(auto curpos : vcurpos){
-			v_areas[nlay][curpos] = v_poss[nlay].size();
+			v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size();
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);
 			v_poss[nlay].push_back(vert2);
 		}

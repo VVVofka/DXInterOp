@@ -11,7 +11,7 @@ public:
                        D3D_PRIMITIVE_TOPOLOGY Primitive = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST
     ) {// Create Direct3D device and shaders. Call from wWinMain()
         HRESULT hr = MDX::InitDevice(ghWnd, Primitive);
-        g_numVertices = vertices.size();
+        g_numVertices = (unsigned int)vertices.size();
         RETURN_IF_FAIL(MDX::CreateSwapChain());
 #ifdef MYAREA
         RETURN_IF_FAIL(CreateComputeShader());
