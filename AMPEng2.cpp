@@ -6,7 +6,7 @@ void AMPEng2::initialize_data(){
 	nlastlay = model.LaysCnt() - 1; // N last lay
 
 	//setConsole();
-	auto layscnt = model.v_areas.size();
+	int layscnt = (int)model.v_areas.size();
 	for(int nlay = 0; nlay < layscnt; nlay++){
 		int sizey = model.sizeY(nlay);
 		int sizex = model.sizeX(nlay);

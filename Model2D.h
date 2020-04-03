@@ -38,7 +38,7 @@ public:
 		//v_shiftdirs.reserve(RESERV_LAYS_CNT);
 		v_dirs.reserve(RESERV_LAYS_CNT);
 		vsz.reserve(RESERV_LAYS_CNT);
-		int nlay = 0;
+		size_t nlay = 0;
 		Sz2D sz(minsz);
 		//if(sz.y & 1 || sz.x & 1)			sz *= 2;
 		int szmaxxy = sz.Max();
@@ -59,10 +59,9 @@ public:
 		} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 
 		 // Last lay
-		vsz.push_back(Sz2D(sz.y + 1, sz.x + 1));
-		size_t szarea = (sz.x + 1) * (sz.y + 1);
+		vsz.push_back(Sz2D(sz.y, sz.x));
+		size_t szarea = sz.x * sz.y;
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
-		//v_dirs.push_back(std::vector<DrShiftQuadro>(0)); // not use. Use last_dirs
 		last_dirs.resize(szarea, FLT2(0, 0));
 
 		// fill v_poss (for screen only) & v_areas for the last lay

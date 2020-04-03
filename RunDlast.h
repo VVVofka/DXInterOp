@@ -9,23 +9,17 @@
 using namespace concurrency;
 using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;
+
 float normal(int pos, int width) restrict(amp, cpu);
+
 class RunDlast{
-
 public:
-
-	static void run(const array<DrShiftQuadro, 2>& srcd,
-				  array<Vertex2D, 1>& dstpos,
-				  array<int, 2>& dsta,
-				  array<FLT2, 2>& dstd,
-				  const int szy,
-                  const int szx);
 	static void Run(INT2 shift,
-                  const array<DrQuadro, 2>& srcd,
-				  array<Vertex2D, 1>& dstpos,
-				  array<int, 2>& dsta,
-				  array<FLT2, 2>& dstd,
-				  const int szy,
-                  const int szx);
+                    const array<DrQuadro, 2>& srcd,
+				    array<Vertex2D, 1>& dstpos,
+				    array<int, 2>& dsta,
+				    array<FLT2, 2>& dstd,
+				    const int szy,
+                    const int szx);
 
 }; // ***************************************************************************************************

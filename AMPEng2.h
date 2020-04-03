@@ -46,7 +46,7 @@ private:
 	std::random_device rd;   // non-deterministic generator
 	std::mt19937 gen;  // to seed mersenne twister. rand: gen(rd())
 	std::uniform_int_distribution<int> distLastAY, distLastAX;
-	int nlastlay;  // N last lay
+	int nlastlay = -1;  // N last lay
 	const int AMask[16] = {0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1};
 	Blocks2D2 blocks2D2;
 }; // *******************************************************************************************************
