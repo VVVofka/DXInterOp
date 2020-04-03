@@ -17,7 +17,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AMPEngine2.h" />
     <ClInclude Include="AMPEngine3.h" />
     <ClInclude Include="DxInterOp.h" />
     <ClInclude Include="Masks.h" />

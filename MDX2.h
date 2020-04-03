@@ -1,11 +1,9 @@
 #pragma once
 #include "MDX.h"
-#include "AMPEngine2.h"
 #include "AMPEng2.h"
 #include "Vertex.h"
 
 class MDX2 : public MDX {
-	//AMPEngine2* g_pAMPComputeEngine = NULL;
 	AMPEng2* g_pAMPComputeEngine = NULL;
 public:
     HRESULT InitDevice(HWND ghWnd,
@@ -30,7 +28,6 @@ public:
 private:
 #ifdef MYAREA
  HRESULT CreateComputeShader() {
-        //g_pAMPComputeEngine = new AMPEngine2(g_pd3dDevice);
         g_pAMPComputeEngine = new AMPEng2(g_pd3dDevice);
         g_pAMPComputeEngine->initialize_data();
         //g_pAMPComputeEngine->Create(4, 3, 1000, 0.33);

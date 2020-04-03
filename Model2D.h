@@ -67,7 +67,7 @@ public:
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		v_poss.push_back(std::vector<Vertex2D>());
-		fillrnd(nlay, szarea, 0.25);
+		fillrnd(nlay, szarea, 0.05);
 		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, Sz2D sizes){

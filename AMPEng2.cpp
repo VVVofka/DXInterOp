@@ -16,9 +16,6 @@ void AMPEng2::initialize_data(){
 			(new array<int, 2>(sizey, sizex, model.v_areas[nlay].begin(), m_accl_view));
 
 		if(nlay < layscnt - 1){
-			//var_shiftdirs.push_back(std::unique_ptr<array<DrShiftQuadro, 2>>());
-			//var_shiftdirs[nlay] = std::unique_ptr<array<DrShiftQuadro, 2>>
-			//	(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_shiftdirs[nlay].begin(), m_accl_view));
 			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>());
 			var_dirs[nlay] = std::unique_ptr<array<DrQuadro, 2>>
 				(new array<DrQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
