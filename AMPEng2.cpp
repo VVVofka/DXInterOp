@@ -16,9 +16,12 @@ void AMPEng2::initialize_data(){
 			(new array<int, 2>(sizey, sizex, model.v_areas[nlay].begin(), m_accl_view));
 
 		if(nlay < layscnt - 1){
-			var_dirs.push_back(std::unique_ptr<array<DrShiftQuadro, 2>>());
-			var_dirs[nlay] = std::unique_ptr<array<DrShiftQuadro, 2>>
-				(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
+			var_shiftdirs.push_back(std::unique_ptr<array<DrShiftQuadro, 2>>());
+			var_shiftdirs[nlay] = std::unique_ptr<array<DrShiftQuadro, 2>>
+				(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_shiftdirs[nlay].begin(), m_accl_view));
+			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>());
+			var_dirs[nlay] = std::unique_ptr<array<DrQuadro, 2>>
+				(new array<DrQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
 		}
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(model.posLast()->size(), model.posLast()->begin(), m_accl_view));
@@ -36,7 +39,7 @@ void AMPEng2::run(){
 	}
 	// Back to down
 	for(int nlay = 1; nlay < nlastlay; nlay++){
-		RunD::Run(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *dmask);
+		RunD::Run(*var_shiftdirs[nlay - 1], *var_shiftdirs[nlay], *var_areas[nlay], *dmask);
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}

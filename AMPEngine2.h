@@ -58,7 +58,7 @@ public:
 			if(nlay < layscnt - 1){
 				var_dirs.push_back(std::unique_ptr<array<DrShiftQuadro, 2>>());
 				var_dirs[nlay] = std::unique_ptr<array<DrShiftQuadro, 2>>
-					(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
+					(new array<DrShiftQuadro, 2>(sizey, sizex, model.v_shiftdirs[nlay].begin(), m_accl_view));
 			}
 		}
 		m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(model.posLast()->size(), model.posLast()->begin(), m_accl_view));

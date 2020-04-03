@@ -22,7 +22,8 @@ class AMPEng2{
 
 	std::unique_ptr<array<Vertex2D, 1>>	m_data; // for screen
 	std::vector<std::unique_ptr<array<int, 2>>> var_areas;
-	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_dirs;
+	std::vector<std::unique_ptr<array<DrShiftQuadro, 2>>> var_shiftdirs;
+	std::vector<std::unique_ptr<array<DrQuadro, 2>>> var_dirs;
 	std::unique_ptr<array<FLT2, 2>> last_dirs;
 	std::unique_ptr<array<int, 1>> amask;
 	std::unique_ptr<array<FLT2, 1>> dmask;
