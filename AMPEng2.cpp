@@ -39,7 +39,7 @@ void AMPEng2::run(){
 	}
 	// Back to down
 	for(int nlay = 1; nlay < nlastlay; nlay++){
-		RunD::Run(*var_shiftdirs[nlay - 1], *var_shiftdirs[nlay], *var_areas[nlay], *dmask);
+		RunD::Run(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *dmask);
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
