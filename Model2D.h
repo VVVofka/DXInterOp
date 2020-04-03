@@ -31,7 +31,7 @@ public:
 	int LaysCnt(){ return (int)v_areas.size(); }
 	std::vector<Vertex2D>* posLast(){return &v_poss[v_poss.size()-1];}
 
-	void Create(Sz2D& minsz, int maxszXY){
+	void Create(Sz2D& minsz, int maxszXY, double kRnd){
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
@@ -66,7 +66,7 @@ public:
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		v_poss.push_back(std::vector<Vertex2D>());
-		fillrnd(nlay, szarea, 0.06);
+		fillrnd(nlay, szarea, kRnd);
 		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, Sz2D sizes){

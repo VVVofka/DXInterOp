@@ -72,7 +72,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 #else 
 	Sz2D szlay0 = Sz2D(1, 2);
-	model.Create(szlay0, 1024 * 1); //8 - ???
+	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
+	model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
 		mdx.CleanupDevice();
 		return E_FAIL;
