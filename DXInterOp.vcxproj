@@ -227,6 +227,7 @@
     <ClInclude Include="AMPEngine3.h" />
     <ClInclude Include="DrShiftQuadro.h" />
     <ClInclude Include="DxInterOp.h" />
+    <ClInclude Include="Ini.h" />
     <ClInclude Include="Masks.h" />
     <ClInclude Include="MDX.h" />
     <ClInclude Include="MDX2.h" />
