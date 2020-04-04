@@ -34,6 +34,13 @@ void RunDlast::Run(INT2 shift,
 	//parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
 	//	int y = idx[0];
 	//	int x = idx[1];
+	//	dstd[y][x].y += 1.f + y / (-0.5f * dstd.extent[0]);
+	//	dstd[y][x].x += 1.f + x / (-0.5f * dstd.extent[1]);
+	//}); // parallel_for_each(srcd.extent,
+
+	//parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
+	//	int y = idx[0];
+	//	int x = idx[1];
 	//	float diry = dstd[y][x].y;
 	//	float absdiry = fabsf(diry);
 	//	float dirx = dstd[y][x].x;

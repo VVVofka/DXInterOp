@@ -29,7 +29,7 @@ public:
 	int sizeX(int nlay){ return vsz[nlay].x; }
 	int sizeX(){ return vsz[vsz.size() - 1].x; }
 	int LaysCnt(){ return (int)v_areas.size(); }
-	std::vector<Vertex2D>* posLast(){return &v_poss[v_poss.size()-1];}
+	std::vector<Vertex2D>* posLast(){ return &v_poss[v_poss.size() - 1]; }
 
 	void Create(Sz2D& minsz, int maxszXY, double kRnd){
 		const int RESERV_LAYS_CNT = 16;
@@ -40,7 +40,6 @@ public:
 		vsz.reserve(RESERV_LAYS_CNT);
 		size_t nlay = 0;
 		Sz2D sz(minsz);
-		//if(sz.y & 1 || sz.x & 1)			sz *= 2;
 		int szmaxxy = sz.Max();
 		while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
 			vsz.push_back(sz);
@@ -49,7 +48,6 @@ public:
 			v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 			for(auto q : v_areas[nlay]) q = -1;
 
-			//v_shiftdirs.push_back(std::vector<DrShiftQuadro>(szarea));
 			v_dirs.push_back(std::vector<DrQuadro>(szarea));
 
 			v_poss.push_back(std::vector<Vertex2D>());
@@ -66,6 +64,7 @@ public:
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		v_poss.push_back(std::vector<Vertex2D>());
+		//fillrndnorm(nlay, szarea, kRnd);
 		fillrnd(nlay, szarea, kRnd);
 		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
@@ -84,10 +83,25 @@ public:
 		std::uniform_int_distribution<int> dist(0, int(szarea) - 1);
 		size_t szpos = size_t(szarea * kFill + 0.5);
 		v_poss[nlay].reserve(szpos);
+
+		int szy = vsz[nlay].y, szx = vsz[nlay].x;
+		std::normal_distribution<> distry(szy * 0.5, szy * 0.15);
+		std::normal_distribution<> distrx(szx * 0.5, szx * 0.1);
+
 		while(v_poss[nlay].size() < szpos){
 			int curpos;
 			do{
-				curpos = dist(gen);
+				//curpos = dist(gen);
+				int y, x;
+				do{
+					y = (int)distry(gen);
+				} while(y < 0 || y >= szy);
+				do{
+					x = (int)distrx(gen);
+				} while(x < 0 || x >= szx);
+
+				curpos = y * szx + x;
+				assert(curpos < (int)v_areas[nlay].size());
 			} while(v_areas[nlay][curpos] >= 0);
 			v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size(); // 0 ... szpos-1
 
@@ -95,10 +109,36 @@ public:
 			v_poss[nlay].push_back(vert2);
 		} // 	while(v_poss[nlay].size() < szpos)
 	} // /////////////////////////////////////////////////////////////////////////////////
+	void fillrndnorm(int nlay, size_t szarea, double kFill){
+		std::random_device rd;   // non-deterministic generator
+		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
+		int szy = vsz[nlay].y, szx = vsz[nlay].x;
+		std::normal_distribution<> distry(szy * 0.5, szy * 0.25);
+		std::normal_distribution<> distrx(szx * 0.5, szx * 0.25);
+		size_t szpos = size_t(szarea * kFill + 0.5);
+		v_poss[nlay].reserve(szpos);
+
+		for(int j = 0; j<int(szpos); j++){
+			int y, x;
+			do{
+				y = (int)distry(gen);
+			} while(y < 0 || y >= szy);
+			do{
+				x = (int)distrx(gen);
+			} while(x < 0 || x >= szx);
+
+			int curpos = y * szx + x;
+			assert(curpos < (int)v_areas[nlay].size());
+
+			v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size();
+			Vertex2D vert2 = norm(curpos, vsz[nlay]);
+			v_poss[nlay].push_back(vert2);
+		}
+	} // /////////////////////////////////////////////////////////////////////////////////
 	void filltest(int nlay){
 		int vcurpos[] =
 		//{1, 4, 9, 11, 14, 19, 20, 21, 24, 25, 29, 34, 44};
-		{0, 8, 16, 4*17, 4*17+8, 4*17+16, 8*17, 8*17+8, 8*17+16};
+		{0, 8, 16, 4 * 17, 4 * 17 + 8, 4 * 17 + 16, 8 * 17, 8 * 17 + 8, 8 * 17 + 16};
 		for(auto curpos : vcurpos){
 			v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size();
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);
