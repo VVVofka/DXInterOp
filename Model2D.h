@@ -85,8 +85,8 @@ public:
 		v_poss[nlay].reserve(szpos);
 
 		int szy = vsz[nlay].y, szx = vsz[nlay].x;
-		std::normal_distribution<> distry(szy * 0.5, szy * 0.15);
-		std::normal_distribution<> distrx(szx * 0.5, szx * 0.1);
+		std::normal_distribution<> distry(szy * 0.5, szy * 0.1);
+		std::normal_distribution<> distrx(szx * 0.5, szx * 0.15);
 
 		while(v_poss[nlay].size() < szpos){
 			int curpos;
