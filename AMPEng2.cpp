@@ -5,7 +5,6 @@ void AMPEng2::initialize_data(){
 	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX());
 	nlastlay = model.LaysCnt() - 1; // N last lay
 
-	//setConsole();
 	int layscnt = (int)model.v_areas.size();
 	for(int nlay = 0; nlay < layscnt; nlay++){
 		int sizey = model.sizeY(nlay);
@@ -25,22 +24,111 @@ void AMPEng2::initialize_data(){
 	last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 	amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, AMask, m_accl_view));
 	dmask = std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(16 * 16, blocks2D2.vin, m_accl_view));
+	//setConsole();
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 void AMPEng2::run(){
 	//return;
-	INT2 rnd = INT2(distLastAY(gen), distLastAX(gen));
-	RunA::RunLast(rnd, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+	INT2 shift = INT2(distLastAY(gen), distLastAX(gen));
+	//printf("\nshift = y:%d x:%d\n", shift.y, shift.x);	dumpA(nlastlay);
+	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 
 	for(int nlay = nlastlay - 1; nlay > 0; nlay--){
+		//dumpA(nlay);
 		RunA::Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 	}
+	//dumpA(0);
 	// Back to down
 	for(int nlay = 1; nlay < nlastlay; nlay++){
 		RunD::Run(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *dmask);
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
-	array<FLT2, 2>& dirs = *last_dirs;
-	RunDlast::Run(rnd, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], dirs, model.sizeY(), model.sizeX());
+	RunDlast::Run(shift, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeY(), model.sizeX());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+void AMPEng2::dumpA(int nlay){
+	const char separ[] = " ";
+	if(nlay < 0) nlay = model.LaysCnt() - 1;
+	setConsole();
+	array<int, 2> av(*var_areas[nlay].get());
+	std::cout << "A[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+	if(nlay == int(var_areas.size() - 1)){
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++){
+				int q = av[y][x];
+				if(q < 0)
+					std::cout << " . ";
+				else
+					printf("%2d ", q);
+			}
+			std::cout << std::endl;
+		}
+	} else{
+		for(int y = 0; y < av.extent[0]; y++){
+			for(int x = 0; x < av.extent[1]; x++){
+				int q = av[y][x];
+				assert(q == 0 || q == 1);
+				if(q < 0)
+					std::cout << ". ";
+				else
+					std::cout << q << separ;
+					//std::cout << (q >> 3) << (1 & (q >> 2)) << (1 & (q >> 1)) << (1 & q) << separ;
+			}
+			std::cout << std::endl;
+		}
+	}
+} // ////////////////////////////////////////////////////////////////
+void AMPEng2::dumpA(){
+	setConsole();
+	for(int nlay = 0; nlay < model.LaysCnt(); nlay++){
+		dumpA(nlay);
+		std::cout << std::endl;
+	}
+} // ////////////////////////////////////////////////////////////////////////////////////////
+void AMPEng2::dumpD(int nlay){
+	if(nlay < 0) nlay = model.LaysCnt() - 1;
+	setConsole();
+	array<DrQuadro, 2> av(*var_dirs[nlay].get());
+	std::cout << "Dirs[" << nlay << "] y*x: " << av.extent[0] << "*" << av.extent[1] << std::endl;
+	for(int y = 0; y < av.extent[0]; y++){
+		for(int x = 0; x < av.extent[1]; x++){
+			//if(av[y][x].not0()){
+			std::cout << " Y=" << y << " X=" << x << std::endl;
+			av[y][x].dump();
+			std::cout << std::endl;
+		//}
+		}
+	}
+	std::cout << std::endl;
+} // ////////////////////////////////////////////////////////////////
+void AMPEng2::dumpD(){
+	for(int nlay = 0; nlay < model.LaysCnt() - 1; nlay++)
+		dumpD(nlay);
+	dumpDLast();
+} // ////////////////////////////////////////////////////////////////////////////////////////
+void AMPEng2::dumpDLast(){
+	int szy = last_dirs->extent[0],
+		szx = last_dirs->extent[1];
+	if(szy <= 0 || szx <= 0) return;
+	array<FLT2, 2> av(*last_dirs);
+	std::cout << "DirsLast[" << model.LaysCnt() - 1 << "] y*x: " << szy << "*" << szx;
+	for(int y = 0; y < szy; y++){
+		printf("\n%+.2f", av[0][0].y);
+		for(int x = 1; x < szx; x++)
+			printf("  %+.2f", av[y][x].y);
+
+		printf("\n%+.2f", av[0][0].x);
+		for(int x = 1; x < szx; x++)
+			printf("  %+.2f", av[y][x].x);
+		printf("\n");
+	}
+} // ///////////////////////////////////////////////////////////////////////////////////////////////
+void AMPEng2::dumpPos(){
+	array_view<Vertex2D, 1> avpos(m_data->extent[0]);
+	m_data.get()->copy_to(avpos);
+	for(int n = 0; n < (int)avpos.extent[0]; n++){
+		auto p = avpos[n].Pos;
+		printf("%d:\t%+.3f %+.3f\n", n, p.y, p.x);
+	}
+} // ////////////////////////////////////////////////////////////////////////////////////////
 

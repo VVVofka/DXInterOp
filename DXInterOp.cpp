@@ -72,8 +72,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 #else 
 	Sz2D szlay0 = Sz2D(1, 2);
-	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
-	model.Create(szlay0, 8 * 1, 0.25); //8 - ???
+	model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
+	//model.Create(szlay0, 8 * 1, 0.5); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
 		mdx.CleanupDevice();
 		return E_FAIL;
@@ -117,7 +117,7 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow){  // Register class and cr
 
 	// Create window
 	g_hInst = hInstance;
-	RECT rc = {0, 0, 2048, 1024};
+	RECT rc = {0, 0, 1024, 768};
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 	g_hWnd = CreateWindow(L"AMPC++WindowClass", L"AMPC++ and Direct3D 11 InterOp Sample",
 		WS_OVERLAPPEDWINDOW,

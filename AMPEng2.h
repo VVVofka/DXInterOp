@@ -42,12 +42,23 @@ private:
 						// 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
 						// 00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
 						// 00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
+    const int AMask[16] = {0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1};  // line=1 diag=1 +
+  //const int AMask[16] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1};  // line=1 diag=0 +
+  //const int AMask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};  // line=0 diag=1 quadro
+  //const int AMask[16] = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1};  // line=0 diag=0 quadro
 	
 	std::random_device rd;   // non-deterministic generator
 	std::mt19937 gen;  // to seed mersenne twister. rand: gen(rd())
 	std::uniform_int_distribution<int> distLastAY, distLastAX;
 	int nlastlay = -1;  // N last lay
-	const int AMask[16] = {0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1};
 	Blocks2D2 blocks2D2;
+
+public:
+	void dumpA(int nlay);
+	void dumpA();
+	void dumpD(int nlay);
+	void dumpD();
+	void dumpDLast();
+	void dumpPos();
 }; // *******************************************************************************************************
 
