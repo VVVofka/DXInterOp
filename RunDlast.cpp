@@ -50,26 +50,44 @@ void RunDlast::Run(INT2 shift,
 	const int leny = szy - 1, lenx = szx - 1;
 	const float ky = (leny <= 0) ? 0 : 2.f / float(leny);
 	const float kx = (lenx <= 0) ? 0 : 2.f / float(lenx);
+	
+	struct myStruct{
+		int x,y;
+		int cell;
+		int newx, newy;
+	};
+	std::vector<myStruct> dbg(dsta.extent.size());
+	array_view<myStruct, 2> av = array_view<myStruct, 2>(dsta.extent[0], dsta.extent[1], dbg);
+	setConsole();
+	printf("shift:%d %d\n", shift.y, shift.x);
+	printf("sz:%d %d\n", dsta.extent[0], dsta.extent[1]);
 	parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 		const int mask[7] = {0,0,1, 9, -1,0,0};
 		const int y0 = idx[0] * 2 + shift.y;
 		const int x0 = idx[1] * 2 + shift.x;
 		for(int ncell = 0; ncell < 4; ncell++){
-			int ycell = ncell / 2;
-			int xcell = ncell % 2;
-			int y = (y0 + ycell) % dstd.extent[0];
-			int x = (x0 + xcell) % dstd.extent[1];
-			int aold = dsta[y][x];
+			const int ycell = ncell / 2;
+			const int xcell = ncell % 2;
+			const int y = (y0 + ycell) % dstd.extent[0];
+			const int x = (x0 + xcell) % dstd.extent[1];
+
+			myStruct* pd = &av[idx[0] + ycell][idx[1] + xcell];
+			pd->cell = ncell; pd->y = y; pd->x = x;
+
+			const int aold = dsta[y][x];
 			if(aold < 0) continue;
-			int signy = sign(int(dstd[y][x].y));
+			const int signy = sign(int(dstd[y][x].y));
 			if(signy == ycell * 2 - 1) continue;
-			int signx = sign(int(dstd[y][x].x));
+			const int signx = sign(int(dstd[y][x].x));
 			if(signx == xcell * 2 - 1) continue;
-			int adry = ycell * 4 + signy + 1; // 0..1 | 0..2
-			int adrx = xcell * 4 + signx + 1;
-			int newy = (y + mask[adry]) % dstd.extent[0];
-			int newx = (x + mask[adrx]) % dstd.extent[1];
-			int anew = dsta[newy][newx];
+			const int adry = ycell * 4 + signy + 1; // 0..1 | 0..2
+			const int adrx = xcell * 4 + signx + 1;
+			const int newy = (y + mask[adry]) % dstd.extent[0];
+			const int newx = (x + mask[adrx]) % dstd.extent[1];
+
+			pd->newy = newy; pd->newx = newx;
+
+			const int anew = dsta[newy][newx];
 			if(anew >= 0) continue;
 
 			dsta[y][x] = anew; // anew == -1;
@@ -82,6 +100,7 @@ void RunDlast::Run(INT2 shift,
 			dstpos[aold].Pos.x = normal(newx, szx);
 		} // for(ncell
 	}); // parallel_for_each(srcd.extent,
+	av.synchronize();
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 float normal(int pos, int width) restrict(amp, cpu){
 	return float(2 * pos + 1) / width - 1.f;
