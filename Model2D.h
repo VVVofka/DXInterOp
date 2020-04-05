@@ -31,11 +31,10 @@ public:
 	int LaysCnt(){ return (int)v_areas.size(); }
 	std::vector<Vertex2D>* posLast(){ return &v_poss[v_poss.size() - 1]; }
 
-	void Create(Sz2D& minsz, int maxszXY, double kRnd){
+	void Create(Sz2D& minsz, int maxszXY, double kRnd, double kSigmaY, double kSigmaX){
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
-		//v_shiftdirs.reserve(RESERV_LAYS_CNT);
 		v_dirs.reserve(RESERV_LAYS_CNT);
 		vsz.reserve(RESERV_LAYS_CNT);
 		size_t nlay = 0;
@@ -64,8 +63,7 @@ public:
 
 		// fill v_poss (for screen only) & v_areas for the last lay
 		v_poss.push_back(std::vector<Vertex2D>());
-		//fillrndnorm(nlay, szarea, kRnd);
-		fillrnd(nlay, szarea, kRnd);
+		fillrnd(nlay, szarea, kRnd, kSigmaY, kSigmaX);
 		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, Sz2D sizes){
@@ -77,7 +75,7 @@ public:
 		float x = normal(ix, sizes.x);
 		return Vertex2D(y, x);
 	} // /////////////////////////////////////////////////////////////////////////////////
-	void fillrnd(int nlay, size_t szarea, double kFill){
+	void fillrnd(int nlay, size_t szarea, double kFill, double kSigmaY, double kSigmaX){
 		std::random_device rd;   // non-deterministic generator
 		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
 		std::uniform_int_distribution<int> dist(0, int(szarea) - 1);
@@ -85,8 +83,8 @@ public:
 		v_poss[nlay].reserve(szpos);
 
 		int szy = vsz[nlay].y, szx = vsz[nlay].x;
-		std::normal_distribution<> distry(szy * 0.5, szy * 0.1);
-		std::normal_distribution<> distrx(szx * 0.5, szx * 0.15);
+		std::normal_distribution<> distry(szy * 0.5, szy * 0.3 * kSigmaY);
+		std::normal_distribution<> distrx(szx * 0.5, szx * 0.3 * kSigmaX);
 
 		while(v_poss[nlay].size() < szpos){
 			int curpos;
@@ -108,32 +106,6 @@ public:
 			Vertex2D vert2 = norm(curpos, vsz[nlay]);
 			v_poss[nlay].push_back(vert2);
 		} // 	while(v_poss[nlay].size() < szpos)
-	} // /////////////////////////////////////////////////////////////////////////////////
-	void fillrndnorm(int nlay, size_t szarea, double kFill){
-		std::random_device rd;   // non-deterministic generator
-		std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
-		int szy = vsz[nlay].y, szx = vsz[nlay].x;
-		std::normal_distribution<> distry(szy * 0.5, szy * 0.25);
-		std::normal_distribution<> distrx(szx * 0.5, szx * 0.25);
-		size_t szpos = size_t(szarea * kFill + 0.5);
-		v_poss[nlay].reserve(szpos);
-
-		for(int j = 0; j<int(szpos); j++){
-			int y, x;
-			do{
-				y = (int)distry(gen);
-			} while(y < 0 || y >= szy);
-			do{
-				x = (int)distrx(gen);
-			} while(x < 0 || x >= szx);
-
-			int curpos = y * szx + x;
-			assert(curpos < (int)v_areas[nlay].size());
-
-			v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size();
-			Vertex2D vert2 = norm(curpos, vsz[nlay]);
-			v_poss[nlay].push_back(vert2);
-		}
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void filltest(int nlay){
 		int vcurpos[] =

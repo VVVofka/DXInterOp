@@ -8,10 +8,8 @@ using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;
 class RunA{
 	public:
-		static void run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
-		static void runlast(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
-
 		static void Run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
 		static void RunLast(INT2 shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
+		static void RunUnTorLast(INT2 shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask);
 }; // *********************************************************************************************************
 

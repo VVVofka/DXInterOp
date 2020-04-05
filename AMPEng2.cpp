@@ -1,8 +1,8 @@
 #include "AMPEng2.h"
 void AMPEng2::initialize_data(){
 	gen = std::mt19937(2020);  // to seed mersenne twister. rand: gen(rd())
-	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY());
-	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX());
+	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY()-1);
+	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX()-1);
 	nlastlay = model.LaysCnt() - 1; // N last lay
 
 	int layscnt = (int)model.v_areas.size();
@@ -31,6 +31,7 @@ void AMPEng2::run(){
 	INT2 shift = INT2(distLastAY(gen), distLastAX(gen));
 	//printf("\nshift = y:%d x:%d\n", shift.y, shift.x);	dumpA(nlastlay);
 	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+	//RunA::RunUnTorLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 
 	for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 		//dumpA(nlay);
