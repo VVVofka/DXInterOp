@@ -1,10 +1,10 @@
 #pragma once
 #include <amp.h>
-#include <DrShiftQuadro.h>
 #include <amp_graphics.h>
 #include <D3D11.h>
 #include <vector>
 
+#include "Utils.h"
 #include "Model2D.h"
 #include "Vertex.h"
 #include "RunA.h"

@@ -24,7 +24,6 @@
     <ClInclude Include="MDX2.h" />
     <ClInclude Include="MDX3.h" />
     <ClInclude Include="Model2D.h" />
-    <ClInclude Include="Sz2D.h" />
     <ClInclude Include="RunA.h">
       <Filter>Run</Filter>
     </ClInclude>
@@ -35,7 +34,6 @@
     <ClInclude Include="RunDlast.h">
       <Filter>Run</Filter>
     </ClInclude>
-    <ClInclude Include="DrShiftQuadro.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="AMPEng2.h">
       <Filter>Run</Filter>

@@ -26,6 +26,7 @@ void AMPEng2::initialize_data(){
 	dmask = std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(16 * 16, blocks2D2.vin, m_accl_view));
 	//setConsole();
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
+
 void AMPEng2::run(){
 	//return;
 	INT2 shift = INT2(distLastAY(gen), distLastAX(gen));

@@ -1,7 +1,6 @@
 #include "RunA.h"
-#define TORSPACE
-void RunA::RunLast(INT2 shift, const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
-	parallel_for_each(dst.extent, [&dst, &src, &mask, shift](index<2> idx) restrict(amp){
+void RunA::RunLast(INT2 shift, const array<aType, 2>& src, array<int, 2>& dst, const array<int, 1>& amask){
+	parallel_for_each(dst.extent, [&dst, &src, &amask, shift](index<2> idx) restrict(amp){
 		const int y = idx[0];
 		const int x = idx[1];
 		const int y0 = (y * 2 + shift.y) % src.extent[0];
@@ -11,11 +10,32 @@ void RunA::RunLast(INT2 shift, const array<int, 2>& src, array<int, 2>& dst, con
 		const int x1 = (x0 + 1) % src.extent[1];
 
 		// yx: l-left, r-right, t - top, b - bottom
-		const int tl = src[y0][x0] < 0 ? 0 : 1;  // << 0
-		const int tr = src[y0][x1] < 0 ? 0 : 2;  // << 1
-		const int bl = src[y1][x0] < 0 ? 0 : 4;  // << 2
-		const int br = src[y1][x1] < 0 ? 0 : 8;  // << 3
-		dst[y][x] = mask[tl + tr + bl + br];
+		// t - tale;   h - head
+		int tl[2] = {0, 0}; // tl[0] = 1 : tale
+		int tr[2] = {0, 0};
+		int bl[2] = {0, 0};
+		int br[2] = {0, 0};
+
+		aType a = src[y0][x0];
+		if(a.adress >= 0)
+			tl[a.talehead & 1] = 1;
+
+		a = src[y0][x1];
+		if(a.adress >= 0)
+			tr[a.talehead & 1] = 2;
+
+		a = src[y1][x0];
+		if(a.adress >= 0)
+			bl[a.talehead & 1] = 4;
+
+		a = src[y1][x1];
+		if(a.adress >= 0)
+			br[a.talehead & 1] = 1;
+
+		const int mskt = amask[tl[0] + tr[0] + bl[0] + br[0]];
+		const int mskh = amask[tl[1] + tr[1] + bl[1] + br[1]];
+		if(amask[adrt])
+		dst[y][x] = amask[tl + tr + bl + br];
 	});
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 void RunA::Run(const array<int, 2>& src, array<int, 2>& dst, const array<int, 1>& mask){
