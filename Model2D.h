@@ -5,7 +5,6 @@
 #include <DirectXMath.h>
 #include "DXInterOp.h"
 //#include "INT2.h"
-#include "DrShiftQuadro.h"
 #include "Utils.h"
 #include "Vertex.h"
 

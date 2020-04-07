@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <cstdio>
 #include <iostream>
+#include <amp.h>
 
 void setConsole();
 float normal(int pos, int width) restrict(amp, cpu);
@@ -16,6 +17,8 @@ struct FLT2{
 	bool not0(){ return x != 0 || y != 0; }
 }; // ********************************************************************************************
 
+#pragma warning(push)
+#pragma warning(disable:26495) // not initialize x,y
 struct INT2{
 	int y;
 	int x;
@@ -26,6 +29,7 @@ struct INT2{
 	int Max(){ return __max(y, x); }
 	//bool not0(){ return x != 0 || y != 0; }
 }; // ********************************************************************************************
+#pragma warning(pop)
 
 struct DrQuadro{
 	FLT2 items[4];
