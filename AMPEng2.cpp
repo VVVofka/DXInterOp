@@ -7,17 +7,16 @@ void AMPEng2::initialize_data(){
 
 	int layscnt = (int)model.v_areas.size();
 	for(int nlay = 0; nlay < layscnt; nlay++){
-		int sizey = model.sizeY(nlay);
-		int sizex = model.sizeX(nlay);
+		const INT2 size = model.sizeYX(nlay);
 
 		var_areas.push_back(std::unique_ptr<array<int, 2>>());
 		var_areas[nlay] = std::unique_ptr<array<int, 2>>
-			(new array<int, 2>(sizey, sizex, model.v_areas[nlay].begin(), m_accl_view));
+			(new array<int, 2>(size.y, size.x, model.v_areas[nlay].begin(), m_accl_view));
 
 		if(nlay < layscnt - 1){
 			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>());
 			var_dirs[nlay] = std::unique_ptr<array<DrQuadro, 2>>
-				(new array<DrQuadro, 2>(sizey, sizex, model.v_dirs[nlay].begin(), m_accl_view));
+				(new array<DrQuadro, 2>(size.y, size.x, model.v_dirs[nlay].begin(), m_accl_view));
 		}
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(int(model.posLast()->size()), model.posLast()->begin(), m_accl_view));
@@ -28,7 +27,7 @@ void AMPEng2::initialize_data(){
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 void AMPEng2::run(){
 	//return;
-	INT2 shift = INT2(distLastAY(gen), distLastAX(gen));
+	INT2 shift(distLastAY(gen), distLastAX(gen));
 	//printf("\nshift = y:%d x:%d\n", shift.y, shift.x);	dumpA(nlastlay);
 	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 	//RunA::RunUnTorLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);

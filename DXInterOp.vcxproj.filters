@@ -15,6 +15,7 @@
     <ClCompile Include="AMPEng2.cpp">
       <Filter>Run</Filter>
     </ClCompile>
+    <ClCompile Include="Model2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine3.h" />
