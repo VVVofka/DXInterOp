@@ -5,25 +5,23 @@ void RunD::Run(const array<DrQuadro, 2>& srcd,
 			   const array<int, 2>& dsta,
 			   const array<FLT2, 1>& masksD){
 	parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &masksD](index<2> idx) restrict(amp){
-		const int y = idx[0];
-		const int x = idx[1];
-		const int y2 = y * 2;
-		const int x2 = x * 2;
+		INT2 src(idx);
+		INT2 dst = src * 2;
 
-		int tl = dsta[y2][x2];
-		int tr = dsta[y2][x2 + 1];
-		int bl = dsta[y2 + 1][x2];
-		int br = dsta[y2 + 1][x2 + 1];
+		int tl = dsta[dst.y][dst.x];
+		int tr = dsta[dst.y][dst.x + 1];
+		int bl = dsta[dst.y + 1][dst.x];
+		int br = dsta[dst.y + 1][dst.x + 1];
 		int mask = ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
 		int nmask = 16 * mask;
-		auto srcdcell = &srcd[y][x];
+		auto srcdcell = &srcd[src.y][src.x];
 		for(int ncell = 0; ncell < 4; ncell++){
-			FLT2 src = srcdcell->items[ncell];
-			auto item = &dstd[y2 + ncell / 2][x2 + ncell % 2];
-			{FLT2* dst = &item->items[0]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
-			{FLT2* dst = &item->items[1]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
-			{FLT2* dst = &item->items[2]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
-			{FLT2* dst = &item->items[3]; dst->x = src.x + masksD[nmask].x; dst->y = src.y + masksD[nmask++].y; }
+			FLT2 s = srcdcell->items[ncell];
+			auto item = &dstd[dst.y + ncell / 2][dst.x + ncell % 2];
+			{FLT2* d = &item->items[0]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
+			{FLT2* d = &item->items[1]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
+			{FLT2* d = &item->items[2]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
+			{FLT2* d = &item->items[3]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
 		}
 	});
 } // ///////////////////////////////////////////////////////////////////////////////////////////////

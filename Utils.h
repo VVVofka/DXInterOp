@@ -20,12 +20,13 @@ struct FLT2{
 struct INT2{
 	int y;
 	int x;
-	INT2() : x(0), y(0) {}
-	INT2(int Y, int X) : x(X), y(Y){}
+	INT2() restrict(amp, cpu) : y(0), x(0){}
+	INT2(int Y, int X) restrict(amp, cpu) : y(Y), x(X){}
+	INT2(concurrency::index<2> idx) restrict(amp, cpu) : y(idx[0]), x(idx[1]){}
 	//bool not0(){ return x != 0 || y != 0; }
 	void operator *=(int mult){ y *= mult; x *= mult; }
 
-	//Sz2D operator * (int mult){ return Sz2D(y*mult, x*mult); }
+	INT2 operator * (int mult)  restrict(amp, cpu) { return INT2(y*mult, x*mult); }
 
 	//size_t Area(){ return (y + 1) * (x + 1); }
 	int Max(){ return __max(y, x); }
