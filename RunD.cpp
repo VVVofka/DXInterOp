@@ -5,23 +5,46 @@ void RunD::Run(const array<DrQuadro, 2>& srcd,
 			   const array<int, 2>& dsta,
 			   const array<FLT2, 1>& masksD){
 	parallel_for_each(srcd.extent, [&srcd, &dstd, &dsta, &masksD](index<2> idx) restrict(amp){
-		INT2 src(idx);
-		INT2 dst = src * 2;
+		const INT2 src(idx);
+		const INT2 dst = src * 2;
 
-		int tl = dsta[dst.y][dst.x];
-		int tr = dsta[dst.y][dst.x + 1];
-		int bl = dsta[dst.y + 1][dst.x];
-		int br = dsta[dst.y + 1][dst.x + 1];
-		int mask = ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
-		int nmask = 16 * mask;
-		auto srcdcell = &srcd[src.y][src.x];
-		for(int ncell = 0; ncell < 4; ncell++){
-			FLT2 s = srcdcell->items[ncell];
-			auto item = &dstd[dst.y + ncell / 2][dst.x + ncell % 2];
-			{FLT2* d = &item->items[0]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
-			{FLT2* d = &item->items[1]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
-			{FLT2* d = &item->items[2]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
-			{FLT2* d = &item->items[3]; d->x = s.x + masksD[nmask].x; d->y = s.y + masksD[nmask++].y; }
-		}
+		const int y0 = dst.y;
+		const int y1 = y0 + 1;
+		const int x0 = dst.x;
+		const int x1 = x0 + 1;
+
+		const int tl = dsta[y0][x0];
+		const int tr = dsta[y0][x1];
+		const int bl = dsta[y1][x0];
+		const int br = dsta[y1][x1];
+		int nmask = 16 * ((tl & 1) + ((tr & 1) << 1) + ((bl & 1) << 2) + ((br & 1) << 3));
+
+		const FLT2* srcitems = srcd[src.y][src.x].items;
+		FLT2* dstitems = dstd[y0][x0].items;
+		dstitems->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+
+		srcitems++;
+		dstitems = dstd[y0][x1].items;
+		dstitems->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+
+		srcitems++;
+		dstitems = dstd[y1][x0].items;
+		dstitems->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+
+		srcitems++;
+		dstitems = dstd[y1][x1].items;
+		dstitems->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x); nmask++;
+		(++dstitems)->set(srcitems->y + masksD[nmask].y, srcitems->x + masksD[nmask].x);
 	});
 } // ///////////////////////////////////////////////////////////////////////////////////////////////

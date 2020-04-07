@@ -44,7 +44,7 @@ void AMPEng2::run(){
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
-	RunDlast::Run(shift, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeY(), model.sizeX());
+	RunDlast::Run(shift, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeYX());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void AMPEng2::dumpA(int nlay){

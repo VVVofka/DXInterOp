@@ -29,6 +29,7 @@ public:
 	int sizeY(){ return vsz[vsz.size() - 1].y; }
 	int sizeX(int nlay){ return vsz[nlay].x; }
 	int sizeX(){ return vsz[vsz.size() - 1].x; }
+	const INT2& sizeYX(){return vsz[vsz.size() - 1];}
 	int LaysCnt(){ return (int)v_areas.size(); }
 	std::vector<Vertex2D>* posLast(){ return &v_poss[v_poss.size() - 1]; }
 

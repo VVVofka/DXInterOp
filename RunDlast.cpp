@@ -1,22 +1,19 @@
 #include "RunDlast.h"
 //#define AMPDBG_DLAST
-void RunDlast::Run(INT2 shift,
+void RunDlast::Run(const INT2 shift,
 				   const array<DrQuadro, 2>& srcd,
 				   array<Vertex2D, 1>& dstpos,
 				   array<int, 2>& dsta,
 				   array<FLT2, 2>& dstd,
-				   const int szy,
-				   const int szx){
+				   const INT2 sz){
 	parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
-		const int y = idx[0];
-		const int y0 = (y * 2 + shift.y) % dstd.extent[0];
+		const INT2 src(idx);
+		const int y0 = (src.y * 2 + shift.y) % dstd.extent[0];
+		const int x0 = (src.x * 2 + shift.x) % dstd.extent[1];
 		const int y1 = (y0 + 1) % dstd.extent[0];
-
-		const int x = idx[1];
-		const int x0 = (x * 2 + shift.x) % dstd.extent[1];
 		const int x1 = (x0 + 1) % dstd.extent[1];
 
-		auto q = srcd[y][x].items;
+		auto q = srcd[src.y][src.x].items;
 
 		dstd[y0][x0].y = q->y;
 		dstd[y0][x0].x = q->x;
@@ -53,8 +50,8 @@ void RunDlast::Run(INT2 shift,
 	//	dstd[y][x].x = dirx;
 	//}); // parallel_for_each(srcd.extent,
 
-	const float kwidthy = float(szy - 1) / szy, kwidthx = float(szx - 1) / szx;
-	const int leny = szy - 1, lenx = szx - 1;
+	const float kwidthy = float(sz.y - 1) / sz.y, kwidthx = float(sz.x - 1) / sz.x;
+	const int leny = sz.y - 1, lenx = sz.x - 1;
 	const float ky = (leny <= 0) ? 0 : 2.f / float(leny);
 	const float kx = (lenx <= 0) ? 0 : 2.f / float(lenx);
 
@@ -111,8 +108,8 @@ void RunDlast::Run(INT2 shift,
 			//dstd[newy][newx].y = dstd[newy][newx].x = 0; // Block next moves by ncell
 			dstd[y][x].y = dstd[y][x].x = 0;
 
-			dstpos[aold].Pos.y = normal(newy, szy);
-			dstpos[aold].Pos.x = normal(newx, szx);
+			dstpos[aold].Pos.y = normal(newy, sz.y);
+			dstpos[aold].Pos.x = normal(newx, sz.x);
 		} // for(ncell
 	}); // parallel_for_each(srcd.extent,
 #ifdef AMPDBG_DLAST
