@@ -32,13 +32,13 @@ public:
 	const INT2& sizeYX() const {return vsz[vsz.size() - 1];}
 	int LaysCnt() const { return (int)v_areas.size(); }
 
-	void Create(INT2& minsz, int maxszXY, double kRnd, FLT2 kSigma);
+	void Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma);
 	void dumpA(int nlay) const;
 	void dumpD(int nlay) const;
 
 private:
 	Vertex2D norm(int curpos, INT2 sizes) const;
-	void fillrnd(int nlay, size_t szarea, double kFill, FLT2 kSigma);
+	void fillrnd(int nlay, size_t szarea, double kFill, DBL2 kSigma);
 	void filltest(int nlay);
 }; // *****************************************************************************
 

@@ -1,5 +1,5 @@
 #include "Model2D.h"
-void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, FLT2 kSigma){
+void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 	const int RESERV_LAYS_CNT = 16;
 	v_poss.reserve(RESERV_LAYS_CNT);
 	v_areas.reserve(RESERV_LAYS_CNT);
@@ -38,7 +38,7 @@ Vertex2D Model2D::norm(int curpos, INT2 sizes) const{
 	const float x = NORMAL_TO_AREA(ix, sizes.x);
 	return Vertex2D(y, x);
 } // /////////////////////////////////////////////////////////////////////////////////
-void Model2D::fillrnd(int nlay, size_t szarea, double kFill, FLT2 kSigma){
+void Model2D::fillrnd(int nlay, size_t szarea, double kFill, DBL2 kSigma){
 	std::random_device rd;   // non-deterministic generator
 	std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
 	std::uniform_int_distribution<int> dist(0, int(szarea) - 1);
