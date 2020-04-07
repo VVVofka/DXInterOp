@@ -16,6 +16,7 @@
       <Filter>Run</Filter>
     </ClCompile>
     <ClCompile Include="Model2D.cpp" />
+    <ClCompile Include="Masks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine3.h" />

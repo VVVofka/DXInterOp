@@ -243,6 +243,7 @@
     <ClCompile Include="DXInterOp.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
     </ClCompile>
+    <ClCompile Include="Masks.cpp" />
     <ClCompile Include="Model2D.cpp" />
     <ClCompile Include="RunA.cpp" />
     <ClCompile Include="RunD.cpp" />
