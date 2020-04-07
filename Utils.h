@@ -7,13 +7,11 @@
 using namespace Concurrency;
 using namespace Concurrency::fast_math;
 
-void setConsole();
-float normal(int pos, int width) restrict(amp, cpu);
-
-class Utils{}; // *******************************************************************************************
-
 #define NORMAL_TO_AREA(POS, WIDTH) (float(2 * (POS) + 1) / (WIDTH) - 1.f)
-//float(2 * pos + 1) / width - 1.f
+
+void setConsole();
+//class Utils{}; // *******************************************************************************************
+
 struct FLT2{
 	float y;
 	float x;

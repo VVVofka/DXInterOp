@@ -91,7 +91,6 @@ void RunDlast::Run(const INT2 shift,
 			//dstd[newy][newx].y = dstd[newy][newx].x = 0; // Block next moves by ncell
 			//dstd[y][x].y = dstd[y][x].x = 0; // lines 18-28
 
-			//dstpos[aold].Pos.y = NORMAL_TO_AREA(newy, sz.y);
 			dstpos[aold].Pos.y = NORMAL_TO_AREA(newy, sz.y);
 			dstpos[aold].Pos.x = NORMAL_TO_AREA(newx, sz.x);
 		} // for(ncell
@@ -106,9 +105,6 @@ void RunDlast::Run(const INT2 shift,
 	}
 #endif
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
-float normal(int pos, int width) restrict(amp, cpu){
-	return float(2 * pos + 1) / width - 1.f;
-} // //////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef AMPDBG_DLAST
 #undef AMPDBG_DLAST

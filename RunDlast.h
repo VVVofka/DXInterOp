@@ -9,8 +9,6 @@ using namespace concurrency;
 using namespace concurrency::fast_math;
 using namespace concurrency::direct3d;
 
-float normal(int pos, int width) restrict(amp, cpu);
-
 class RunDlast{
 public:
 	static void Run(const INT2 shift,
