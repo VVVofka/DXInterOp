@@ -236,7 +236,6 @@
     <ClInclude Include="RunA.h" />
     <ClInclude Include="RunD.h" />
     <ClInclude Include="RunDlast.h" />
-    <ClInclude Include="Sz2D.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>

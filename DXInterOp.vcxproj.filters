@@ -24,7 +24,6 @@
     <ClInclude Include="MDX2.h" />
     <ClInclude Include="MDX3.h" />
     <ClInclude Include="Model2D.h" />
-    <ClInclude Include="Sz2D.h" />
     <ClInclude Include="RunA.h">
       <Filter>Run</Filter>
     </ClInclude>

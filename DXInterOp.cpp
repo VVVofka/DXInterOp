@@ -24,7 +24,7 @@
 #else // MY2D
 #include "MDX2.h"
 #include "Model2D.h"
-#include "Sz2D.h"
+#include "Utils.h"
 #endif // MY2D
 
 //--------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		return E_FAIL;
 	}
 #else 
-	Sz2D szlay0 = Sz2D(1, 1);
+	INT2 szlay0 = INT2(1, 1);
 	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
 	model.Create(szlay0, 1024 * 2, 0.015, 0.15, 0.15); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){

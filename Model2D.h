@@ -4,7 +4,6 @@
 #include <vector>
 #include <DirectXMath.h>
 #include "DXInterOp.h"
-#include "Sz2D.h"
 #include "DrShiftQuadro.h"
 #include "Utils.h"
 #include "Vertex.h"
@@ -23,7 +22,7 @@ public:
 	std::vector<int> lastArea(){ return v_areas[v_areas.size() - 1]; }
 	std::vector<Vertex2D> lastPoss(){ return v_poss[v_poss.size() - 1]; }
 
-	std::vector<Sz2D> vsz;
+	std::vector<INT2> vsz;
 	int sizeY(int nlay){ return vsz[nlay].y; }
 	int sizeY(){ return vsz[vsz.size() - 1].y; }
 	int sizeX(int nlay){ return vsz[nlay].x; }
@@ -31,14 +30,14 @@ public:
 	int LaysCnt(){ return (int)v_areas.size(); }
 	std::vector<Vertex2D>* posLast(){ return &v_poss[v_poss.size() - 1]; }
 
-	void Create(Sz2D& minsz, int maxszXY, double kRnd, double kSigmaY, double kSigmaX){
+	void Create(INT2& minsz, int maxszXY, double kRnd, double kSigmaY, double kSigmaX){
 		const int RESERV_LAYS_CNT = 16;
 		v_poss.reserve(RESERV_LAYS_CNT);
 		v_areas.reserve(RESERV_LAYS_CNT);
 		v_dirs.reserve(RESERV_LAYS_CNT);
 		vsz.reserve(RESERV_LAYS_CNT);
 		size_t nlay = 0;
-		Sz2D sz(minsz);
+		INT2 sz(minsz);
 		int szmaxxy = sz.Max();
 		while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
 			vsz.push_back(sz);
@@ -56,7 +55,7 @@ public:
 		} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 
 		 // Last lay
-		vsz.push_back(Sz2D(sz.y, sz.x));
+		vsz.push_back(INT2(sz.y, sz.x));
 		size_t szarea = sz.x * sz.y;
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		last_dirs.resize(szarea, FLT2(0, 0));
@@ -66,7 +65,7 @@ public:
 		fillrnd(nlay, szarea, kRnd, kSigmaY, kSigmaX);
 		//filltest(nlay);
 	} // //////////////////////////////////////////////////////////////////////////////////
-	Vertex2D norm(int curpos, Sz2D sizes){
+	Vertex2D norm(int curpos, INT2 sizes){
 		int iy = curpos / sizes.x;
 		//float y = sizes.y <= 1 ? 0 : 2.f * iy / (sizes.y - 1.f) - 1.f;
 		float y = normal(iy, sizes.y);
