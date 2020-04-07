@@ -3,91 +3,23 @@
 #include <string>
 #include "Utils.h"
 struct CellItem{
-	int diry;
-	int dirx;
-	int eny;
-	int enx;
-	CellItem(int dirX = -2, int dirY = -2){
-		if(dirX == -1)
-			dirx = 0, enx = 1;
-		else if(dirX == 0)
-			dirx = 0, enx = 0;
-		else if(dirX == 1)
-			dirx = 1, enx = 1;
-		else
-			dirx = -1, enx = -1;
-
-		if(dirY == -1)
-			diry = 0, eny = 1;
-		else if(dirY == 0)
-			diry = 0, eny = 0;
-		else if(dirY == 1)
-			diry = 1, eny = 1;
-		else
-			diry = -1, eny = -1;
-	} // /////////////////////////////////////////////////////////////////
-	void set(int dirX, int dirY){
-		assert(dirX >= -1 && dirX <= 1);
-		if(dirX < 0){
-			dirx = 0, enx = 1;
-		} else if(dirX > 0){
-			dirx = 1, enx = 1;
-		} else{
-			dirx = 0, enx = 0;
-		}
-
-		assert(dirY >= -1 && dirY <= 1);
-		if(dirY < 0){
-			diry = 0, eny = 1;
-		} else if(dirY > 0){
-			diry = 1, eny = 1;
-		} else{
-			diry = 0, eny = 0;
-		}
-	} // /////////////////////////////////////////////////////////
-	std::string dumpx(){ return dump(enx, dirx); }
-	std::string dumpy(){ return dump(eny, diry); }
+	INT2 dir;
+	INT2 en;
+	CellItem(int dirX = -2, int dirY = -2);
+	void set(int dirX, int dirY);
+	std::string dumpx(){ return dump(en.x, dir.x); }
+	std::string dumpy(){ return dump(en.y, dir.y); }
 	std::string dump(){ return dumpx() + dumpy(); }
-	FLT2 getFLT2(){ return FLT2(getfloat(eny, diry), getfloat(enx, dirx)); }
+	FLT2 getFLT2(){ return FLT2(getfloat(en.y, dir.y), getfloat(en.x, dir.x)); }
 	// ///////////////////////////////////////////////////////////
-	std::string dump(int en, int dir){
-		if(en == 1)
-			return dir == 0 ? "-1" : "+1";
-		return dir == 0 ? "-0" : "+0";
-	} // //////////////////////////////////////////////////////////////////
-	float getfloat(int en, int dir){
-		if(en == 1)
-			return dir == 0 ? -1.f : +1.f;
-		return 0.f;
-	} // //////////////////////////////////////////////////////////////////
-	CellItem reflectHor(){
-		int x = b2i(enx, dirx);
-		int y = b2i(eny, diry);
-		return CellItem(-x, y);
-	} // //////////////////////////////////////////////////////////////////////////////
-	CellItem reflectVer(){
-		int x = b2i(enx, dirx);
-		int y = b2i(eny, diry);
-		return CellItem(x, -y);
-	} // //////////////////////////////////////////////////////////////////////////////
-	CellItem reflectDiag1(){ // axe Top,Left -> Bottom,Right
-		int x = b2i(enx, dirx);
-		int y = b2i(eny, diry);
-		return CellItem(y, x);
-	} // //////////////////////////////////////////////////////////////////////////////
-	CellItem reflectDiag2(){ // axe Top,Right -> Bottom,Left
-		int x = b2i(enx, dirx);
-		int y = b2i(eny, diry);
-		return CellItem(-y, -x);
-	} // //////////////////////////////////////////////////////////////////////////////
+	std::string dump(int in_en, int in_dir);
+	float getfloat(int in_en, int in_dir);
+	CellItem reflectHor();
+	CellItem reflectVer();
+	CellItem reflectDiag1();
+	CellItem reflectDiag2();
 private:
-	static int b2i(int en, int dir){
-		assert((en == 0 || en == 1) && (dir == 0 || dir == 1));
-		if(en == 0) return 0;
-		if(dir == 0) return -1;
-		return 1;
-	} // ///////////////////////////////////////////////////////////////////////////////
-
+	static int b2i(int en, int dir);
 }; // *************************************************************
 struct Cell2D{
 	int val = -1;

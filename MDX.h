@@ -12,7 +12,6 @@
 #pragma warning(disable:4005 26812) 
 #include <d3dcompiler.h>
 #include <D3D11.h>
-#pragma warning(pop)
 
 #include "DXInterOp.h"
 #include "Vertex.h"
@@ -264,4 +263,5 @@ protected:
     } // /////////////////////////////////////////////////////////////////////////////////////////////
 
 }; // ******************************************************************************************
+#pragma warning(pop)
 

@@ -202,3 +202,77 @@ Cell2D Cell2D::reflectDiag2(){ // axe Top,Right -> Bottom,Left
 	ret.dirs[0] = dirs[3].reflectDiag2();
 	return ret;
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
+CellItem::CellItem(int dirX, int dirY){
+	if(dirX == -1)
+		dir.x = 0, en.x = 1;
+	else if(dirX == 0)
+		dir.x = 0, en.x = 0;
+	else if(dirX == 1)
+		dir.x = 1, en.x = 1;
+	else
+		dir.x = -1, en.x = -1;
+
+	if(dirY == -1)
+		dir.y = 0, en.y = 1;
+	else if(dirY == 0)
+		dir.y = 0, en.y = 0;
+	else if(dirY == 1)
+		dir.y = 1, en.y = 1;
+	else
+		dir.y = -1, en.y = -1;
+} // /////////////////////////////////////////////////////////////////
+void CellItem::set(int dirX, int dirY){
+	assert(dirX >= -1 && dirX <= 1);
+	if(dirX < 0){
+		dir.x = 0, en.x = 1;
+	} else if(dirX > 0){
+		dir.x = 1, en.x = 1;
+	} else{
+		dir.x = 0, en.x = 0;
+	}
+
+	assert(dirY >= -1 && dirY <= 1);
+	if(dirY < 0){
+		dir.y = 0, en.y = 1;
+	} else if(dirY > 0){
+		dir.y = 1, en.y = 1;
+	} else{
+		dir.y = 0, en.y = 0;
+	}
+} // ///////////////////////////////////////////////////////////////////////////////////////////////
+std::string CellItem::dump(int in_en, int in_dir){
+	if(in_en == 1)
+		return in_dir == 0 ? "-1" : "+1";
+	return in_dir == 0 ? "-0" : "+0";
+} // //////////////////////////////////////////////////////////////////
+float CellItem::getfloat(int in_en, int in_dir){
+	if(in_en == 1)
+		return in_dir == 0 ? -1.f : +1.f;
+	return 0.f;
+} // ///////////////////////////////////////////////////////////////////////////////////////////////
+CellItem CellItem::reflectHor(){
+	int x = b2i(en.x, dir.x);
+	int y = b2i(en.y, dir.y);
+	return CellItem(-x, y);
+} // //////////////////////////////////////////////////////////////////////////////
+CellItem CellItem::reflectVer(){
+	int x = b2i(en.x, dir.x);
+	int y = b2i(en.y, dir.y);
+	return CellItem(x, -y);
+} // //////////////////////////////////////////////////////////////////////////////
+CellItem CellItem::reflectDiag1(){ // axe Top,Left -> Bottom,Right
+	int x = b2i(en.x, dir.x);
+	int y = b2i(en.y, dir.y);
+	return CellItem(y, x);
+} // //////////////////////////////////////////////////////////////////////////////
+CellItem CellItem::reflectDiag2(){ // axe Top,Right -> Bottom,Left
+	int x = b2i(en.x, dir.x);
+	int y = b2i(en.y, dir.y);
+	return CellItem(-y, -x);
+} // ///////////////////////////////////////////////////////////////////////////////////////////////
+int CellItem::b2i(int en, int dir){
+	assert((en == 0 || en == 1) && (dir == 0 || dir == 1));
+	if(en == 0) return 0;
+	if(dir == 0) return -1;
+	return 1;
+} // ///////////////////////////////////////////////////////////////////////////////////////////////
