@@ -8,13 +8,13 @@
 #include <iterator>
 #include <exception>
 
+#include "DXInterOp.h"
+#include "Vertex.h"
+
 #pragma warning(push)
 #pragma warning(disable:4005 26812) 
 #include <d3dcompiler.h>
 #include <D3D11.h>
-
-#include "DXInterOp.h"
-#include "Vertex.h"
 
 class MDX{
 protected:
