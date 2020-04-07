@@ -73,7 +73,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 #else 
 	INT2 szlay0 = INT2(1, 1);
 	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
-	model.Create(szlay0, 1024 * 2, 0.015, 0.15, 0.15); //8 - ???
+	FLT2 Sigma(0.15, 0.15);
+	model.Create(szlay0, 1024 * 2, 0.015, Sigma); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
 		mdx.CleanupDevice();
 		return E_FAIL;

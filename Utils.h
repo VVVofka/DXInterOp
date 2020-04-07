@@ -17,6 +17,8 @@ struct FLT2{
 	float x;
 	FLT2() : y(0), x(0){}
 	FLT2(float Y, float X) restrict(amp, cpu) : x(X), y(Y){}
+	FLT2(int Y, int X) restrict(amp, cpu) : x(float(X)), y(float(Y)){}
+	FLT2(double Y, double X) restrict(amp, cpu) : x(float(X)), y(float(Y)){}
 	void set(float Y, float X) restrict(amp, cpu){ y = Y, x = X; }
 	bool not0(){ return x != 0 || y != 0; }
 	const FLT2& abs() const restrict(amp, cpu){ return FLT2(fabsf(y), fabsf(x)); }
