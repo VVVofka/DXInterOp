@@ -4,12 +4,8 @@
 #include <vector>
 #include <DirectXMath.h>
 #include "DXInterOp.h"
-#include "DrShiftQuadro.h"
 #include "Utils.h"
 #include "Vertex.h"
-
-//def in Model2D.h
-// float x,y
 
 class Model2D{
 public:

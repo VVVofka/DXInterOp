@@ -225,7 +225,6 @@
   <ItemGroup>
     <ClInclude Include="AMPEng2.h" />
     <ClInclude Include="AMPEngine3.h" />
-    <ClInclude Include="DrShiftQuadro.h" />
     <ClInclude Include="DxInterOp.h" />
     <ClInclude Include="Ini.h" />
     <ClInclude Include="Masks.h" />

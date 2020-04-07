@@ -2,7 +2,6 @@
 #include <amp.h>
 #include <amp_math.h>
 #include <amp_graphics.h>
-#include "DrShiftQuadro.h"
 #include "Vertex.h"
 #include "Utils.h"
 

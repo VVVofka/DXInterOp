@@ -34,7 +34,6 @@
     <ClInclude Include="RunDlast.h">
       <Filter>Run</Filter>
     </ClInclude>
-    <ClInclude Include="DrShiftQuadro.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="AMPEng2.h">
       <Filter>Run</Filter>

@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <cstdio>
+#include <iostream>
 #include <amp.h>
 
 void setConsole();
@@ -29,4 +30,14 @@ struct INT2{
 	//size_t Area(){ return (y + 1) * (x + 1); }
 	int Max(){ return __max(y, x); }
 
+}; // ********************************************************************************************
+
+struct DrQuadro{
+	FLT2 items[4];
+	bool not0(){ return items[0].not0() || items[1].not0() || items[2].not0() || items[3].not0(); }
+	void dump(){
+		for(int i = 0; i < 4; i++){
+			printf("\ti:%d y:%+.1f x:%+.1f", i, items[i].y, items[i].x);
+		}
+	} // ///////////////////////////////////////////////////////////////////////////////////////
 }; // ********************************************************************************************

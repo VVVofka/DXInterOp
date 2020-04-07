@@ -1,6 +1,5 @@
 #pragma once
 #include <amp.h>
-#include <DrShiftQuadro.h>
 #include <amp_graphics.h>
 #include <D3D11.h>
 #include <vector>
@@ -11,6 +10,7 @@
 #include "RunD.h"
 #include "RunDlast.h"
 #include "Masks.h"
+#include "Utils.h"
 
 extern Model2D model;
 
