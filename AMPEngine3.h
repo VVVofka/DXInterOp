@@ -3,9 +3,16 @@
 #include <amp.h>
 #include <amp_math.h>
 #include <amp_graphics.h>
-#include "DXInterOp.h"
-//#include <ppl.h>
 #include <numeric>
+//#include <ppl.h>
+
+#pragma warning(push)
+#pragma warning(disable:4005 26812) 
+#include <D3D11.h>
+#pragma warning(pop)
+
+#include "Vertex.h"
+#include "DXInterOp.h"
 #define THETA 3.1415f/1024  
 
 using namespace concurrency;

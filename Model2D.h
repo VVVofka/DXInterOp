@@ -2,7 +2,13 @@
 #include <random>
 #include <cmath>
 #include <vector>
+
+#pragma warning(push)
+#pragma warning(disable:4005 26812) 
+#include <D3D11.h>
 #include <DirectXMath.h>
+#pragma warning(pop)
+
 #include "DXInterOp.h"
 #include "Utils.h"
 #include "Vertex.h"

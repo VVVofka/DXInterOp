@@ -1,14 +1,19 @@
 #pragma once
 //#include <windows.h>
 //#include <winnt.h>
-#include <d3d11.h>
-#include <d3dcompiler.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <exception>
+
+#pragma warning(push)
+#pragma warning(disable:4005 26812) 
+#include <d3dcompiler.h>
+#include <D3D11.h>
+#pragma warning(pop)
+
 #include "DXInterOp.h"
 #include "Vertex.h"
 
