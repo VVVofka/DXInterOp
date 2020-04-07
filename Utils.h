@@ -3,19 +3,25 @@
 #include <cstdio>
 #include <iostream>
 #include <amp.h>
+#include <amp_math.h>
+using namespace Concurrency;
+using namespace Concurrency::fast_math;
 
 void setConsole();
 float normal(int pos, int width) restrict(amp, cpu);
 
-class Utils{
-}; // *******************************************************************************************
+class Utils{}; // *******************************************************************************************
+
+#define NORMAL_TO_AREA(POS, WIDTH) (float(2 * (POS) + 1) / (WIDTH) - 1.f)
+//float(2 * pos + 1) / width - 1.f
 struct FLT2{
 	float y;
 	float x;
 	FLT2() : y(0), x(0){}
 	FLT2(float Y, float X) restrict(amp, cpu) : x(X), y(Y){}
-	void set(float Y, float X) restrict(amp, cpu) { y = Y, x = X;}
+	void set(float Y, float X) restrict(amp, cpu){ y = Y, x = X; }
 	bool not0(){ return x != 0 || y != 0; }
+	const FLT2& abs() const restrict(amp, cpu){ return FLT2(fabsf(y), fabsf(x)); }
 }; // ********************************************************************************************
 
 struct INT2{
@@ -27,7 +33,7 @@ struct INT2{
 	//bool not0(){ return x != 0 || y != 0; }
 	void operator *=(int mult){ y *= mult; x *= mult; }
 
-	const INT2& operator * (int mult) const restrict(amp, cpu) { return INT2(y*mult, x*mult); }
+	const INT2& operator * (int mult) const restrict(amp, cpu){ return INT2(y * mult, x * mult); }
 	int Max(){ return __max(y, x); }
 }; // ********************************************************************************************
 

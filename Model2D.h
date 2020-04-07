@@ -70,11 +70,9 @@ public:
 	} // //////////////////////////////////////////////////////////////////////////////////
 	Vertex2D norm(int curpos, INT2 sizes){
 		int iy = curpos / sizes.x;
-		//float y = sizes.y <= 1 ? 0 : 2.f * iy / (sizes.y - 1.f) - 1.f;
-		float y = normal(iy, sizes.y);
+		float y = NORMAL_TO_AREA(iy, sizes.y);
 		int ix = curpos % sizes.x;
-		//float x = sizes.x <= 1 ? 0 : 2.f * ix / (sizes.x - 1.f) - 1.f;
-		float x = normal(ix, sizes.x);
+		float x = NORMAL_TO_AREA(ix, sizes.x);
 		return Vertex2D(y, x);
 	} // /////////////////////////////////////////////////////////////////////////////////
 	void fillrnd(int nlay, size_t szarea, double kFill, double kSigmaY, double kSigmaX){

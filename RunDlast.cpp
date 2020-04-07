@@ -13,47 +13,30 @@ void RunDlast::Run(const INT2 shift,
 		const int y1 = (y0 + 1) % dstd.extent[0];
 		const int x1 = (x0 + 1) % dstd.extent[1];
 
-		auto q = srcd[src.y][src.x].items;
-
-		dstd[y0][x0].y = q->y;
-		dstd[y0][x0].x = q->x;
-
-		dstd[y0][x1].y = (++q)->y;
-		dstd[y0][x1].x = q->x;
-
-		dstd[y1][x0].y = (++q)->y;
-		dstd[y1][x0].x = q->x;
-
-		dstd[y1][x1].y = (++q)->y;
-		dstd[y1][x1].x = q->x;
+		const FLT2* q = srcd[src.y][src.x].items;
+		dstd[y0][x0] = *q;
+		dstd[y0][x1] = *(++q);
+		dstd[y1][x0] = *(++q);
+		dstd[y1][x1] = *(++q);
 	}); // parallel_for_each(srcd.extent,
 
-	//parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
+	// // prefer to center -
+    //parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
 	//	int y = idx[0];
 	//	int x = idx[1];
 	//	dstd[y][x].y += 1.f + y / (-0.5f * dstd.extent[0]);
 	//	dstd[y][x].x += 1.f + x / (-0.5f * dstd.extent[1]);
 	//}); // parallel_for_each(srcd.extent,
 
-	//parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
-	//	int y = idx[0];
-	//	int x = idx[1];
-	//	float diry = dstd[y][x].y;
-	//	float absdiry = fabsf(diry);
-	//	float dirx = dstd[y][x].x;
-	//	float absdirx = fabsf(dirx);
-	//	if(absdirx >= 2 * absdiry)
-	//		diry = 0;
-	//	else if(absdiry >= 2 * absdirx)
-	//		dirx = 0;
-	//	dstd[y][x].y = diry;
-	//	dstd[y][x].x = dirx;
+	// // del small dir (ex. 7,3 -> 7,0) +
+ //   parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
+	//	const INT2 dst(idx);
+	//	const FLT2 absdir(dstd[dst.y][dst.x].abs());
+	//	if(absdir.x >= 2 * absdir.y)
+	//		dstd[dst.y][dst.x].y = 0;
+	//	else if(absdir.y >= 2 * absdir.x)
+	//		dstd[dst.y][dst.x].x = 0;
 	//}); // parallel_for_each(srcd.extent,
-
-	const float kwidthy = float(sz.y - 1) / sz.y, kwidthx = float(sz.x - 1) / sz.x;
-	const int leny = sz.y - 1, lenx = sz.x - 1;
-	const float ky = (leny <= 0) ? 0 : 2.f / float(leny);
-	const float kx = (lenx <= 0) ? 0 : 2.f / float(lenx);
 
 #ifdef AMPDBG_DLAST
 	struct myStruct{
@@ -106,10 +89,11 @@ void RunDlast::Run(const INT2 shift,
 			dsta[newy][newx] = aold;
 
 			//dstd[newy][newx].y = dstd[newy][newx].x = 0; // Block next moves by ncell
-			dstd[y][x].y = dstd[y][x].x = 0;
+			//dstd[y][x].y = dstd[y][x].x = 0; // lines 18-28
 
-			dstpos[aold].Pos.y = normal(newy, sz.y);
-			dstpos[aold].Pos.x = normal(newx, sz.x);
+			//dstpos[aold].Pos.y = NORMAL_TO_AREA(newy, sz.y);
+			dstpos[aold].Pos.y = NORMAL_TO_AREA(newy, sz.y);
+			dstpos[aold].Pos.x = NORMAL_TO_AREA(newx, sz.x);
 		} // for(ncell
 	}); // parallel_for_each(srcd.extent,
 #ifdef AMPDBG_DLAST
