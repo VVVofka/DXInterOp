@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <iterator>
 #include <exception>
-//#include "DXUT.h"
 #include "DXInterOp.h"
 #include "Masks.h"
 #ifdef MY2D
@@ -143,27 +142,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 			break;
 		case WM_KEYDOWN:
 		{
-			//switch (wParam) {
-			//case VK_ESCAPE:
-			//{
-			//	if (GetDXUTState().GetHandleEscape())
-			//		SendMessage(hWnd, WM_CLOSE, 0, 0);
-			//	break;
-			//}
-
-			//case VK_PAUSE:
-			//{
-			//	if (GetDXUTState().GetHandlePause()) {
-			//		bool bTimePaused = DXUTIsTimePaused();
-			//		bTimePaused = !bTimePaused;
-			//		if (bTimePaused)
-			//			DXUTPause(true, false);
-			//		else
-			//			DXUTPause(false, false);
-			//	}
-			//	break;
-			//}
-			//}
+			switch(wParam){
+				case VK_ESCAPE:
+					SendMessage(hWnd, WM_CLOSE, 0, 0);
+					break;
+				case 73:   // I
+					break;
+				default:
+					//setConsole();			printf("%d\n", wParam);
+					break;
+				case VK_PAUSE:
+					break;
+			}
 			break;
 		}
 		default:

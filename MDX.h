@@ -8,7 +8,7 @@
 #include <iterator>
 #include <exception>
 
-#include "DXInterOp.h"
+//#include "DXInterOp.h"
 #include "Vertex.h"
 
 #pragma warning(push)
