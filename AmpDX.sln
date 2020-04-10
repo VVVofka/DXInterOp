@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AmpDX", "DXInterOp.vcxproj", "{122A8C26-6DB8-4B7D-9CCD-55EBB7BFF596}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Options", "..\Options\Options\Options.vcxproj", "{DE3F8F7C-BAF2-4990-9AA0-08E44288B9E8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Options", "Options\Options.vcxproj", "{DE3F8F7C-BAF2-4990-9AA0-08E44288B9E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
