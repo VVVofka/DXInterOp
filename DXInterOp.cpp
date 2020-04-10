@@ -81,7 +81,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 #endif // MY2D
 
 	//Blocks2D2 blks;
-
 	//blks.dumpx();	_RPT0(0, "\n Y \n");	blks.dumpy();
 
 	// Main message loop
@@ -130,8 +129,7 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow){  // Register class and cr
 } // //////////////////////////////////////////////////////////////////////////////////////////////
 // Called every time the application receives a message
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
-	PAINTSTRUCT ps;
-	HDC hdc;
+	PAINTSTRUCT ps;	HDC hdc;
 	switch(message){
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
@@ -141,7 +139,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 			PostQuitMessage(0);
 			break;
 		case WM_KEYDOWN:
-		{
 			switch(wParam){
 				case VK_ESCAPE:
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
@@ -153,7 +150,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					break;
 				case VK_PAUSE:
 					break;
-			}
 			break;
 		}
 		default:
