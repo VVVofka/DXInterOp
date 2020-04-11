@@ -2,12 +2,9 @@
 #include "Cell4.h"
 
 Cell4::Cell4(PictureBox^ parrent){
-	for(int ncell = 0; ncell < 4; ncell++){
-		for(int nitem = 0; nitem < 4; nitem++){
+	for(int ncell = 0; ncell < 4; ncell++)
+		for(int nitem = 0; nitem < 4; nitem++)
 			cells[ncell * 4 + nitem] = gcnew Cell();
-
-		}
-	}
 	int x0 = 1, y0 = 1;
 	int x1 = parrent->Width / 2 + 3;
 	int y1 = parrent->Height / 2 + 3;
@@ -15,12 +12,26 @@ Cell4::Cell4(PictureBox^ parrent){
 	sval = parrent->Tag->ToString();
 	width = parrent->Width;
 	heigh = parrent->Height;
-	int val = 0;
-	for(int j = 0; j < 4; j++)
-		if(sval[j] != '0')
-			val += 1 << j;
 	parrent->Paint += gcnew PaintEventHandler(this, &Cell4::cell4_Paint);
 	parrent->MouseDown += gcnew MouseEventHandler(this, &Cell4::cell4_MouseDown);
+} // ///////////////////////////////////////////////////////////////////////
+
+void Cell4::Rotate(Cell4^ src){
+	static const int matrpos[4] = {2,0,3,1};
+	Cell^ csrc, ^ cdst;
+	for(int ncell = 0; ncell < 4; ncell++){
+		int ncellsrc = matrpos[ncell];
+		for(int nitem = 0; nitem < 4; nitem++){
+			int nitemsrc = matrpos[nitem];
+			csrc = src->getCell(ncellsrc, nitemsrc);
+			cdst = getCell(ncell, nitem);
+			cdst->setRotate(csrc);
+			printf("zzz\n");
+		}
+	}
+	for(int ncell = 0; ncell < 4; ncell++){
+		cells[ncell]->setRotate(src->getCell(matrpos[ncell]));
+	}
 } // ///////////////////////////////////////////////////////////////////////
 System::Void Cell4::cell4_Paint(System::Object^ sender, Forms::PaintEventArgs^ e){
 	int shift = 1;
@@ -33,7 +44,7 @@ System::Void Cell4::cell4_Paint(System::Object^ sender, Forms::PaintEventArgs^ e
 		int y0 = (j / 2) * heigh / 2 + shift;
 		int w = width / 2 - 2 * shift;
 		int h = heigh / 2 - 2 * shift;
-		if(sval[j] != '0'){
+		if(sval[3 - j] != '0'){
 			g->FillRectangle(blueBrush, x0, y0, w, h);
 		} else
 			g->FillRectangle(whiteBrush, x0, y0, w, h);

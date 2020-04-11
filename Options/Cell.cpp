@@ -8,12 +8,17 @@ void Cell::setDir(int Dir){
 	dir = Dir;
 } // ////////////////////////////////////////////////////////////////////////////////
 void Cell::nextDir(int shiftDir){
-	int newdir = 9 + dir + shiftDir;
-	dir = newdir % 9;
+	dir = (dir + shiftDir + 9) % 9;
 } // ////////////////////////////////////////////////////////////////////////////////
+void Cell::setRotate(Cell^ src){
+	//static const int matrdirs[9] = {0,7,8,1,2,3,4,5,6};
+	static const int matrdirs[9] = {0,3,4,5,6,7,8,1,2};
+	int srcdir = src->getDir();
+	dir = matrdirs[srcdir];
+} // ///////////////////////////////////////////////////////////////////////
 void Cell::drawArrow(Graphics^ g, int x0, int y0, int width, int heigh){
 	const int penwidth = (width + heigh) / 16;
-	Pen^ pen = gcnew Pen(Color::Black, penwidth);
+	Pen^ pen = gcnew Pen(Color::Black, float(penwidth));
 	const int gap = (width + heigh) / 16;
 	const int lenarx = width / 4;
 	const int lenary = heigh / 4;
