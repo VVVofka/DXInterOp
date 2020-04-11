@@ -38,8 +38,8 @@ public:
 	}
 private:
 	Cell4
-		^ cell0000, ^ cell0001, ^ cell0010, ^ cell0011, 
-		^ cell0100, ^ cell0101, ^ cell0110, ^ cell0111, 
+		^ cell0000, ^ cell0001, ^ cell0010, ^ cell0011,
+		^ cell0100, ^ cell0101, ^ cell0110, ^ cell0111,
 		^ cell1000, ^ cell1001, ^ cell1010, ^ cell1011,
 		^ cell1100, ^ cell1101, ^ cell1110, ^ cell1111;
 private: System::Windows::Forms::PictureBox^ box0010;
@@ -390,7 +390,6 @@ private: System::Void btn0111_Click(System::Object^ sender, System::EventArgs^ e
 	cell1101->Rotate(cell1110);
 	box1101->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
-
 private: System::Void btn0110_Click(System::Object^ sender, System::EventArgs^ e){
 	cell1001->Rotate(cell0110);
 	box1001->Refresh();

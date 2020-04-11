@@ -49,12 +49,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>CPP</Filter>
     </ClCompile>
-    <ClCompile Include="Form1.cpp">
-      <Filter>CPP</Filter>
-    </ClCompile>
-    <ClCompile Include="Cell.cpp">
-      <Filter>CPP</Filter>
-    </ClCompile>
     <ClCompile Include="Cell4.cpp">
       <Filter>CPP</Filter>
     </ClCompile>
