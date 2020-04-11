@@ -145,12 +145,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
 				case 73:{   // I
-					int main();
-					int tst(int a, int b);
-					//int ret = main();
-					int ret = tst(7, 12);
+					int main(), ret = 0;
+					int tst(int* dir);
+					ret = main();
+					int dirs[16 * 4 * 4] = {1,2,3};
+					//ret = tst(dirs);
 					setConsole();
-					printf("%d\n", ret);
+					for(int n = 0; n < 8; n++)
+						printf("%d ", dirs[n]);
+					printf("\tret:%d\n", ret);
 					break; }
 				default:
 					//setConsole();			printf("%d\n", wParam);
