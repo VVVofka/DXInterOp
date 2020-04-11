@@ -31,21 +31,21 @@ public:
 	void Rotate(Cell4^ src){
 		//src->dump();
 		static const int matrpos[4] = {2,0,3,1};
-		Cell^ csrc, ^ cdst;
 		for(int ncell = 0; ncell < 4; ncell++){
 			int ncellsrc = matrpos[ncell];
 			for(int nitem = 0; nitem < 4; nitem++){
 				int nitemsrc = matrpos[nitem];
-				csrc = src->getCell(ncellsrc, nitemsrc);
-				cdst = getCell(ncell, nitem);
+				Cell^ csrc = src->getCell(ncellsrc, nitemsrc);
+				Cell^ cdst = getCell(ncell, nitem);
 				cdst->setRotate(csrc);
 				//Diagnostics::Debug::Print("cell:{0} item:{1}", ncell, nitem);
 				//dump();
 			}
 		}
-	}
+	} // //////////////////////////////////////////////////////////////////////////////////////////////
 	Cell^ getCell(int index){return cells[index];}
 	Cell^ getCell(int ncell, int nitem){return cells[4 * ncell + nitem];}
+	void setDir(int ncell, int nitem, int newdir){ cells[4 * ncell + nitem]->setDir(newdir);}
 	// //////////////////////////////////////////////////////////////////////////////////////////////
 	void dump(){
 		Diagnostics::Debug::Print("{0}\t{1}\t\t{2}\t{3}", cells[0]->getDir(), cells[1]->getDir(), cells[4]->getDir(), cells[5]->getDir());
