@@ -83,7 +83,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//Blocks2D2 blks;
 	//blks.dumpx();	_RPT0(0, "\n Y \n");	blks.dumpy();
 
-	
+
 // Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message){
@@ -146,17 +146,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					break;
 				case 73:{   // I
 					int main();
-					int ret = main();
+					int tst(int a, int b);
+					//int ret = main();
+					int ret = tst(7, 12);
 					setConsole();
 					printf("%d\n", ret);
-					break;}
+					break; }
 				default:
 					//setConsole();			printf("%d\n", wParam);
 					break;
 				case VK_PAUSE:
 					break;
-			break;
-		}
+					break;
+			}
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}

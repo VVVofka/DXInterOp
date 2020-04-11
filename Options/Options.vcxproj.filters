@@ -49,9 +49,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>CPP</Filter>
     </ClCompile>
-    <ClCompile Include="Cell4.cpp">
-      <Filter>CPP</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="app.ico">
