@@ -11,10 +11,12 @@ using namespace System;
 using namespace System::Windows::Forms;
 
 [STAThread]
-int main() {
+int main(){
+	static bool first = true;
 	Application::EnableVisualStyles();
-	Application::SetCompatibleTextRenderingDefault(false);
-	Application::Run(gcnew CppCLRWinformsProjekt::Form1()); 
+	if(first)
+		first = false, Application::SetCompatibleTextRenderingDefault(false);
+	Application::Run(gcnew CppCLRWinformsProjekt::Form1());
 	return 0;
 }
-int tst(int a, int b){return a + b;}
+//int tst(int a, int b){return a + b;}

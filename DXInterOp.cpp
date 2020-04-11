@@ -146,9 +146,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					break;
 				case 73:{   // I
 					int main();
-					int tst(int a, int b);
-					//int ret = main();
-					int ret = tst(7, 12);
+					//int tst(int a, int b);
+					int ret = main();
+					//int ret = 0;// tst(7, 12);
 					setConsole();
 					printf("%d\n", ret);
 					break; }

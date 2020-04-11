@@ -15,33 +15,31 @@ using namespace System::Drawing;
 /// </summary>
 public ref class Form1 : public System::Windows::Forms::Form{
 public:
+	void setDir(int a, int ncell, int nitem, int dir){ cells[a]->getCell(ncell, nitem)->setDir(dir); }
+	int getDir(int a, int ncell, int nitem){ return cells[a]->getCell(ncell, nitem)->getDir(); }
 	Form1(void){
 		InitializeComponent();
 		//TODO: Konstruktorcode hier hinzufьgen.
-		cell0000 = gcnew Cell4(box0000);
-		cell0001 = gcnew Cell4(box0001);
-		cell0010 = gcnew Cell4(box0010);
-		cell0011 = gcnew Cell4(box0011);
-		cell0100 = gcnew Cell4(box0100);
-		cell0101 = gcnew Cell4(box0101);
-		cell0110 = gcnew Cell4(box0110);
-		cell0111 = gcnew Cell4(box0111);
+		cells[0b0000] = gcnew Cell4(box0000);
+		cells[0b0001] = gcnew Cell4(box0001);
+		cells[0b0010] = gcnew Cell4(box0010);
+		cells[0b0011] = gcnew Cell4(box0011);
+		cells[0b0100] = gcnew Cell4(box0100);
+		cells[0b0101] = gcnew Cell4(box0101);
+		cells[0b0110] = gcnew Cell4(box0110);
+		cells[0b0111] = gcnew Cell4(box0111);
 
-		cell1000 = gcnew Cell4(box1000);
-		cell1001 = gcnew Cell4(box1001);
-		cell1010 = gcnew Cell4(box1010);
-		cell1011 = gcnew Cell4(box1011);
-		cell1100 = gcnew Cell4(box1100);
-		cell1101 = gcnew Cell4(box1101);
-		cell1110 = gcnew Cell4(box1110);
-		cell1111 = gcnew Cell4(box1111);
+		cells[0b1000] = gcnew Cell4(box1000);
+		cells[0b1001] = gcnew Cell4(box1001);
+		cells[0b1010] = gcnew Cell4(box1010);
+		cells[0b1011] = gcnew Cell4(box1011);
+		cells[0b1100] = gcnew Cell4(box1100);
+		cells[0b1101] = gcnew Cell4(box1101);
+		cells[0b1110] = gcnew Cell4(box1110);
+		cells[0b1111] = gcnew Cell4(box1111);
 	}
 private:
-	Cell4
-		^ cell0000, ^ cell0001, ^ cell0010, ^ cell0011,
-		^ cell0100, ^ cell0101, ^ cell0110, ^ cell0111,
-		^ cell1000, ^ cell1001, ^ cell1010, ^ cell1011,
-		^ cell1100, ^ cell1101, ^ cell1110, ^ cell1111;
+	array<Cell4^>^ cells = gcnew array<Cell4^>(16);
 private: System::Windows::Forms::PictureBox^ box0010;
 private: System::Windows::Forms::PictureBox^ box0100;
 private: System::Windows::Forms::PictureBox^ box1000;
@@ -51,6 +49,12 @@ private: System::Windows::Forms::PictureBox^ box0101;
 private: System::Windows::Forms::PictureBox^ box1001;
 private: System::Windows::Forms::PictureBox^ box1011;
 private: System::Windows::Forms::PictureBox^ box1101;
+private: System::Windows::Forms::PictureBox^ box0000;
+private: System::Windows::Forms::PictureBox^ box0001;
+private: System::Windows::Forms::PictureBox^ box0011;
+private: System::Windows::Forms::PictureBox^ box0110;
+private: System::Windows::Forms::PictureBox^ box0111;
+private: System::Windows::Forms::PictureBox^ box1111;
 private: System::Windows::Forms::Button^ btn0001;
 private: System::Windows::Forms::Button^ btn0011;
 private: System::Windows::Forms::Button^ btn0111;
@@ -66,12 +70,6 @@ protected:
 		}
 	}
 
-private: System::Windows::Forms::PictureBox^ box0000;
-private: System::Windows::Forms::PictureBox^ box0001;
-private: System::Windows::Forms::PictureBox^ box0011;
-private: System::Windows::Forms::PictureBox^ box0110;
-private: System::Windows::Forms::PictureBox^ box0111;
-private: System::Windows::Forms::PictureBox^ box1111;
 
 private: System::ComponentModel::IContainer^ components;
 
@@ -133,8 +131,6 @@ private:
 		this->box0110->Location = System::Drawing::Point(263, 392);
 		this->box0110->Name = L"box0110";
 		this->box0110->Size = System::Drawing::Size(96, 96);
-		this->box0110->TabIndex = 5;
-		this->box0110->TabStop = false;
 		this->box0110->Tag = L"0110";
 		// 
 		// box0000
@@ -142,8 +138,6 @@ private:
 		this->box0000->Location = System::Drawing::Point(25, 392);
 		this->box0000->Name = L"box0000";
 		this->box0000->Size = System::Drawing::Size(96, 96);
-		this->box0000->TabIndex = 0;
-		this->box0000->TabStop = false;
 		this->box0000->Tag = L"0000";
 		// 
 		// box0001
@@ -151,8 +145,6 @@ private:
 		this->box0001->Location = System::Drawing::Point(25, 36);
 		this->box0001->Name = L"box0001";
 		this->box0001->Size = System::Drawing::Size(96, 96);
-		this->box0001->TabIndex = 1;
-		this->box0001->TabStop = false;
 		this->box0001->Tag = L"0001";
 		// 
 		// box0011
@@ -160,8 +152,6 @@ private:
 		this->box0011->Location = System::Drawing::Point(25, 148);
 		this->box0011->Name = L"box0011";
 		this->box0011->Size = System::Drawing::Size(96, 96);
-		this->box0011->TabIndex = 2;
-		this->box0011->TabStop = false;
 		this->box0011->Tag = L"0011";
 		// 
 		// box0111
@@ -169,8 +159,6 @@ private:
 		this->box0111->Location = System::Drawing::Point(25, 260);
 		this->box0111->Name = L"box0111";
 		this->box0111->Size = System::Drawing::Size(96, 96);
-		this->box0111->TabIndex = 4;
-		this->box0111->TabStop = false;
 		this->box0111->Tag = L"0111";
 		// 
 		// box1111
@@ -178,8 +166,6 @@ private:
 		this->box1111->Location = System::Drawing::Point(144, 392);
 		this->box1111->Name = L"box1111";
 		this->box1111->Size = System::Drawing::Size(96, 96);
-		this->box1111->TabIndex = 3;
-		this->box1111->TabStop = false;
 		this->box1111->Tag = L"1111";
 		// 
 		// box0010
@@ -187,8 +173,6 @@ private:
 		this->box0010->Location = System::Drawing::Point(174, 36);
 		this->box0010->Name = L"box0010";
 		this->box0010->Size = System::Drawing::Size(96, 96);
-		this->box0010->TabIndex = 1;
-		this->box0010->TabStop = false;
 		this->box0010->Tag = L"0010";
 		// 
 		// box0100
@@ -196,8 +180,6 @@ private:
 		this->box0100->Location = System::Drawing::Point(412, 36);
 		this->box0100->Name = L"box0100";
 		this->box0100->Size = System::Drawing::Size(96, 96);
-		this->box0100->TabIndex = 1;
-		this->box0100->TabStop = false;
 		this->box0100->Tag = L"0100";
 		// 
 		// box1000
@@ -205,8 +187,6 @@ private:
 		this->box1000->Location = System::Drawing::Point(293, 36);
 		this->box1000->Name = L"box1000";
 		this->box1000->Size = System::Drawing::Size(96, 96);
-		this->box1000->TabIndex = 1;
-		this->box1000->TabStop = false;
 		this->box1000->Tag = L"1000";
 		// 
 		// box1010
@@ -214,8 +194,6 @@ private:
 		this->box1010->Location = System::Drawing::Point(174, 148);
 		this->box1010->Name = L"box1010";
 		this->box1010->Size = System::Drawing::Size(96, 96);
-		this->box1010->TabIndex = 2;
-		this->box1010->TabStop = false;
 		this->box1010->Tag = L"1010";
 		// 
 		// box1100
@@ -223,8 +201,6 @@ private:
 		this->box1100->Location = System::Drawing::Point(293, 148);
 		this->box1100->Name = L"box1100";
 		this->box1100->Size = System::Drawing::Size(96, 96);
-		this->box1100->TabIndex = 2;
-		this->box1100->TabStop = false;
 		this->box1100->Tag = L"1100";
 		// 
 		// box0101
@@ -232,8 +208,6 @@ private:
 		this->box0101->Location = System::Drawing::Point(412, 148);
 		this->box0101->Name = L"box0101";
 		this->box0101->Size = System::Drawing::Size(96, 96);
-		this->box0101->TabIndex = 2;
-		this->box0101->TabStop = false;
 		this->box0101->Tag = L"0101";
 		// 
 		// box1001
@@ -241,8 +215,6 @@ private:
 		this->box1001->Location = System::Drawing::Point(412, 392);
 		this->box1001->Name = L"box1001";
 		this->box1001->Size = System::Drawing::Size(96, 96);
-		this->box1001->TabIndex = 5;
-		this->box1001->TabStop = false;
 		this->box1001->Tag = L"1001";
 		// 
 		// box1011
@@ -250,8 +222,6 @@ private:
 		this->box1011->Location = System::Drawing::Point(174, 260);
 		this->box1011->Name = L"box1011";
 		this->box1011->Size = System::Drawing::Size(96, 96);
-		this->box1011->TabIndex = 4;
-		this->box1011->TabStop = false;
 		this->box1011->Tag = L"1011";
 		// 
 		// box1101
@@ -259,8 +229,6 @@ private:
 		this->box1101->Location = System::Drawing::Point(412, 260);
 		this->box1101->Name = L"box1101";
 		this->box1101->Size = System::Drawing::Size(96, 96);
-		this->box1101->TabIndex = 4;
-		this->box1101->TabStop = false;
 		this->box1101->Tag = L"1101";
 		// 
 		// box1110
@@ -268,8 +236,6 @@ private:
 		this->box1110->Location = System::Drawing::Point(293, 260);
 		this->box1110->Name = L"box1110";
 		this->box1110->Size = System::Drawing::Size(96, 96);
-		this->box1110->TabIndex = 4;
-		this->box1110->TabStop = false;
 		this->box1110->Tag = L"1110";
 		// 
 		// btn0001
@@ -361,37 +327,37 @@ private:
 #pragma endregion
 
 private: System::Void btn0001_Click(System::Object^ sender, System::EventArgs^ e){
-	cell0010->Rotate(cell0001);
+	cells[0b0010]->Rotate(cells[0b0001]);
 	box0010->Refresh();
 
-	cell1000->Rotate(cell0010);
+	cells[0b1000]->Rotate(cells[0b0010]);
 	box1000->Refresh();
 
-	cell0100->Rotate(cell1000);
+	cells[0b0100]->Rotate(cells[0b1000]);
 	box0100->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
 private: System::Void btn0011_Click(System::Object^ sender, System::EventArgs^ e){
-	cell1010->Rotate(cell0011);
+	cells[0b1010]->Rotate(cells[0b0011]);
 	box1010->Refresh();
 
-	cell1100->Rotate(cell1010);
+	cells[0b1100]->Rotate(cells[0b1010]);
 	box1100->Refresh();
 
-	cell0101->Rotate(cell1100);
+	cells[0b0101]->Rotate(cells[0b1100]);
 	box0101->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
 private: System::Void btn0111_Click(System::Object^ sender, System::EventArgs^ e){
-	cell1011->Rotate(cell0111);
+	cells[0b1011]->Rotate(cells[0b0111]);
 	box1011->Refresh();
 
-	cell1110->Rotate(cell1011);
+	cells[0b1110]->Rotate(cells[0b1011]);
 	box1110->Refresh();
 
-	cell1101->Rotate(cell1110);
+	cells[0b1101]->Rotate(cells[0b1110]);
 	box1101->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
 private: System::Void btn0110_Click(System::Object^ sender, System::EventArgs^ e){
-	cell1001->Rotate(cell0110);
+	cells[0b1001]->Rotate(cells[0b0110]);
 	box1001->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
 
