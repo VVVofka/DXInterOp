@@ -1,5 +1,4 @@
 #include "pch.h"
-
 using namespace System;
 
 //int main(array<System::String ^> ^args)
@@ -18,3 +17,4 @@ int main() {
 	Application::Run(gcnew CppCLRWinformsProjekt::Form1()); 
 	return 0;
 }
+int tst(int a, int b){return a + b;}

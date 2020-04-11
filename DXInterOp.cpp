@@ -83,7 +83,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//Blocks2D2 blks;
 	//blks.dumpx();	_RPT0(0, "\n Y \n");	blks.dumpy();
 
-	// Main message loop
+	
+// Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message){
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
@@ -143,8 +144,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 				case VK_ESCAPE:
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
-				case 73:   // I
-					break;
+				case 73:{   // I
+					int main();
+					int ret = main();
+					setConsole();
+					printf("%d\n", ret);
+					break;}
 				default:
 					//setConsole();			printf("%d\n", wParam);
 					break;

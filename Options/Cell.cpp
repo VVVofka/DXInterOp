@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Cell.h"
+using namespace CppCLRWinformsProjekt;
 
 Cell::Cell(){
 	dir = 0;

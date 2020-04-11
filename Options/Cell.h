@@ -1,11 +1,12 @@
 #pragma once
 #include <cassert>
-
+namespace CppCLRWinformsProjekt{
 using namespace System;
 using namespace System::Windows::Forms;
 using namespace System::Drawing;
+using namespace CppCLRWinformsProjekt;
 
-ref class Cell{
+private ref class Cell{
 	int dir;
 public:
 	Cell();
@@ -15,4 +16,4 @@ public:
 	void setRotate(Cell^ src);
 	void drawArrow(Graphics^ g, int x0, int y0, int width, int heigh) ;
 }; // *************************************************************************************
-
+}

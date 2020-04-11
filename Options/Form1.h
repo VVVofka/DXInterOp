@@ -55,9 +55,6 @@ private: System::Windows::Forms::Button^ btn0001;
 private: System::Windows::Forms::Button^ btn0011;
 private: System::Windows::Forms::Button^ btn0111;
 private: System::Windows::Forms::Button^ btn0110;
-
-
-
 private: System::Windows::Forms::PictureBox^ box1110;
 protected:
 	/// <summary>
@@ -196,7 +193,7 @@ private:
 		// 
 		// box0100
 		// 
-		this->box0100->Location = System::Drawing::Point(293, 36);
+		this->box0100->Location = System::Drawing::Point(412, 36);
 		this->box0100->Name = L"box0100";
 		this->box0100->Size = System::Drawing::Size(96, 96);
 		this->box0100->TabIndex = 1;
@@ -205,7 +202,7 @@ private:
 		// 
 		// box1000
 		// 
-		this->box1000->Location = System::Drawing::Point(412, 36);
+		this->box1000->Location = System::Drawing::Point(293, 36);
 		this->box1000->Name = L"box1000";
 		this->box1000->Size = System::Drawing::Size(96, 96);
 		this->box1000->TabIndex = 1;
@@ -293,6 +290,7 @@ private:
 		this->btn0011->TabIndex = 6;
 		this->btn0011->Text = L">>";
 		this->btn0011->UseVisualStyleBackColor = true;
+		this->btn0011->Click += gcnew System::EventHandler(this, &Form1::btn0011_Click);
 		// 
 		// btn0111
 		// 
@@ -302,6 +300,7 @@ private:
 		this->btn0111->TabIndex = 6;
 		this->btn0111->Text = L">>";
 		this->btn0111->UseVisualStyleBackColor = true;
+		this->btn0111->Click += gcnew System::EventHandler(this, &Form1::btn0111_Click);
 		// 
 		// btn0110
 		// 
@@ -311,6 +310,7 @@ private:
 		this->btn0110->TabIndex = 6;
 		this->btn0110->Text = L">>";
 		this->btn0110->UseVisualStyleBackColor = true;
+		this->btn0110->Click += gcnew System::EventHandler(this, &Form1::btn0110_Click);
 		// 
 		// Form1
 		// 
@@ -363,6 +363,39 @@ private:
 private: System::Void btn0001_Click(System::Object^ sender, System::EventArgs^ e){
 	cell0010->Rotate(cell0001);
 	box0010->Refresh();
+
+	cell1000->Rotate(cell0010);
+	box1000->Refresh();
+
+	cell0100->Rotate(cell1000);
+	box0100->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
+private: System::Void btn0011_Click(System::Object^ sender, System::EventArgs^ e){
+	cell1010->Rotate(cell0011);
+	box1010->Refresh();
+
+	cell1100->Rotate(cell1010);
+	box1100->Refresh();
+
+	cell0101->Rotate(cell1100);
+	box0101->Refresh();
+} // /////////////////////////////////////////////////////////////////////////
+private: System::Void btn0111_Click(System::Object^ sender, System::EventArgs^ e){
+	cell1011->Rotate(cell0111);
+	box1011->Refresh();
+
+	cell1110->Rotate(cell1011);
+	box1110->Refresh();
+
+	cell1101->Rotate(cell1110);
+	box1101->Refresh();
+} // /////////////////////////////////////////////////////////////////////////
+
+private: System::Void btn0110_Click(System::Object^ sender, System::EventArgs^ e){
+	cell1001->Rotate(cell0110);
+	box1001->Refresh();
+} // /////////////////////////////////////////////////////////////////////////
+
+
 };
 }

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Cell4.h"
+using namespace CppCLRWinformsProjekt;
 
 Cell4::Cell4(PictureBox^ parrent){
 	for(int ncell = 0; ncell < 4; ncell++)
@@ -15,8 +16,8 @@ Cell4::Cell4(PictureBox^ parrent){
 	parrent->Paint += gcnew PaintEventHandler(this, &Cell4::cell4_Paint);
 	parrent->MouseDown += gcnew MouseEventHandler(this, &Cell4::cell4_MouseDown);
 } // ///////////////////////////////////////////////////////////////////////
-
 void Cell4::Rotate(Cell4^ src){
+	//src->dump();
 	static const int matrpos[4] = {2,0,3,1};
 	Cell^ csrc, ^ cdst;
 	for(int ncell = 0; ncell < 4; ncell++){
@@ -26,11 +27,9 @@ void Cell4::Rotate(Cell4^ src){
 			csrc = src->getCell(ncellsrc, nitemsrc);
 			cdst = getCell(ncell, nitem);
 			cdst->setRotate(csrc);
-			printf("zzz\n");
+			//Diagnostics::Debug::Print("cell:{0} item:{1}", ncell, nitem);
+			//dump();
 		}
-	}
-	for(int ncell = 0; ncell < 4; ncell++){
-		cells[ncell]->setRotate(src->getCell(matrpos[ncell]));
 	}
 } // ///////////////////////////////////////////////////////////////////////
 System::Void Cell4::cell4_Paint(System::Object^ sender, Forms::PaintEventArgs^ e){
@@ -55,13 +54,7 @@ System::Void Cell4::cell4_Paint(System::Object^ sender, Forms::PaintEventArgs^ e
 		cells[j * 4 + 3]->drawArrow(g, x0 + 1 + w / 2, y0 + 1 + h / 2, w / 2 - 1, h / 2 - 1);
 	}
 	return System::Void();
-
-	// Draw a string on the PictureBox.
-	//g->DrawString("This is a diagonal line drawn on the control",
-	//	fnt, Brushes::Blue, new Point(30, 30));
-	//// Draw a line in the PictureBox.
-	//g->DrawLine(System.Drawing.Pens.Red, pictureBox1.Left, pictureBox1.Top,
-	//	pictureBox1.Right, pictureBox1.Bottom);
+	//g->DrawString("This is a diagonal line drawn on the control", fnt, Brushes::Blue, new Point(30, 30));
 } // //////////////////////////////////////////////////////////////////////////////////
 System::Void Cell4::cell4_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e){
 	const int x = e->X, y = e->Y;
@@ -79,3 +72,10 @@ System::Void Cell4::cell4_MouseDown(System::Object^ sender, System::Windows::For
 	pb->Refresh();
 	return System::Void();
 } // //////////////////////////////////////////////////////////////////////////////////////////////
+void Cell4::dump(){
+	Diagnostics::Debug::Print("{0}\t{1}\t\t{2}\t{3}",cells[0]->getDir(), cells[1]->getDir(), cells[4]->getDir(), cells[5]->getDir());
+	Diagnostics::Debug::Print("{0}\t{1}\t\t{2}\t{3}",cells[2]->getDir(), cells[3]->getDir(), cells[6]->getDir(), cells[7]->getDir());
+	Diagnostics::Debug::Print("");
+	Diagnostics::Debug::Print("{0}\t{1}\t\t{2}\t{3}",cells[8]->getDir(), cells[9]->getDir(), cells[12]->getDir(), cells[13]->getDir());
+	Diagnostics::Debug::Print("{0}\t{1}\t\t{2}\t{3}",cells[10]->getDir(), cells[11]->getDir(), cells[14]->getDir(), cells[15]->getDir());
+} // ///////////////////////////////////////////////////////////////////////
