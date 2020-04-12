@@ -70,15 +70,40 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		return E_FAIL;
 	}
 #else 
+	//INT2 szlay0 = INT2(1, 1);
+	////model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
+	//DBL2 Sigma(0.15, 0.15);
+	//model.Create(szlay0, 1024 * 2, 0.015, Sigma); //8 - ???
+	//if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
+	//	mdx.CleanupDevice();
+	//	return E_FAIL;
+	//}
+#endif // MY2D
+
+// Main message loop
+	//MSG msg = {0};
+	//while(WM_QUIT != msg.message){
+	//	if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
+	//		TranslateMessage(&msg);
+	//		DispatchMessage(&msg);
+	//	} else{
+	//		mdx.Render();
+	//	}
+	//}
+	//mdx.CleanupDevice();
+	//return (int)msg.wParam;
+	int work();
+	return work();
+} // ////////////////////////////////////////////////////////////////////////////
+int work(){
 	INT2 szlay0 = INT2(1, 1);
 	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
-	DBL2 Sigma(0.15, 0.15);
+	DBL2 Sigma(0.35, 0.35);
 	model.Create(szlay0, 1024 * 2, 0.015, Sigma); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
 		mdx.CleanupDevice();
 		return E_FAIL;
 	}
-#endif // MY2D
 
 // Main message loop
 	MSG msg = {0};
@@ -92,9 +117,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 	mdx.CleanupDevice();
 	return (int)msg.wParam;
-} // ////////////////////////////////////////////////////////////////////////////
-int work(){
-
 } // /////////////////////////////////////////////////////////////////////////////
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow){  // Register class and create window
 	// Register class
@@ -148,6 +170,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					model.blocks2D2.toDirs(dirs);
 					openDlgOptions(dirs);
 					model.blocks2D2.fromDirs(dirs);
+					mdx.InitDevice(g_hWnd, model.lastPoss());
 					//setConsole();for(auto q : dirs) printf("%d", q);
 					//printf("\n");
 					break; }
