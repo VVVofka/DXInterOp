@@ -17,6 +17,7 @@
     </ClCompile>
     <ClCompile Include="Model2D.cpp" />
     <ClCompile Include="Masks.cpp" />
+    <ClCompile Include="Options.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine3.h" />
@@ -41,6 +42,7 @@
       <Filter>Run</Filter>
     </ClInclude>
     <ClInclude Include="Ini.h" />
+    <ClInclude Include="Options.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl" />

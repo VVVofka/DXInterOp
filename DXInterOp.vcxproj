@@ -239,6 +239,7 @@
     <ClInclude Include="MDX2.h" />
     <ClInclude Include="MDX3.h" />
     <ClInclude Include="Model2D.h" />
+    <ClInclude Include="Options.h" />
     <ClInclude Include="RunA.h" />
     <ClInclude Include="RunD.h" />
     <ClInclude Include="RunDlast.h" />
@@ -252,6 +253,7 @@
     </ClCompile>
     <ClCompile Include="Masks.cpp" />
     <ClCompile Include="Model2D.cpp" />
+    <ClCompile Include="Options.cpp" />
     <ClCompile Include="RunA.cpp" />
     <ClCompile Include="RunD.cpp" />
     <ClCompile Include="RunDlast.cpp" />

@@ -15,6 +15,11 @@
 #include <d3dcompiler.h>
 #include <D3D11.h>
 
+#define MYAREA
+//#define MY2D
+//#define MY3D
+
+
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
 #endif    

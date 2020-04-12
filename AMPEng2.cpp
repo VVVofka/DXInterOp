@@ -26,10 +26,9 @@ void AMPEng2::initialize_data(){
 	//setConsole();
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 void AMPEng2::run(){
-	//return;
 	INT2 shift(distLastAY(gen), distLastAX(gen));
 	//printf("\nshift = y:%d x:%d\n", shift.y, shift.x);	dumpA(nlastlay);
-	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
+	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[size_t(nlastlay) - 1], *amask);
 	//RunA::RunUnTorLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 
 	for(int nlay = nlastlay - 1; nlay > 0; nlay--){

@@ -7,43 +7,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 //#include <windows.h>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <exception>
 #include "DXInterOp.h"
-#include "Masks.h"
-#ifdef MY2D
-#include "MDX2.h"
-#include "Model2D.h"
-#elif MY3D // MY2D
-#include "MDX3.h"
-#else // MY2D
-#include "MDX2.h"
-#include "Model2D.h"
-#include "Utils.h"
-#endif // MY2D
 
-//--------------------------------------------------------------------------------------
-// Global Variables
-HINSTANCE                   g_hInst = NULL;
-HWND                        g_hWnd = NULL;
-// Forward declarations
-HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-#ifdef MY2D
-MDX2 mdx;
-Model2D model;
-std::vector<Vertex2D> vertices(3);
-#elif MY3D // MY2D
-MDX3 mdx;
-std::vector<Vertex3D> vertices(3);
-#else // MY2D
-MDX2 mdx;
-Model2D model = Model2D();
-#endif // MY2D
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
@@ -52,7 +17,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	RETURN_IF_FAIL(InitWindow(hInstance, nCmdShow));
-
 #ifdef MY2D
 	vertices[0].Pos = DirectX::XMFLOAT2(-0.25f, 0.0f);
 	vertices[1].Pos = DirectX::XMFLOAT2(0.0f, -0.5f);
@@ -79,19 +43,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//	return E_FAIL;
 	//}
 #endif // MY2D
-
-// Main message loop
-	//MSG msg = {0};
-	//while(WM_QUIT != msg.message){
-	//	if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
-	//		TranslateMessage(&msg);
-	//		DispatchMessage(&msg);
-	//	} else{
-	//		mdx.Render();
-	//	}
-	//}
-	//mdx.CleanupDevice();
-	//return (int)msg.wParam;
 	int work();
 	return work();
 } // ////////////////////////////////////////////////////////////////////////////
@@ -165,14 +116,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
 				case 73:{   // I
-					void openDlgOptions(int* dirs); // decl Options.lib
-					int dirs[16 * 4 * 4];
-					model.blocks2D2.toDirs(dirs);
-					openDlgOptions(dirs);
-					model.blocks2D2.fromDirs(dirs);
+
+					mdx.CleanupDevice();
 					mdx.InitDevice(g_hWnd, model.lastPoss());
-					//setConsole();for(auto q : dirs) printf("%d", q);
-					//printf("\n");
 					break; }
 				case VK_PAUSE:
 					break;

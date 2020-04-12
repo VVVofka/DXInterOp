@@ -152,6 +152,7 @@
     <ClInclude Include="Form1.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="OptionExternDecl.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />

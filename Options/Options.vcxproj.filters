@@ -38,6 +38,9 @@
     <ClInclude Include="Types.h">
       <Filter>Head</Filter>
     </ClInclude>
+    <ClInclude Include="OptionExternDecl.h">
+      <Filter>Head</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CppCLR_WinformsProjekt.cpp">
