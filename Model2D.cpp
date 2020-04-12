@@ -30,6 +30,7 @@ void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 	v_poss.push_back(std::vector<Vertex2D>());
 	fillrnd(nlay, (int)szarea, kRnd, kSigma);
 	//filltest(nlay);
+	blocks2D2.fromDirs()
 } // //////////////////////////////////////////////////////////////////////////////////
 Vertex2D Model2D::norm(int curpos, INT2 sizes) const{
 	const int iy = curpos / sizes.x;

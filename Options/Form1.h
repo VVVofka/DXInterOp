@@ -14,9 +14,11 @@ using namespace System::Drawing;
 /// Zusammenfassung fьr Form1
 /// </summary>
 public ref class Form1 : public System::Windows::Forms::Form{
+	int OkCancel = 1; // Ok=1 Cancel=0
 public:
 	void setDir(int a, int ncell, int nitem, int dir){ cells[a]->getCell(ncell, nitem)->setDir(dir); }
 	int getDir(int a, int ncell, int nitem){ return cells[a]->getCell(ncell, nitem)->getDir(); }
+	int getOk(){return OkCancel;}
 	Form1(void){
 		InitializeComponent();
 		//TODO: Konstruktorcode hier hinzufьgen.
@@ -59,6 +61,7 @@ private: System::Windows::Forms::Button^ btn0001;
 private: System::Windows::Forms::Button^ btn0011;
 private: System::Windows::Forms::Button^ btn0111;
 private: System::Windows::Forms::Button^ btn0110;
+private: System::Windows::Forms::Button^ btOk;
 private: System::Windows::Forms::PictureBox^ box1110;
 protected:
 	/// <summary>
@@ -108,6 +111,7 @@ private:
 		this->btn0011 = (gcnew System::Windows::Forms::Button());
 		this->btn0111 = (gcnew System::Windows::Forms::Button());
 		this->btn0110 = (gcnew System::Windows::Forms::Button());
+		this->btOk = (gcnew System::Windows::Forms::Button());
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0110))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0000))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0001))->BeginInit();
@@ -131,6 +135,8 @@ private:
 		this->box0110->Location = System::Drawing::Point(263, 392);
 		this->box0110->Name = L"box0110";
 		this->box0110->Size = System::Drawing::Size(96, 96);
+		this->box0110->TabIndex = 22;
+		this->box0110->TabStop = false;
 		this->box0110->Tag = L"0110";
 		// 
 		// box0000
@@ -138,6 +144,8 @@ private:
 		this->box0000->Location = System::Drawing::Point(25, 392);
 		this->box0000->Name = L"box0000";
 		this->box0000->Size = System::Drawing::Size(96, 96);
+		this->box0000->TabIndex = 7;
+		this->box0000->TabStop = false;
 		this->box0000->Tag = L"0000";
 		// 
 		// box0001
@@ -145,6 +153,8 @@ private:
 		this->box0001->Location = System::Drawing::Point(25, 36);
 		this->box0001->Name = L"box0001";
 		this->box0001->Size = System::Drawing::Size(96, 96);
+		this->box0001->TabIndex = 11;
+		this->box0001->TabStop = false;
 		this->box0001->Tag = L"0001";
 		// 
 		// box0011
@@ -152,6 +162,8 @@ private:
 		this->box0011->Location = System::Drawing::Point(25, 148);
 		this->box0011->Name = L"box0011";
 		this->box0011->Size = System::Drawing::Size(96, 96);
+		this->box0011->TabIndex = 15;
+		this->box0011->TabStop = false;
 		this->box0011->Tag = L"0011";
 		// 
 		// box0111
@@ -159,6 +171,8 @@ private:
 		this->box0111->Location = System::Drawing::Point(25, 260);
 		this->box0111->Name = L"box0111";
 		this->box0111->Size = System::Drawing::Size(96, 96);
+		this->box0111->TabIndex = 20;
+		this->box0111->TabStop = false;
 		this->box0111->Tag = L"0111";
 		// 
 		// box1111
@@ -166,6 +180,8 @@ private:
 		this->box1111->Location = System::Drawing::Point(144, 392);
 		this->box1111->Name = L"box1111";
 		this->box1111->Size = System::Drawing::Size(96, 96);
+		this->box1111->TabIndex = 16;
+		this->box1111->TabStop = false;
 		this->box1111->Tag = L"1111";
 		// 
 		// box0010
@@ -173,6 +189,8 @@ private:
 		this->box0010->Location = System::Drawing::Point(174, 36);
 		this->box0010->Name = L"box0010";
 		this->box0010->Size = System::Drawing::Size(96, 96);
+		this->box0010->TabIndex = 8;
+		this->box0010->TabStop = false;
 		this->box0010->Tag = L"0010";
 		// 
 		// box0100
@@ -180,6 +198,8 @@ private:
 		this->box0100->Location = System::Drawing::Point(412, 36);
 		this->box0100->Name = L"box0100";
 		this->box0100->Size = System::Drawing::Size(96, 96);
+		this->box0100->TabIndex = 9;
+		this->box0100->TabStop = false;
 		this->box0100->Tag = L"0100";
 		// 
 		// box1000
@@ -187,6 +207,8 @@ private:
 		this->box1000->Location = System::Drawing::Point(293, 36);
 		this->box1000->Name = L"box1000";
 		this->box1000->Size = System::Drawing::Size(96, 96);
+		this->box1000->TabIndex = 10;
+		this->box1000->TabStop = false;
 		this->box1000->Tag = L"1000";
 		// 
 		// box1010
@@ -194,6 +216,8 @@ private:
 		this->box1010->Location = System::Drawing::Point(174, 148);
 		this->box1010->Name = L"box1010";
 		this->box1010->Size = System::Drawing::Size(96, 96);
+		this->box1010->TabIndex = 12;
+		this->box1010->TabStop = false;
 		this->box1010->Tag = L"1010";
 		// 
 		// box1100
@@ -201,6 +225,8 @@ private:
 		this->box1100->Location = System::Drawing::Point(293, 148);
 		this->box1100->Name = L"box1100";
 		this->box1100->Size = System::Drawing::Size(96, 96);
+		this->box1100->TabIndex = 13;
+		this->box1100->TabStop = false;
 		this->box1100->Tag = L"1100";
 		// 
 		// box0101
@@ -208,6 +234,8 @@ private:
 		this->box0101->Location = System::Drawing::Point(412, 148);
 		this->box0101->Name = L"box0101";
 		this->box0101->Size = System::Drawing::Size(96, 96);
+		this->box0101->TabIndex = 14;
+		this->box0101->TabStop = false;
 		this->box0101->Tag = L"0101";
 		// 
 		// box1001
@@ -215,6 +243,8 @@ private:
 		this->box1001->Location = System::Drawing::Point(412, 392);
 		this->box1001->Name = L"box1001";
 		this->box1001->Size = System::Drawing::Size(96, 96);
+		this->box1001->TabIndex = 21;
+		this->box1001->TabStop = false;
 		this->box1001->Tag = L"1001";
 		// 
 		// box1011
@@ -222,6 +252,8 @@ private:
 		this->box1011->Location = System::Drawing::Point(174, 260);
 		this->box1011->Name = L"box1011";
 		this->box1011->Size = System::Drawing::Size(96, 96);
+		this->box1011->TabIndex = 17;
+		this->box1011->TabStop = false;
 		this->box1011->Tag = L"1011";
 		// 
 		// box1101
@@ -229,6 +261,8 @@ private:
 		this->box1101->Location = System::Drawing::Point(412, 260);
 		this->box1101->Name = L"box1101";
 		this->box1101->Size = System::Drawing::Size(96, 96);
+		this->box1101->TabIndex = 19;
+		this->box1101->TabStop = false;
 		this->box1101->Tag = L"1101";
 		// 
 		// box1110
@@ -236,6 +270,8 @@ private:
 		this->box1110->Location = System::Drawing::Point(293, 260);
 		this->box1110->Name = L"box1110";
 		this->box1110->Size = System::Drawing::Size(96, 96);
+		this->box1110->TabIndex = 18;
+		this->box1110->TabStop = false;
 		this->box1110->Tag = L"1110";
 		// 
 		// btn0001
@@ -278,11 +314,22 @@ private:
 		this->btn0110->UseVisualStyleBackColor = true;
 		this->btn0110->Click += gcnew System::EventHandler(this, &Form1::btn0110_Click);
 		// 
+		// btOk
+		// 
+		this->btOk->DialogResult = System::Windows::Forms::DialogResult::OK;
+		this->btOk->Location = System::Drawing::Point(536, 604);
+		this->btOk->Name = L"btOk";
+		this->btOk->Size = System::Drawing::Size(75, 23);
+		this->btOk->TabIndex = 23;
+		this->btOk->Text = L"Ok";
+		this->btOk->UseVisualStyleBackColor = true;
+		// 
 		// Form1
 		// 
 		this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 		this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 		this->ClientSize = System::Drawing::Size(623, 662);
+		this->Controls->Add(this->btOk);
 		this->Controls->Add(this->btn0110);
 		this->Controls->Add(this->btn0111);
 		this->Controls->Add(this->btn0011);

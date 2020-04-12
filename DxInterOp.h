@@ -29,6 +29,9 @@ HWND                        g_hWnd = NULL;
 // Forward declarations
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+
+Options options;
+
 #ifdef MY2D
 MDX2 mdx;
 Model2D model;
@@ -40,6 +43,5 @@ std::vector<Vertex3D> vertices(3);
 MDX2 mdx;
 Model2D model = Model2D();
 #endif // MY2D
-
 
 

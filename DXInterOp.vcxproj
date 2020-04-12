@@ -118,6 +118,7 @@
       <PrecompiledHeaderOutputFile />
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>26812;4005;4702;26495</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,6 +152,7 @@
       </PrecompiledHeaderOutputFile>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>26812;4005</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
