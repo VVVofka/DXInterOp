@@ -9,12 +9,14 @@
 #include <DirectXMath.h>
 #pragma warning(pop)
 
-#include "DXInterOp.h"
+//#include "DXInterOp.h"
 #include "Utils.h"
 #include "Vertex.h"
+#include "Masks.h"
 
 class Model2D{
 public:
+	Blocks2D2 blocks2D2;
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DrQuadro>> v_dirs;

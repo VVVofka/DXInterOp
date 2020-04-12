@@ -55,7 +55,6 @@ private:
 	std::mt19937 gen;  // to seed mersenne twister. rand: gen(rd())
 	std::uniform_int_distribution<int> distLastAY, distLastAX;
 	int nlastlay = -1;  // N last lay
-	Blocks2D2 blocks2D2;
 
 public:
 	void dumpA(int nlay);

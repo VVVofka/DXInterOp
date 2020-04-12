@@ -80,10 +80,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 #endif // MY2D
 
-	//Blocks2D2 blks;
-	//blks.dumpx();	_RPT0(0, "\n Y \n");	blks.dumpy();
-
-
 // Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message){
@@ -95,9 +91,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 	}
 	mdx.CleanupDevice();
-	//return DXUTGetExitCode();
 	return (int)msg.wParam;
 } // ////////////////////////////////////////////////////////////////////////////
+int work(){
+
+} // /////////////////////////////////////////////////////////////////////////////
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow){  // Register class and create window
 	// Register class
 	WNDCLASSEX wcex;
@@ -145,13 +143,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
 				case 73:{   // I
-//					int main();
-					void openDlgOptions(int* dirs);
-					static int dirs[16 * 4 * 4] = {1,2,3,4,0,5,6,7,8};
+					void openDlgOptions(int* dirs); // decl Options.lib
+					int dirs[16 * 4 * 4];
+					model.blocks2D2.toDirs(dirs);
 					openDlgOptions(dirs);
-					setConsole();
-					for(auto q : dirs) printf("%d", q);
-					printf("\n");
+					model.blocks2D2.fromDirs(dirs);
+					//setConsole();for(auto q : dirs) printf("%d", q);
+					//printf("\n");
 					break; }
 				case VK_PAUSE:
 					break;
