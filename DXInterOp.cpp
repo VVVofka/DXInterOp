@@ -146,11 +146,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					break;
 				case 73:{   // I
 					int main();
-					//int tst(int a, int b);
-					int ret = main();
-					//int ret = 0;// tst(7, 12);
+					void openDlgOptions(int* dirs);
+					//int ret = main();
+					static int dirs[16 * 4 * 4] = {1,2,3,4,0,5,6,7,8};
+					openDlgOptions(dirs);
 					setConsole();
-					printf("%d\n", ret);
+					for(auto q : dirs) printf("%d", q);
+					printf("\n");
 					break; }
 				default:
 					//setConsole();			printf("%d\n", wParam);

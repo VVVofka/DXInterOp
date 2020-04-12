@@ -15,5 +15,20 @@ int main(){
 		first = false, Application::SetCompatibleTextRenderingDefault(false);
 	Application::Run(gcnew CppCLRWinformsProjekt::Form1());
 	return 0;
-}
-//int tst(int a, int b){return a + b;}
+} // /////////////////////////////////////////////////////////////////////////////////////////////
+void openDlgOptions(int* dirs){
+	static bool first = true;
+	Application::EnableVisualStyles();
+	if(first)
+		first = false, Application::SetCompatibleTextRenderingDefault(false);
+	auto frm = gcnew CppCLRWinformsProjekt::Form1();
+	for(int a = 0, n = 0; a < 16; a++)
+		for(int ncell = 0; ncell < 4; ncell++)
+			for(int nitem = 0; nitem < 4; nitem++)
+				frm->setDir(a, ncell, nitem, dirs[n++]);
+	Application::Run(frm);
+	for(int a = 0, n = 0; a < 16; a++)
+		for(int ncell = 0; ncell < 4; ncell++)
+			for(int nitem = 0; nitem < 4; nitem++)
+				dirs[n++] = frm->getDir(a, ncell, nitem);
+} // //////////////////////////////////////////////////////////////////////////////////////////////
