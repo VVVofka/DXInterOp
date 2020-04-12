@@ -1,5 +1,23 @@
 #include "Masks.h"
-void Blocks2D2::Add(int index, 
+
+// ///////////////////////////////////////////////////////////////////////////////////////////////
+void Blocks2D2::fromDirs(const int* dirs){
+	for(int a = 0; a < 16 * 4 * 4; a++)
+		vin[a] = maskFLT2[dirs[a]];
+}// ////////////////////////////////////////////////////////////////////////////////////////////
+void Blocks2D2::toDirs(int* dirs) const{
+	for(int a = 0, d; a < 16 * 4 * 4; a++){
+		for(d = 0; d <= 8; d++){
+			FLT2 f1 = vin[a].sign();
+			FLT2 f2 = maskFLT2[d].sign();
+			if(f1 == f2)
+				break;
+		}
+		assert(d >= 0 && d <= 8);
+		dirs[a] = d;
+	}
+} // ////////////////////////////////////////////////////////////////////////////////////////////////////
+void Blocks2D2::Add(int index,
   int dirx00, int diry00, int dirx01, int diry01, int dirx10, int diry10, int dirx11, int diry11, 
   int dirx02, int diry02, int dirx03, int diry03, int dirx12, int diry12, int dirx13, int diry13, 
   int dirx20, int diry20, int dirx21, int diry21, int dirx30, int diry30, int dirx31, int diry31, 

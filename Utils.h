@@ -22,6 +22,12 @@ struct FLT2{
 	void set(float Y, float X) restrict(amp, cpu){ y = Y, x = X; }
 	bool not0(){ return x != 0 || y != 0; }
 	const FLT2& abs() const restrict(amp, cpu){ return FLT2(fabsf(y), fabsf(x)); }
+	bool operator == (const FLT2& other) const {return y== other.y && x==other.x;}
+	FLT2 sign() const{
+		float outy = (y < 0) ? -1.f : (y > 0) ? 1.f : 0;
+		float outx = (x < 0) ? -1.f : (x > 0) ? 1.f : 0;
+		return FLT2(outy, outx);
+	}
 }; // ********************************************************************************************
 struct DBL2{
 	double y;
