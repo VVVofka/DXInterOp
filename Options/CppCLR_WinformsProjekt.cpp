@@ -18,7 +18,6 @@ int main(){
 } // /////////////////////////////////////////////////////////////////////////////////////////////
 // 111
 // 222
-// 333
 int openDlgOptions(int* dirs){
 	static bool first = true;
 	Application::EnableVisualStyles();
