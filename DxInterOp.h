@@ -30,8 +30,6 @@ HWND                        g_hWnd = NULL;
 HRESULT             InitWindow(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
-Options options;
-
 #ifdef MY2D
 MDX2 mdx;
 Model2D model;
@@ -41,7 +39,7 @@ MDX3 mdx;
 std::vector<Vertex3D> vertices(3);
 #else // MY2D
 MDX2 mdx;
-Model2D model = Model2D(options);
+Model2D model = Model2D();
 #endif // MY2D
 
 

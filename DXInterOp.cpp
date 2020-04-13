@@ -8,6 +8,7 @@
 //--------------------------------------------------------------------------------------
 //#include <windows.h>
 #include "DXInterOp.h"
+static bool pauseRender = false;
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -63,7 +64,8 @@ int work(){
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else{
-			mdx.Render();
+			if(!pauseRender)
+				mdx.Render();
 		}
 	}
 	mdx.CleanupDevice();
@@ -116,11 +118,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
 				case 79:{ // key 'o'  // I=73
-					options.showDlg();
-					if(options.isRestart()){
+					pauseRender = true;
+					int retdlg = model.options.showDlg();
+					//if(options.isRestart()){
 						mdx.CleanupDevice();
 						mdx.InitDevice(g_hWnd, model.lastPoss());
-					}
+					//}
+					pauseRender = false;
 					break; }
 				case VK_PAUSE:
 					break;

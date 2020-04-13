@@ -2,7 +2,7 @@
 #include "Options\\OptionExternDecl.h"
 #include "Masks.h"
 
-#define autoDirsFName "autoDirs.dat"
+#define autoDirsFName "autoArr.dat"
 
 class Options{
 public:
@@ -12,9 +12,8 @@ public:
 	bool loadAuto();
 	FLT2* getFLT2(){return blocks2D2.vin;}
 	int showDlg();
-	bool isRestart(){return retDlg != 0;}
+	bool isRestart(){return retDlg & ReturnOptions::Restart;}
 
-private:
 	Blocks2D2 blocks2D2;
 	static const int szArr = szDirs; // + ...
 	int iArr[szArr];
@@ -26,5 +25,7 @@ private:
 	bool setDefault();
 	bool save(const char* fname) const;
 	bool load(const char* fname);
+private:
+	void loadAll();
 }; // ***************************************************************************************
 

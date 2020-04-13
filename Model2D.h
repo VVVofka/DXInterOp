@@ -17,7 +17,8 @@
 
 class Model2D{
 public:
-	Model2D(Options& inOptions): options(inOptions){}
+	Model2D(){}
+	Options options;
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DrQuadro>> v_dirs;
@@ -44,6 +45,5 @@ private:
 	Vertex2D norm(int curpos, INT2 sizes) const;
 	void fillrnd(int nlay, size_t szarea, double kFill, DBL2 kSigma);
 	void filltest(int nlay);
-	Options& options;
 }; // *****************************************************************************
 

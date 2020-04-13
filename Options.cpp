@@ -2,7 +2,8 @@
 
 Options::Options(){
 	dirs = iArr;
-	if(!loadAuto())
+	bool isload = loadAuto();
+	if(!isload)
 		setDefault();
 } // //////////////////////////////////////////////////////////////////////////////////
 bool Options::saveAuto() const{
@@ -11,10 +12,14 @@ bool Options::saveAuto() const{
 } // ///////////////////////////////////////////////////////////////////////////
 bool Options::loadAuto(){
 	bool ret = load(autoDirsFName);
+	if(ret)
+		loadAll();
 	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
 int Options::showDlg(){
 	retDlg = openDlgOptions(iArr);
+	save(autoDirsFName);
+	loadAll();
 	return retDlg;
 } // ///////////////////////////////////////////////////////////////////////////
 bool Options::setDefault(){
@@ -65,5 +70,8 @@ bool Options::load(const char* fname){
 	}
 	MessageBoxA(NULL, fname, "Error#2 read file!", MB_ICONEXCLAMATION | MB_OK);
 	return false;
+} // ///////////////////////////////////////////////////////////////////////////
+void Options::loadAll(){
+	blocks2D2.fromDirs(dirs);// TODO: add other parametrs
 } // ///////////////////////////////////////////////////////////////////////////
 
