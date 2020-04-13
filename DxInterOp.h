@@ -41,7 +41,7 @@ MDX3 mdx;
 std::vector<Vertex3D> vertices(3);
 #else // MY2D
 MDX2 mdx;
-Model2D model = Model2D();
+Model2D model = Model2D(options);
 #endif // MY2D
 
 

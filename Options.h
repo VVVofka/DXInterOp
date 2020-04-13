@@ -6,9 +6,21 @@
 
 class Options{
 public:
+	Options();
 	int loadDirs();
+	int saveAuto() const;
+	int loadAuto();
 private:
-	void save(const int* dirs, const int sz, const char* fname) const;
-	void load(int* dirs, const int sz, const char* fname) const;
+	static const int szDirs = 16 * 4 * 4;
+	static const int szArr = szDirs; // + ...
+	int iArr[szArr];
+	double dArr[szArr];
+
+	int* dirs;
+
+	int savei(const int* ar, const int sz, const char* fname) const;
+	bool loadi(int* ar, const int sz, const char* fname) const;
+	int saved(const double* ar, const int sz, const char* fname) const;
+	int loadd(double* ar, const int sz, const char* fname) const;
 }; // ***************************************************************************************
 
