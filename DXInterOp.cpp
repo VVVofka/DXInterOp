@@ -125,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 				case VK_PAUSE:
 					break;
 				default:
-					setConsole();			printf("%d\n", wParam);
+					setConsole();			printf("%d\n", (int)wParam);
 					break;
 			}
 		default:

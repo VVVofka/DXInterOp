@@ -2,6 +2,8 @@
 
 Options::Options(){
 	dirs = iArr;
+	if(!loadAuto())
+		setDefault();
 } // //////////////////////////////////////////////////////////////////////////////////
 bool Options::saveAuto() const{
 	bool ret = save(autoDirsFName);
@@ -58,7 +60,7 @@ bool Options::load(const char* fname){
 		int checkread = 0;
 		szread = (int)fread(&checkread, sizeof(checkread), 1, f);
 		fclose(f);
-		if (szread == 1 && checkread == check) 
+		if(szread == 1 && checkread == check)
 			return true;
 	}
 	MessageBoxA(NULL, fname, "Error#2 read file!", MB_ICONEXCLAMATION | MB_OK);

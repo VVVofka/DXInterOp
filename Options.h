@@ -6,7 +6,7 @@
 
 class Options{
 public:
-	static const int szDirs = Blocks2D2::szA * Blocks2D2::szCells * Blocks2D2::szItems;
+	static const int szDirs = Blocks2D2::szFLT;
 	Options();
 	bool saveAuto() const;
 	bool loadAuto();

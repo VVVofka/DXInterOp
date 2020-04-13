@@ -28,7 +28,7 @@ void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 
 	// fill v_poss (for screen only) & v_areas for the last lay
 	v_poss.push_back(std::vector<Vertex2D>());
-	fillrnd(nlay, (int)szarea, kRnd, kSigma);
+	fillrnd((int)nlay, (int)szarea, kRnd, kSigma);
 	//filltest(nlay);
 } // //////////////////////////////////////////////////////////////////////////////////
 Vertex2D Model2D::norm(int curpos, INT2 sizes) const{

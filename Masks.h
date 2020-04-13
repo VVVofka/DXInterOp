@@ -64,8 +64,8 @@ private:
 struct Blocks2D2{
 	const FLT2 maskFLT2[9] = {FLT2(0,0),FLT2(-1,-1),FLT2(-1,0),FLT2(-1,1),FLT2(0,1),FLT2(1,1),FLT2(1,0),FLT2(1,-1),FLT2(0,-1)};
 	static const int szA = 16;
-	static const int szCells = 16;
-	static const int szItems = 16;
+	static const int szCells = 4;
+	static const int szItems = 4;
 	static const int szFLT = szA * szCells * szItems;
 	FLT2 vin[szFLT];
 	Block2D2 v[szA] = {};
