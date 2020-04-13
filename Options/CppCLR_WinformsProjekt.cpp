@@ -16,6 +16,7 @@ int main(){
 	Application::Run(gcnew CppCLRWinformsProjekt::Form1());
 	return 0;
 } // /////////////////////////////////////////////////////////////////////////////////////////////
+// 111
 int openDlgOptions(int* dirs){
 	static bool first = true;
 	Application::EnableVisualStyles();
