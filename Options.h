@@ -1,6 +1,6 @@
 #pragma once
-#include "Model2D.h"
 #include "Options\\OptionExternDecl.h"
+#include "Masks.h"
 
 #define autoDirsFName "autoDirs.dat"
 
@@ -8,8 +8,9 @@ class Options{
 public:
 	Options();
 	int loadDirs();
-	int saveAuto() const;
-	int loadAuto();
+	bool saveAuto() const;
+	bool loadAuto();
+
 private:
 	static const int szDirs = 16 * 4 * 4;
 	static const int szArr = szDirs; // + ...
@@ -18,9 +19,8 @@ private:
 
 	int* dirs;
 
-	int savei(const int* ar, const int sz, const char* fname) const;
-	bool loadi(int* ar, const int sz, const char* fname) const;
-	int saved(const double* ar, const int sz, const char* fname) const;
-	int loadd(double* ar, const int sz, const char* fname) const;
+	void setDefault();
+	bool save(const char* fname) const;
+	bool load(const char* fname);
 }; // ***************************************************************************************
 

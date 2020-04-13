@@ -14,59 +14,50 @@ int Options::loadDirs(){
 	//printf("\n");
 	return ret & ReturnOptions::Restart ? 1 : 0;
 } // ///////////////////////////////////////////////////////////////////////////
-int Options::saveAuto() const{
-	int ret = savei(iArr, szArr, autoDirsFName);
-	if(ret) return ret;
-	return saved(dArr, szArr, autoDirsFName);
+bool Options::saveAuto() const{
+	bool ret = save(autoDirsFName);
+	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
-int Options::loadAuto(){
-	int ret = loadi(iArr, szArr, autoDirsFName);
-	if(ret) return ret;
-	return loadd(dArr, szArr, autoDirsFName);
+bool Options::loadAuto(){
+	bool ret = load(autoDirsFName);
+	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
-int Options::savei(const int* dirs, const int sz, const char* fname) const{
+void Options::setDefault(){
+
+} // ///////////////////////////////////////////////////////////////////////////
+bool Options::save(const char* fname) const{
 	FILE* f;
 	errno_t err = fopen_s(&f, fname, "wb");
 	if(err == 0){
-		fwrite(dirs, sizeof(dirs[0]), sz + 1, f);
-		fclose(f);
-	}
-	return int(err);
-} // ///////////////////////////////////////////////////////////////////////////
-bool Options::loadi(int* dirs, const int sz, const char* fname) const{
-	FILE* f;
-	errno_t err = fopen_s(&f, fname, "rb");
-	if(err == 0){
-		int szread = (int)fread(dirs, sizeof(dirs[0]), sz, f);
-		if(szread != sz){
+		int szwrite = (int)fwrite(iArr, sizeof(iArr[0]), szArr, f);
+		if(szwrite != szArr){
 			fclose(f);
 			return false;
 		}
 		int check = 10;
-		for(int j = 0; j < sz; j++)
-			check += dirs[j];
+		for(int j = 0; j < szArr; j++)
+			check += iArr[j];
+		szwrite = (int)fwrite(&check, sizeof(check), 1, f);
+		fclose(f);
+		return (szwrite == 1);
+	}return false;
+} // ///////////////////////////////////////////////////////////////////////////
+bool Options::load(const char* fname){
+	FILE* f;
+	errno_t err = fopen_s(&f, fname, "rb");
+	if(err == 0){
+		int szread = (int)fread(iArr, sizeof(iArr[0]), szArr, f);
+		if(szread != szArr){
+			fclose(f);
+			return false;
+		}
+		int check = 10;
+		for(int j = 0; j < szArr; j++)
+			check += iArr[j];
 		int checkread = 0;
 		szread = (int)fread(&checkread, sizeof(checkread), 1, f);
 		fclose(f);
 		return (szread == 1 && checkread == check);
 	}return false;
-} // ///////////////////////////////////////////////////////////////////////////
-int Options::saved(const double* dirs, const int sz, const char* fname) const{
-	FILE* f;
-	errno_t err = fopen_s(&f, fname, "wb");
-	if(err == 0){
-		fwrite(dirs, sizeof(dirs[0]), sz, f);
-		fclose(f);
-	}
-	return int(err);
-} // ///////////////////////////////////////////////////////////////////////////
-int Options::loadd(double* dirs, const int sz, const char* fname) const{
-	FILE* f;
-	errno_t err = fopen_s(&f, fname, "rb");
-	if(err == 0){
-		fread(dirs, sizeof(dirs[0]), sz, f);
-		fclose(f);
-	}
-	return int(err);
 } // ///////////////////////////////////////////////////////////////////////////
 
