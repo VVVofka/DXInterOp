@@ -18,7 +18,6 @@
 class Model2D{
 public:
 	Model2D(Options& inOptions): options(inOptions){}
-	Blocks2D2 blocks2D2;
 	std::vector<std::vector<Vertex2D>> v_poss;
 	std::vector<std::vector<int>> v_areas;
 	std::vector<std::vector<DrQuadro>> v_dirs;
@@ -39,6 +38,7 @@ public:
 	void Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma);
 	void dumpA(int nlay) const;
 	void dumpD(int nlay) const;
+	FLT2* getFLT2(){return options.getFLT2();}
 
 private:
 	Vertex2D norm(int curpos, INT2 sizes) const;

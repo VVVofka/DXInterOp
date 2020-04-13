@@ -115,8 +115,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 				case VK_ESCAPE:
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
-				case 79:{ // O  // I=73
-					if(options.loadDirs()){
+				case 79:{ // key 'o'  // I=73
+					options.showDlg();
+					if(options.isRestart()){
 						mdx.CleanupDevice();
 						mdx.InitDevice(g_hWnd, model.lastPoss());
 					}

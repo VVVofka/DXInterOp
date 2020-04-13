@@ -15,6 +15,7 @@
 #include "RunDlast.h"
 #include "Masks.h"
 #include "Utils.h"
+#include "Options.h"
 
 extern Model2D model;
 

@@ -1,19 +1,8 @@
 #include "Options.h"
-extern Model2D model;
 
 Options::Options(){
 	dirs = iArr;
 } // //////////////////////////////////////////////////////////////////////////////////
-int Options::loadDirs(){
-	int dirs[16 * 4 * 4];
-	model.blocks2D2.toDirs(dirs);
-	int ret = openDlgOptions(dirs);
-	model.blocks2D2.fromDirs(dirs);
-	savei(dirs, _countof(dirs), autoDirsFName);
-	//setConsole();for(auto q : dirs) printf("%d", q);
-	//printf("\n");
-	return ret & ReturnOptions::Restart ? 1 : 0;
-} // ///////////////////////////////////////////////////////////////////////////
 bool Options::saveAuto() const{
 	bool ret = save(autoDirsFName);
 	return ret;
@@ -22,8 +11,15 @@ bool Options::loadAuto(){
 	bool ret = load(autoDirsFName);
 	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
-void Options::setDefault(){
-
+int Options::showDlg(){
+	retDlg = openDlgOptions(iArr);
+	return retDlg;
+} // ///////////////////////////////////////////////////////////////////////////
+bool Options::setDefault(){
+	blocks2D2.setDefault();
+	blocks2D2.toDirs(dirs);
+	bool ret = save(autoDirsFName);
+	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
 bool Options::save(const char* fname) const{
 	FILE* f;
@@ -32,6 +28,7 @@ bool Options::save(const char* fname) const{
 		int szwrite = (int)fwrite(iArr, sizeof(iArr[0]), szArr, f);
 		if(szwrite != szArr){
 			fclose(f);
+			MessageBoxA(NULL, fname, "Error#1 write file!", MB_ICONEXCLAMATION | MB_OK);
 			return false;
 		}
 		int check = 10;
@@ -39,8 +36,11 @@ bool Options::save(const char* fname) const{
 			check += iArr[j];
 		szwrite = (int)fwrite(&check, sizeof(check), 1, f);
 		fclose(f);
-		return (szwrite == 1);
-	}return false;
+		if(szwrite == 1)
+			return true;
+	}
+	MessageBoxA(NULL, fname, "Error#2 write file!", MB_ICONEXCLAMATION | MB_OK);
+	return false;
 } // ///////////////////////////////////////////////////////////////////////////
 bool Options::load(const char* fname){
 	FILE* f;
@@ -49,6 +49,7 @@ bool Options::load(const char* fname){
 		int szread = (int)fread(iArr, sizeof(iArr[0]), szArr, f);
 		if(szread != szArr){
 			fclose(f);
+			MessageBoxA(NULL, fname, "Error#1 read file!", MB_ICONEXCLAMATION | MB_OK);
 			return false;
 		}
 		int check = 10;
@@ -57,7 +58,10 @@ bool Options::load(const char* fname){
 		int checkread = 0;
 		szread = (int)fread(&checkread, sizeof(checkread), 1, f);
 		fclose(f);
-		return (szread == 1 && checkread == check);
-	}return false;
+		if (szread == 1 && checkread == check) 
+			return true;
+	}
+	MessageBoxA(NULL, fname, "Error#2 read file!", MB_ICONEXCLAMATION | MB_OK);
+	return false;
 } // ///////////////////////////////////////////////////////////////////////////
 
