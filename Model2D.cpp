@@ -9,7 +9,7 @@ void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 	INT2 sz(minsz);
 	int szmaxxy = sz.Max();
 	while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
-		size_t szarea = size_t(sz.x * sz.y);
+		size_t szarea = size_t(sz.x) * size_t(sz.y);
 
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		v_dirs.push_back(std::vector<DrQuadro>(szarea));
@@ -22,7 +22,7 @@ void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 
 	  // Last lay
 	vsz.push_back(sz);
-	const size_t szarea = sz.x * sz.y;
+	const size_t szarea = size_t(sz.x) * size_t(sz.y);
 	v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 	last_dirs.resize(szarea, FLT2(0, 0));
 
