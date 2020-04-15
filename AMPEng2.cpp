@@ -21,7 +21,7 @@ void AMPEng2::initialize_data(){
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(int(model.lastPoss().size()), model.lastPoss().begin(), m_accl_view));
 	last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
-	amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, AMask, m_accl_view));
+	amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, model.options.AMask, m_accl_view));
 	FLT2* strt = model.options.blocks2D2.vin;// getFLT2();
 	dmask = std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(Options::szDirs, strt, m_accl_view));
 	//setConsole();

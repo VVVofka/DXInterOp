@@ -17,9 +17,6 @@ int main(){
 	Application::Run(gcnew CppCLRWinformsProjekt::Form1());
 	return 0;
 } // /////////////////////////////////////////////////////////////////////////////////////////////
-// 111
-// 222
-// 333
 int openDlgOptions(int* iArr){
 	static bool first = true;
 	Application::EnableVisualStyles();
@@ -35,6 +32,7 @@ int openDlgOptions(int* iArr){
 		for(int ncell = 0; ncell < 4; ncell++)
 			for(int nitem = 0; nitem < 4; nitem++)
 				iArr[n++] = frm->getDir(a, ncell, nitem);
-	int ret =  ReturnOptions::Restart;
+	//int ret =  ReturnOptions::Restart;
+	int ret =  1;
 	return ret;
 } // //////////////////////////////////////////////////////////////////////////////////////////////

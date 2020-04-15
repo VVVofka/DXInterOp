@@ -100,26 +100,26 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);.</IncludePath>
     <ReferencePath>$(SolutionDir)$(Configuration);%(AdditionalLibraryDirectories);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</ReferencePath>
     <LibraryPath>$(SolutionDir)$(Configuration);%(AdditionalLibraryDirectories);$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x64;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);.</IncludePath>
     <ReferencePath>$(VCInstallDir)lib</ReferencePath>
     <LibraryPath>$(ProjectDir)$(Platform)\$(Configuration);$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath);.</IncludePath>
-    <LibraryPath>$(ProjectDir)$(Platform)\$(Configuration);$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)$(Configuration);$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
     <GenerateManifest>false</GenerateManifest>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -167,13 +167,14 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>Options.lib;d3d11.lib;d3dcompiler.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
@@ -198,17 +199,18 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812;4005</DisableSpecificWarnings>
+      <DisableSpecificWarnings>26812;4005;4996</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>Options.lib;d3d11.lib;d3dcompiler.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>$(SolutionDir)DirectXTK_2019\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
@@ -237,11 +239,11 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Options.lib;d3d11.lib;d3dcompiler.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalLibraryDirectories>$(SolutionDir)DirectXTK_2019\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
@@ -300,6 +302,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -383,6 +386,11 @@
     <None Include="DXInterOpPsVs.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Options\Options.vcxproj">
+      <Project>{de3f8f7c-baf2-4990-9aa0-08e44288b9e8}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
