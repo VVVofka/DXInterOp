@@ -12,17 +12,19 @@ static const int NormDir = Dirs + 16 * 4 * 4;
 
 static const int LaysSzUpY = NormDir + 1;
 static const int LaysSzUpX = LaysSzUpY + 1;
-static const int LaysSzDnY = LaysSzUpX + 1;
-static const int LaysSzDnX = LaysSzDnY + 1;
+static const int LaysSzDn = LaysSzUpX + 1;
 
-static const int AMasks = LaysSzDnX + 1;
-static const int SeedRnd = AMasks + 16;
+static const int SeedRnd = LaysSzDn + 1;
 static const int LaysCnt = SeedRnd + 1;
+static const int AMasks = LaysCnt + 1;
+              // next = AMasks + 16
 
 // offset in dArr;
-static const double kBorder = 0;
-static const double kLays = kBorder + 1;
-static const double kSigmaY = kLays + LaysCntReserv;
-static const double kSigmaX = kSigmaY + 1;
-static const double kInertion = kSigmaX + 1;
+static const int kFillRnd = 0;
+static const int kSigmaY = kFillRnd + 1;
+static const int kSigmaX = kSigmaY + 1;
+static const int kInertion = kSigmaX + 1;
+static const int kBorder = kInertion + 1;
+static const int kLays = kBorder + 1;
+             //  next = kLays + LaysCntReserv
 }; // *************************************************************

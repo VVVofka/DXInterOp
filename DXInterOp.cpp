@@ -50,8 +50,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 int work(){
 	INT2 szlay0 = INT2(1, 1);
 	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
-	DBL2 Sigma(0.35, 0.35);
-	model.Create(szlay0, 1024 * 2, 0.015, Sigma); //8 - ???
+	DBL2 Sigma(0.95, 0.95);
+	model.Create(szlay0, 1024 * 2, 0.035, Sigma); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
 		mdx.CleanupDevice();
 		return E_FAIL;
@@ -119,7 +119,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					break;
 				case 79:{ // key 'o'  // I=73
 					pauseRender = true;
-					int retdlg = model.options.showDlg();
+					model.options.showDlg();
 					//if(options.isRestart()){
 						mdx.CleanupDevice();
 						mdx.InitDevice(g_hWnd, model.lastPoss());

@@ -62,6 +62,26 @@ private: System::Windows::Forms::Button^ btn0011;
 private: System::Windows::Forms::Button^ btn0111;
 private: System::Windows::Forms::Button^ btn0110;
 private: System::Windows::Forms::Button^ btOk;
+private: System::Windows::Forms::CheckBox^ chNormDirs;
+private: System::Windows::Forms::TextBox^ textBox1;
+private: System::Windows::Forms::Label^ label1;
+private: System::Windows::Forms::Label^ label2;
+private: System::Windows::Forms::TextBox^ textBox2;
+private: System::Windows::Forms::TextBox^ textBox3;
+private: System::Windows::Forms::Label^ label3;
+private: System::Windows::Forms::CheckBox^ chSeedRnd;
+private: System::Windows::Forms::Label^ label4;
+private: System::Windows::Forms::TextBox^ txKFillRnd;
+private: System::Windows::Forms::TextBox^ txKSigmaY;
+private: System::Windows::Forms::Label^ label5;
+private: System::Windows::Forms::Label^ label6;
+private: System::Windows::Forms::TextBox^ txKSigmaX;
+private: System::Windows::Forms::TextBox^ txKInertion;
+private: System::Windows::Forms::Label^ label7;
+private: System::Windows::Forms::Label^ label8;
+private: System::Windows::Forms::TextBox^ txKBorder;
+private: System::Windows::Forms::VScrollBar^ vScrollBar1;
+
 private: System::Windows::Forms::PictureBox^ box1110;
 protected:
 	/// <summary>
@@ -112,6 +132,25 @@ private:
 		this->btn0111 = (gcnew System::Windows::Forms::Button());
 		this->btn0110 = (gcnew System::Windows::Forms::Button());
 		this->btOk = (gcnew System::Windows::Forms::Button());
+		this->chNormDirs = (gcnew System::Windows::Forms::CheckBox());
+		this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+		this->label1 = (gcnew System::Windows::Forms::Label());
+		this->label2 = (gcnew System::Windows::Forms::Label());
+		this->textBox2 = (gcnew System::Windows::Forms::TextBox());
+		this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+		this->label3 = (gcnew System::Windows::Forms::Label());
+		this->chSeedRnd = (gcnew System::Windows::Forms::CheckBox());
+		this->label4 = (gcnew System::Windows::Forms::Label());
+		this->txKFillRnd = (gcnew System::Windows::Forms::TextBox());
+		this->txKSigmaY = (gcnew System::Windows::Forms::TextBox());
+		this->label5 = (gcnew System::Windows::Forms::Label());
+		this->label6 = (gcnew System::Windows::Forms::Label());
+		this->txKSigmaX = (gcnew System::Windows::Forms::TextBox());
+		this->txKInertion = (gcnew System::Windows::Forms::TextBox());
+		this->label7 = (gcnew System::Windows::Forms::Label());
+		this->label8 = (gcnew System::Windows::Forms::Label());
+		this->txKBorder = (gcnew System::Windows::Forms::TextBox());
+		this->vScrollBar1 = (gcnew System::Windows::Forms::VScrollBar());
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0110))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0000))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0001))->BeginInit();
@@ -324,11 +363,191 @@ private:
 		this->btOk->Text = L"Ok";
 		this->btOk->UseVisualStyleBackColor = true;
 		// 
+		// chNormDirs
+		// 
+		this->chNormDirs->AutoSize = true;
+		this->chNormDirs->Location = System::Drawing::Point(557, 36);
+		this->chNormDirs->Name = L"chNormDirs";
+		this->chNormDirs->Size = System::Drawing::Size(68, 17);
+		this->chNormDirs->TabIndex = 24;
+		this->chNormDirs->Text = L"auto Dirs";
+		this->chNormDirs->UseVisualStyleBackColor = true;
+		// 
+		// textBox1
+		// 
+		this->textBox1->Location = System::Drawing::Point(617, 77);
+		this->textBox1->Name = L"textBox1";
+		this->textBox1->Size = System::Drawing::Size(37, 20);
+		this->textBox1->TabIndex = 25;
+		// 
+		// label1
+		// 
+		this->label1->AutoSize = true;
+		this->label1->Location = System::Drawing::Point(554, 84);
+		this->label1->Name = L"label1";
+		this->label1->Size = System::Drawing::Size(57, 13);
+		this->label1->TabIndex = 26;
+		this->label1->Text = L"SizeUp  Y:";
+		// 
+		// label2
+		// 
+		this->label2->AutoSize = true;
+		this->label2->Location = System::Drawing::Point(660, 83);
+		this->label2->Name = L"label2";
+		this->label2->Size = System::Drawing::Size(17, 13);
+		this->label2->TabIndex = 27;
+		this->label2->Text = L"X:";
+		// 
+		// textBox2
+		// 
+		this->textBox2->Location = System::Drawing::Point(684, 77);
+		this->textBox2->Name = L"textBox2";
+		this->textBox2->Size = System::Drawing::Size(44, 20);
+		this->textBox2->TabIndex = 28;
+		// 
+		// textBox3
+		// 
+		this->textBox3->Location = System::Drawing::Point(650, 103);
+		this->textBox3->Name = L"textBox3";
+		this->textBox3->Size = System::Drawing::Size(78, 20);
+		this->textBox3->TabIndex = 25;
+		// 
+		// label3
+		// 
+		this->label3->AutoSize = true;
+		this->label3->Location = System::Drawing::Point(554, 110);
+		this->label3->Name = L"label3";
+		this->label3->Size = System::Drawing::Size(90, 13);
+		this->label3->TabIndex = 26;
+		this->label3->Text = L"Size Dn Max(Y,X)";
+		// 
+		// chSeedRnd
+		// 
+		this->chSeedRnd->AutoSize = true;
+		this->chSeedRnd->Location = System::Drawing::Point(650, 36);
+		this->chSeedRnd->Name = L"chSeedRnd";
+		this->chSeedRnd->Size = System::Drawing::Size(72, 17);
+		this->chSeedRnd->TabIndex = 24;
+		this->chSeedRnd->Text = L"seed Rnd";
+		this->chSeedRnd->UseVisualStyleBackColor = true;
+		// 
+		// label4
+		// 
+		this->label4->AutoSize = true;
+		this->label4->Location = System::Drawing::Point(557, 148);
+		this->label4->Name = L"label4";
+		this->label4->Size = System::Drawing::Size(48, 13);
+		this->label4->TabIndex = 29;
+		this->label4->Text = L"k fill Rnd";
+		// 
+		// txKFillRnd
+		// 
+		this->txKFillRnd->Location = System::Drawing::Point(612, 140);
+		this->txKFillRnd->Name = L"txKFillRnd";
+		this->txKFillRnd->Size = System::Drawing::Size(100, 20);
+		this->txKFillRnd->TabIndex = 30;
+		// 
+		// txKSigmaY
+		// 
+		this->txKSigmaY->Location = System::Drawing::Point(611, 166);
+		this->txKSigmaY->Name = L"txKSigmaY";
+		this->txKSigmaY->Size = System::Drawing::Size(37, 20);
+		this->txKSigmaY->TabIndex = 25;
+		// 
+		// label5
+		// 
+		this->label5->AutoSize = true;
+		this->label5->Location = System::Drawing::Point(548, 173);
+		this->label5->Name = L"label5";
+		this->label5->Size = System::Drawing::Size(58, 13);
+		this->label5->TabIndex = 26;
+		this->label5->Text = L"kSigma  Y:";
+		// 
+		// label6
+		// 
+		this->label6->AutoSize = true;
+		this->label6->Location = System::Drawing::Point(654, 172);
+		this->label6->Name = L"label6";
+		this->label6->Size = System::Drawing::Size(17, 13);
+		this->label6->TabIndex = 27;
+		this->label6->Text = L"X:";
+		// 
+		// txKSigmaX
+		// 
+		this->txKSigmaX->Location = System::Drawing::Point(678, 166);
+		this->txKSigmaX->Name = L"txKSigmaX";
+		this->txKSigmaX->Size = System::Drawing::Size(44, 20);
+		this->txKSigmaX->TabIndex = 28;
+		// 
+		// txKInertion
+		// 
+		this->txKInertion->Location = System::Drawing::Point(612, 192);
+		this->txKInertion->Name = L"txKInertion";
+		this->txKInertion->Size = System::Drawing::Size(100, 20);
+		this->txKInertion->TabIndex = 30;
+		// 
+		// label7
+		// 
+		this->label7->AutoSize = true;
+		this->label7->Location = System::Drawing::Point(557, 199);
+		this->label7->Name = L"label7";
+		this->label7->Size = System::Drawing::Size(50, 13);
+		this->label7->TabIndex = 29;
+		this->label7->Text = L"k inertion";
+		// 
+		// label8
+		// 
+		this->label8->AutoSize = true;
+		this->label8->Location = System::Drawing::Point(556, 225);
+		this->label8->Name = L"label8";
+		this->label8->Size = System::Drawing::Size(46, 13);
+		this->label8->TabIndex = 29;
+		this->label8->Text = L"k border";
+		// 
+		// txKBorder
+		// 
+		this->txKBorder->Location = System::Drawing::Point(611, 218);
+		this->txKBorder->Name = L"txKBorder";
+		this->txKBorder->Size = System::Drawing::Size(100, 20);
+		this->txKBorder->TabIndex = 30;
+		// 
+		// vScrollBar1
+		// 
+		this->vScrollBar1->LargeChange = 50;
+		this->vScrollBar1->Location = System::Drawing::Point(584, 260);
+		this->vScrollBar1->Maximum = 100000;
+		this->vScrollBar1->Name = L"vScrollBar1";
+		this->vScrollBar1->ScaleScrollBarForDpiChange = false;
+		this->vScrollBar1->Size = System::Drawing::Size(18, 152);
+		this->vScrollBar1->SmallChange = 10;
+		this->vScrollBar1->TabIndex = 32;
+		this->vScrollBar1->TabStop = true;
+		this->vScrollBar1->Value = 50000;
+		// 
 		// Form1
 		// 
 		this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 		this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-		this->ClientSize = System::Drawing::Size(623, 662);
+		this->ClientSize = System::Drawing::Size(803, 662);
+		this->Controls->Add(this->vScrollBar1);
+		this->Controls->Add(this->txKBorder);
+		this->Controls->Add(this->txKInertion);
+		this->Controls->Add(this->label8);
+		this->Controls->Add(this->txKFillRnd);
+		this->Controls->Add(this->label7);
+		this->Controls->Add(this->label4);
+		this->Controls->Add(this->txKSigmaX);
+		this->Controls->Add(this->label6);
+		this->Controls->Add(this->textBox2);
+		this->Controls->Add(this->label2);
+		this->Controls->Add(this->label5);
+		this->Controls->Add(this->label3);
+		this->Controls->Add(this->label1);
+		this->Controls->Add(this->txKSigmaY);
+		this->Controls->Add(this->textBox3);
+		this->Controls->Add(this->textBox1);
+		this->Controls->Add(this->chSeedRnd);
+		this->Controls->Add(this->chNormDirs);
 		this->Controls->Add(this->btOk);
 		this->Controls->Add(this->btn0110);
 		this->Controls->Add(this->btn0111);
@@ -369,6 +588,7 @@ private:
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box1101))->EndInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box1110))->EndInit();
 		this->ResumeLayout(false);
+		this->PerformLayout();
 
 	}
 #pragma endregion
