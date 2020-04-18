@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Cell4.h"
+#include "OptionExternDecl.h"
 
 namespace CppCLRWinformsProjekt{
 
@@ -15,10 +16,19 @@ using namespace System::Drawing;
 /// </summary>
 public ref class Form1 : public System::Windows::Forms::Form{
 	int OkCancel = 1; // Ok=1 Cancel=0
+	int* iArr;
+	double* dArr;
 public:
 	void setDir(int a, int ncell, int nitem, int dir){ cells[a]->getCell(ncell, nitem)->setDir(dir); }
 	int getDir(int a, int ncell, int nitem){ return cells[a]->getCell(ncell, nitem)->getDir(); }
-	int getOk(){return OkCancel;}
+	int getOk(){ return OkCancel; }
+	void setArr(int* i_arr, double* d_arr){
+		iArr = i_arr; dArr = d_arr;
+		for(int a = 0, n = 0; a < 16; a++)
+			for(int ncell = 0; ncell < 4; ncell++)
+				for(int nitem = 0; nitem < 4; nitem++)
+					setDir(a, ncell, nitem, iArr[n++]);
+	}
 	Form1(void){
 		InitializeComponent();
 		//TODO: Konstruktorcode hier hinzufьgen.
@@ -63,11 +73,14 @@ private: System::Windows::Forms::Button^ btn0111;
 private: System::Windows::Forms::Button^ btn0110;
 private: System::Windows::Forms::Button^ btOk;
 private: System::Windows::Forms::CheckBox^ chNormDirs;
-private: System::Windows::Forms::TextBox^ textBox1;
+private: System::Windows::Forms::TextBox^ txSizeYUp;
+
 private: System::Windows::Forms::Label^ label1;
 private: System::Windows::Forms::Label^ label2;
-private: System::Windows::Forms::TextBox^ textBox2;
-private: System::Windows::Forms::TextBox^ textBox3;
+private: System::Windows::Forms::TextBox^ txSizeXUp;
+private: System::Windows::Forms::TextBox^ txSizeDn;
+
+
 private: System::Windows::Forms::Label^ label3;
 private: System::Windows::Forms::CheckBox^ chSeedRnd;
 private: System::Windows::Forms::Label^ label4;
@@ -80,7 +93,14 @@ private: System::Windows::Forms::TextBox^ txKInertion;
 private: System::Windows::Forms::Label^ label7;
 private: System::Windows::Forms::Label^ label8;
 private: System::Windows::Forms::TextBox^ txKBorder;
-private: System::Windows::Forms::VScrollBar^ vScrollBar1;
+
+private: System::Windows::Forms::Button^ btCancel;
+private: System::Windows::Forms::TextBox^ txKLaysFrom;
+
+private: System::Windows::Forms::Label^ label9;
+private: System::Windows::Forms::Label^ label10;
+private: System::Windows::Forms::TextBox^ txKLaysTo;
+
 
 private: System::Windows::Forms::PictureBox^ box1110;
 protected:
@@ -133,11 +153,11 @@ private:
 		this->btn0110 = (gcnew System::Windows::Forms::Button());
 		this->btOk = (gcnew System::Windows::Forms::Button());
 		this->chNormDirs = (gcnew System::Windows::Forms::CheckBox());
-		this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+		this->txSizeYUp = (gcnew System::Windows::Forms::TextBox());
 		this->label1 = (gcnew System::Windows::Forms::Label());
 		this->label2 = (gcnew System::Windows::Forms::Label());
-		this->textBox2 = (gcnew System::Windows::Forms::TextBox());
-		this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+		this->txSizeXUp = (gcnew System::Windows::Forms::TextBox());
+		this->txSizeDn = (gcnew System::Windows::Forms::TextBox());
 		this->label3 = (gcnew System::Windows::Forms::Label());
 		this->chSeedRnd = (gcnew System::Windows::Forms::CheckBox());
 		this->label4 = (gcnew System::Windows::Forms::Label());
@@ -150,7 +170,11 @@ private:
 		this->label7 = (gcnew System::Windows::Forms::Label());
 		this->label8 = (gcnew System::Windows::Forms::Label());
 		this->txKBorder = (gcnew System::Windows::Forms::TextBox());
-		this->vScrollBar1 = (gcnew System::Windows::Forms::VScrollBar());
+		this->btCancel = (gcnew System::Windows::Forms::Button());
+		this->txKLaysFrom = (gcnew System::Windows::Forms::TextBox());
+		this->label9 = (gcnew System::Windows::Forms::Label());
+		this->label10 = (gcnew System::Windows::Forms::Label());
+		this->txKLaysTo = (gcnew System::Windows::Forms::TextBox());
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0110))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0000))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0001))->BeginInit();
@@ -362,6 +386,7 @@ private:
 		this->btOk->TabIndex = 23;
 		this->btOk->Text = L"Ok";
 		this->btOk->UseVisualStyleBackColor = true;
+		this->btOk->Click += gcnew System::EventHandler(this, &Form1::btOk_Click);
 		// 
 		// chNormDirs
 		// 
@@ -373,12 +398,12 @@ private:
 		this->chNormDirs->Text = L"auto Dirs";
 		this->chNormDirs->UseVisualStyleBackColor = true;
 		// 
-		// textBox1
+		// txSizeYUp
 		// 
-		this->textBox1->Location = System::Drawing::Point(617, 77);
-		this->textBox1->Name = L"textBox1";
-		this->textBox1->Size = System::Drawing::Size(37, 20);
-		this->textBox1->TabIndex = 25;
+		this->txSizeYUp->Location = System::Drawing::Point(617, 77);
+		this->txSizeYUp->Name = L"txSizeYUp";
+		this->txSizeYUp->Size = System::Drawing::Size(37, 20);
+		this->txSizeYUp->TabIndex = 25;
 		// 
 		// label1
 		// 
@@ -398,19 +423,19 @@ private:
 		this->label2->TabIndex = 27;
 		this->label2->Text = L"X:";
 		// 
-		// textBox2
+		// txSizeXUp
 		// 
-		this->textBox2->Location = System::Drawing::Point(684, 77);
-		this->textBox2->Name = L"textBox2";
-		this->textBox2->Size = System::Drawing::Size(44, 20);
-		this->textBox2->TabIndex = 28;
+		this->txSizeXUp->Location = System::Drawing::Point(684, 77);
+		this->txSizeXUp->Name = L"txSizeXUp";
+		this->txSizeXUp->Size = System::Drawing::Size(44, 20);
+		this->txSizeXUp->TabIndex = 28;
 		// 
-		// textBox3
+		// txSizeDn
 		// 
-		this->textBox3->Location = System::Drawing::Point(650, 103);
-		this->textBox3->Name = L"textBox3";
-		this->textBox3->Size = System::Drawing::Size(78, 20);
-		this->textBox3->TabIndex = 25;
+		this->txSizeDn->Location = System::Drawing::Point(650, 103);
+		this->txSizeDn->Name = L"txSizeDn";
+		this->txSizeDn->Size = System::Drawing::Size(78, 20);
+		this->txSizeDn->TabIndex = 25;
 		// 
 		// label3
 		// 
@@ -511,41 +536,74 @@ private:
 		this->txKBorder->Size = System::Drawing::Size(100, 20);
 		this->txKBorder->TabIndex = 30;
 		// 
-		// vScrollBar1
+		// btCancel
 		// 
-		this->vScrollBar1->LargeChange = 50;
-		this->vScrollBar1->Location = System::Drawing::Point(584, 260);
-		this->vScrollBar1->Maximum = 100000;
-		this->vScrollBar1->Name = L"vScrollBar1";
-		this->vScrollBar1->ScaleScrollBarForDpiChange = false;
-		this->vScrollBar1->Size = System::Drawing::Size(18, 152);
-		this->vScrollBar1->SmallChange = 10;
-		this->vScrollBar1->TabIndex = 32;
-		this->vScrollBar1->TabStop = true;
-		this->vScrollBar1->Value = 50000;
+		this->btCancel->Location = System::Drawing::Point(618, 604);
+		this->btCancel->Name = L"btCancel";
+		this->btCancel->Size = System::Drawing::Size(75, 23);
+		this->btCancel->TabIndex = 33;
+		this->btCancel->Text = L"Cancel";
+		this->btCancel->UseVisualStyleBackColor = true;
+		this->btCancel->Click += gcnew System::EventHandler(this, &Form1::btCancel_Click);
+		// 
+		// txKLaysFrom
+		// 
+		this->txKLaysFrom->Location = System::Drawing::Point(612, 260);
+		this->txKLaysFrom->Name = L"txKLaysFrom";
+		this->txKLaysFrom->Size = System::Drawing::Size(37, 20);
+		this->txKLaysFrom->TabIndex = 25;
+		// 
+		// label9
+		// 
+		this->label9->AutoSize = true;
+		this->label9->Location = System::Drawing::Point(549, 267);
+		this->label9->Name = L"label9";
+		this->label9->Size = System::Drawing::Size(58, 13);
+		this->label9->TabIndex = 26;
+		this->label9->Text = L"kLays from";
+		// 
+		// label10
+		// 
+		this->label10->AutoSize = true;
+		this->label10->Location = System::Drawing::Point(655, 266);
+		this->label10->Name = L"label10";
+		this->label10->Size = System::Drawing::Size(19, 13);
+		this->label10->TabIndex = 27;
+		this->label10->Text = L"to ";
+		// 
+		// txKLaysTo
+		// 
+		this->txKLaysTo->Location = System::Drawing::Point(679, 260);
+		this->txKLaysTo->Name = L"txKLaysTo";
+		this->txKLaysTo->Size = System::Drawing::Size(44, 20);
+		this->txKLaysTo->TabIndex = 28;
 		// 
 		// Form1
 		// 
 		this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 		this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 		this->ClientSize = System::Drawing::Size(803, 662);
-		this->Controls->Add(this->vScrollBar1);
+		this->Controls->Add(this->btCancel);
 		this->Controls->Add(this->txKBorder);
 		this->Controls->Add(this->txKInertion);
 		this->Controls->Add(this->label8);
 		this->Controls->Add(this->txKFillRnd);
 		this->Controls->Add(this->label7);
 		this->Controls->Add(this->label4);
+		this->Controls->Add(this->txKLaysTo);
 		this->Controls->Add(this->txKSigmaX);
+		this->Controls->Add(this->label10);
 		this->Controls->Add(this->label6);
-		this->Controls->Add(this->textBox2);
+		this->Controls->Add(this->txSizeXUp);
 		this->Controls->Add(this->label2);
+		this->Controls->Add(this->label9);
 		this->Controls->Add(this->label5);
 		this->Controls->Add(this->label3);
 		this->Controls->Add(this->label1);
+		this->Controls->Add(this->txKLaysFrom);
 		this->Controls->Add(this->txKSigmaY);
-		this->Controls->Add(this->textBox3);
-		this->Controls->Add(this->textBox1);
+		this->Controls->Add(this->txSizeDn);
+		this->Controls->Add(this->txSizeYUp);
 		this->Controls->Add(this->chSeedRnd);
 		this->Controls->Add(this->chNormDirs);
 		this->Controls->Add(this->btOk);
@@ -627,7 +685,55 @@ private: System::Void btn0110_Click(System::Object^ sender, System::EventArgs^ e
 	cells[0b1001]->Rotate(cells[0b0110]);
 	box1001->Refresh();
 } // /////////////////////////////////////////////////////////////////////////
+private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
+	for(int a = 0, n = 0; a < 16; a++)
+		for(int ncell = 0; ncell < 4; ncell++)
+			for(int nitem = 0; nitem < 4; nitem++)
+				iArr[n++] = getDir(a, ncell, nitem);
 
+	dArr[InpOptions::NormDir] = converti(chNormDirs);
+	dArr[InpOptions::SeedRnd] = converti(chSeedRnd);
 
-};
+	dArr[InpOptions::LaysSzUpY] = converti(txSizeYUp);
+	dArr[InpOptions::LaysSzUpX] = converti(txSizeXUp);
+	dArr[InpOptions::LaysSzDn] = converti(txSizeDn);
+
+	dArr[InpOptions::kFillRnd] = convertd(txKFillRnd);
+	dArr[InpOptions::kSigmaY] = convertd(txKSigmaY);
+	dArr[InpOptions::kSigmaX] = convertd(txKSigmaX);
+	dArr[InpOptions::kInertion] = convertd(txKInertion);
+	dArr[InpOptions::kBorder] = convertd(txKBorder);
+	OkCancel = true;
+	this->Close();
+} // ///////////////////////////////////////////////////////////////////////////
+private: System::Void btCancel_Click(System::Object^ sender, System::EventArgs^ e){
+	OkCancel = false;
+	this->Close();
+} // ///////////////////////////////////////////////////////////////////////////
+private: double convertd(TextBox^ tx){
+	double result;
+	String^ value = tx->Text;
+	try{
+		result = Convert::ToDouble(value);
+	}
+	catch(String^ s){
+		Console::WriteLine("Unable to convert '{0}' to a Double.", s);
+	}
+	return result;
+} // ///////////////////////////////////////////////////////////////////////////
+private: int converti(TextBox^ tx){
+	int result;
+	String^ value = tx->Text;
+	try{
+		result = Convert::ToInt32(value);
+	}
+	catch(String^ s){
+		Console::WriteLine("Unable to convert '{0}' to a Double.", s);
+	}
+	return result;
+} // ///////////////////////////////////////////////////////////////////////////
+private: int converti(CheckBox^ ch){
+	return ch->Checked ? 1 : 0;
+} // ///////////////////////////////////////////////////////////////////////////
+}; // *******************************************************************************
 }

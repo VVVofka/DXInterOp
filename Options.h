@@ -12,12 +12,13 @@ public:
 	bool loadAuto();
 	FLT2* getFLT2(){ return blocks2D2.vin; }
 	int showDlg();
-	bool isRestart(){ return retDlg & ReturnOptions::Restart; }
+	bool isRestart(){ return retDlg & InpOptions::Restart; }
 
 	Blocks2D2 blocks2D2;
-	static const int szArr = szDirs; // + ...
-	int iArr[szArr];
-	double dArr[szArr];
+	static const int sziArr = InpOptions::AMasks + 16; // + ...
+	static const int szdArr = InpOptions::kLays + InpOptions::LaysCntReserv; // + ...
+	int iArr[sziArr];
+	double dArr[szdArr];
 
 	int* dirs;
 	int retDlg = 0;

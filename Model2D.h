@@ -36,7 +36,7 @@ public:
 	const INT2& sizeYX() const {return vsz[vsz.size() - 1];}
 	int LaysCnt() const { return (int)v_areas.size(); }
 
-	void Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma);
+	int Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma);
 	void dumpA(int nlay) const;
 	void dumpD(int nlay) const;
 	FLT2* getFLT2(){return options.getFLT2();}

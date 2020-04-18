@@ -1,5 +1,5 @@
 #include "Model2D.h"
-void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
+int Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 	const int RESERV_LAYS_CNT = 16;
 	v_poss.reserve(RESERV_LAYS_CNT);
 	v_areas.reserve(RESERV_LAYS_CNT);
@@ -30,6 +30,7 @@ void Model2D::Create(INT2& minsz, int maxszXY, double kRnd, DBL2 kSigma){
 	v_poss.push_back(std::vector<Vertex2D>());
 	fillrnd((int)nlay, (int)szarea, kRnd, kSigma);
 	//filltest(nlay);
+	return int(nlay);
 } // //////////////////////////////////////////////////////////////////////////////////
 Vertex2D Model2D::norm(int curpos, INT2 sizes) const{
 	const int iy = curpos / sizes.x;

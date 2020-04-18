@@ -48,10 +48,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	return work();
 } // ////////////////////////////////////////////////////////////////////////////
 int work(){
-	INT2 szlay0 = INT2(1, 1);
+	INT2 szlay0 = INT2(model.options.iArr[InpOptions::LaysSzUpY], model.options.iArr[InpOptions::LaysSzUpX]);
 	//model.Create(szlay0, 1024 * 1, 0.06); //8 - ???
-	DBL2 Sigma(0.95, 0.95);
-	model.Create(szlay0, 1024 * 2, 0.035, Sigma); //8 - ???
+	DBL2 Sigma(model.options.dArr[InpOptions::kSigmaY], model.options.dArr[InpOptions::kSigmaX]);
+	//model.Create(szlay0, 1024 * 2, 0.035, Sigma); //8 - ???
+	model.options.iArr[InpOptions::LaysCnt] =
+		model.Create(szlay0, model.options.iArr[InpOptions::LaysSzDn], model.options.dArr[InpOptions::kFillRnd], Sigma); //8 - ???
 	if(FAILED(mdx.InitDevice(g_hWnd, model.lastPoss()))){
 		mdx.CleanupDevice();
 		return E_FAIL;
@@ -121,9 +123,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					pauseRender = true;
 					model.options.showDlg();
 					//if(options.isRestart()){
-						mdx.CleanupDevice();
-						mdx.InitDevice(g_hWnd, model.lastPoss());
-					//}
+					mdx.CleanupDevice();
+					mdx.InitDevice(g_hWnd, model.lastPoss());
+				//}
 					pauseRender = false;
 					break; }
 				case VK_PAUSE:

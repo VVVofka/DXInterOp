@@ -1,9 +1,5 @@
 #pragma once
-int openDlgOptions(int* iArr); // decl Options.lib
-namespace ReturnOptions{
-static const int Restart = 1;
-}; // *************************************************************
-
+int openDlgOptions(int* iArr, double* dArr); // decl Options.lib
 namespace InpOptions{
 static const int LaysCntReserv = 20; 
 // offset in iArr;
@@ -27,4 +23,6 @@ static const int kInertion = kSigmaX + 1;
 static const int kBorder = kInertion + 1;
 static const int kLays = kBorder + 1;
              //  next = kLays + LaysCntReserv
+//return
+static const int Restart = 1;
 }; // *************************************************************

@@ -17,21 +17,14 @@ int main(){
 	Application::Run(gcnew CppCLRWinformsProjekt::Form1());
 	return 0;
 } // /////////////////////////////////////////////////////////////////////////////////////////////
-int openDlgOptions(int* iArr){
+int openDlgOptions(int* iArr, double* dArr){
 	static bool first = true;
 	Application::EnableVisualStyles();
 	if(first)
 		first = false, Application::SetCompatibleTextRenderingDefault(false);
 	auto frm = gcnew CppCLRWinformsProjekt::Form1();
-	for(int a = 0, n = 0; a < 16; a++)
-		for(int ncell = 0; ncell < 4; ncell++)
-			for(int nitem = 0; nitem < 4; nitem++)
-				frm->setDir(a, ncell, nitem, iArr[n++]);
+	frm->setArr(iArr, dArr);
 	Application::Run(frm);
-	for(int a = 0, n = 0; a < 16; a++)
-		for(int ncell = 0; ncell < 4; ncell++)
-			for(int nitem = 0; nitem < 4; nitem++)
-				iArr[n++] = frm->getDir(a, ncell, nitem);
 	//int ret =  ReturnOptions::Restart;
 	int ret =  1;
 	return ret;
