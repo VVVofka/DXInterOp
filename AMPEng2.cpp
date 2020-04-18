@@ -34,16 +34,16 @@ void AMPEng2::run(){
 
 	for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 		//dumpA(nlay);
-		RunA::Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
+		RunA::Run(*var_areas[nlay], *var_areas[size_t(nlay - 1)], *amask);
 	}
 	//dumpA(0);
 	// Back to down
 	for(int nlay = 1; nlay < nlastlay; nlay++){
-		RunD::Run(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *dmask);
+		RunD::Run(*var_dirs[size_t(nlay - 1)], *var_dirs[size_t(nlay)], *var_areas[size_t(nlay)], *dmask);
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
-	RunDlast::Run(shift, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeYX());
+	RunDlast::Run(shift, *var_dirs[size_t(nlastlay - 1)], *m_data, *var_areas[size_t(nlastlay)], *last_dirs, model.sizeYX());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void AMPEng2::dumpA(int nlay){

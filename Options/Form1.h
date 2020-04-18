@@ -17,7 +17,23 @@ using namespace System::Drawing;
 public ref class Form1 : public System::Windows::Forms::Form{
 	int OkCancel = 1; // Ok=1 Cancel=0
 	int* iArr;
-	double* dArr;
+private: System::Windows::Forms::Label^ label11;
+private: System::Windows::Forms::Label^ lbLaysCnt;
+private: System::Windows::Forms::Label^ label12;
+private: System::Windows::Forms::ListBox^ lstMask0000;
+private: System::Windows::Forms::Label^ lbMask0001;
+private: System::Windows::Forms::ListBox^ lstMask0001;
+
+private: System::Windows::Forms::Label^ label14;
+private: System::Windows::Forms::ListBox^ lstMask0011;
+private: System::Windows::Forms::Label^ label15;
+private: System::Windows::Forms::ListBox^ lstMask1111;
+private: System::Windows::Forms::Label^ label13;
+private: System::Windows::Forms::ListBox^ lstMask0111;
+private: System::Windows::Forms::Label^ label16;
+private: System::Windows::Forms::ListBox^ lstMask0110;
+
+	   double* dArr;
 public:
 	void setDir(int a, int ncell, int nitem, int dir){ cells[a]->getCell(ncell, nitem)->setDir(dir); }
 	int getDir(int a, int ncell, int nitem){ return cells[a]->getCell(ncell, nitem)->getDir(); }
@@ -28,7 +44,19 @@ public:
 			for(int ncell = 0; ncell < 4; ncell++)
 				for(int nitem = 0; nitem < 4; nitem++)
 					setDir(a, ncell, nitem, iArr[n++]);
-	}
+		chNormDirs->Checked = (iArr[InpOptions::NormDir] != 0);
+		txSizeYUp->Text = Convert::ToString(iArr[InpOptions::LaysSzUpY]);
+		txSizeXUp->Text = Convert::ToString(iArr[InpOptions::LaysSzUpX]);
+		txSizeDn->Text = Convert::ToString(iArr[InpOptions::LaysSzDn]);
+		chSeedRnd->Checked = (iArr[InpOptions::SeedRnd] > 0);
+		lbLaysCnt->Text = Convert::ToString(iArr[InpOptions::LaysCnt]);
+		lstMask0000->SelectedIndex = iArr[InpOptions::AMasks];
+		lstMask0001->SelectedIndex = iArr[InpOptions::AMasks + 1];
+		lstMask0011->SelectedIndex = iArr[InpOptions::AMasks + 3];
+		lstMask0110->SelectedIndex = iArr[InpOptions::AMasks + 6];
+		lstMask0111->SelectedIndex = iArr[InpOptions::AMasks + 7];
+		lstMask1111->SelectedIndex = iArr[InpOptions::AMasks + 15];
+	} // ////////////////////////////////////////////////////////////////////////////////////////
 	Form1(void){
 		InitializeComponent();
 		//TODO: Konstruktorcode hier hinzufьgen.
@@ -175,6 +203,20 @@ private:
 		this->label9 = (gcnew System::Windows::Forms::Label());
 		this->label10 = (gcnew System::Windows::Forms::Label());
 		this->txKLaysTo = (gcnew System::Windows::Forms::TextBox());
+		this->label11 = (gcnew System::Windows::Forms::Label());
+		this->lbLaysCnt = (gcnew System::Windows::Forms::Label());
+		this->label12 = (gcnew System::Windows::Forms::Label());
+		this->lstMask0000 = (gcnew System::Windows::Forms::ListBox());
+		this->lbMask0001 = (gcnew System::Windows::Forms::Label());
+		this->lstMask0001 = (gcnew System::Windows::Forms::ListBox());
+		this->label14 = (gcnew System::Windows::Forms::Label());
+		this->lstMask0011 = (gcnew System::Windows::Forms::ListBox());
+		this->label15 = (gcnew System::Windows::Forms::Label());
+		this->lstMask1111 = (gcnew System::Windows::Forms::ListBox());
+		this->label13 = (gcnew System::Windows::Forms::Label());
+		this->lstMask0111 = (gcnew System::Windows::Forms::ListBox());
+		this->label16 = (gcnew System::Windows::Forms::Label());
+		this->lstMask0110 = (gcnew System::Windows::Forms::ListBox());
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0110))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0000))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0001))->BeginInit();
@@ -578,11 +620,193 @@ private:
 		this->txKLaysTo->Size = System::Drawing::Size(44, 20);
 		this->txKLaysTo->TabIndex = 28;
 		// 
+		// label11
+		// 
+		this->label11->AutoSize = true;
+		this->label11->Location = System::Drawing::Point(543, 297);
+		this->label11->Name = L"label11";
+		this->label11->Size = System::Drawing::Size(68, 13);
+		this->label11->TabIndex = 34;
+		this->label11->Text = L"Lays count =";
+		// 
+		// lbLaysCnt
+		// 
+		this->lbLaysCnt->AutoSize = true;
+		this->lbLaysCnt->Location = System::Drawing::Point(612, 297);
+		this->lbLaysCnt->Name = L"lbLaysCnt";
+		this->lbLaysCnt->Size = System::Drawing::Size(13, 13);
+		this->lbLaysCnt->TabIndex = 35;
+		this->lbLaysCnt->Text = L"0";
+		// 
+		// label12
+		// 
+		this->label12->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+		this->label12->FlatStyle = System::Windows::Forms::FlatStyle::System;
+		this->label12->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+														   static_cast<System::Byte>(204)));
+		this->label12->Location = System::Drawing::Point(557, 342);
+		this->label12->Name = L"label12";
+		this->label12->Size = System::Drawing::Size(34, 35);
+		this->label12->TabIndex = 36;
+		this->label12->Text = L"0 0 0 0";
+		this->label12->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+		// 
+		// lstMask0000
+		// 
+		this->lstMask0000->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															   static_cast<System::Byte>(204)));
+		this->lstMask0000->FormattingEnabled = true;
+		this->lstMask0000->ItemHeight = 16;
+		this->lstMask0000->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
+		this->lstMask0000->Location = System::Drawing::Point(597, 342);
+		this->lstMask0000->Name = L"lstMask0000";
+		this->lstMask0000->Size = System::Drawing::Size(20, 36);
+		this->lstMask0000->TabIndex = 37;
+		// 
+		// lbMask0001
+		// 
+		this->lbMask0001->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+		this->lbMask0001->FlatStyle = System::Windows::Forms::FlatStyle::System;
+		this->lbMask0001->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															  static_cast<System::Byte>(204)));
+		this->lbMask0001->Location = System::Drawing::Point(557, 392);
+		this->lbMask0001->Name = L"lbMask0001";
+		this->lbMask0001->Size = System::Drawing::Size(34, 35);
+		this->lbMask0001->TabIndex = 36;
+		this->lbMask0001->Text = L"1 0 0 0";
+		this->lbMask0001->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+		// 
+		// lstMask0001
+		// 
+		this->lstMask0001->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															   static_cast<System::Byte>(204)));
+		this->lstMask0001->FormattingEnabled = true;
+		this->lstMask0001->ItemHeight = 16;
+		this->lstMask0001->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
+		this->lstMask0001->Location = System::Drawing::Point(597, 392);
+		this->lstMask0001->Name = L"lstMask0001";
+		this->lstMask0001->Size = System::Drawing::Size(20, 36);
+		this->lstMask0001->TabIndex = 37;
+		// 
+		// label14
+		// 
+		this->label14->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+		this->label14->FlatStyle = System::Windows::Forms::FlatStyle::System;
+		this->label14->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+														   static_cast<System::Byte>(204)));
+		this->label14->Location = System::Drawing::Point(557, 441);
+		this->label14->Name = L"label14";
+		this->label14->Size = System::Drawing::Size(34, 35);
+		this->label14->TabIndex = 36;
+		this->label14->Text = L"1 1 0 0";
+		this->label14->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+		// 
+		// lstMask0011
+		// 
+		this->lstMask0011->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															   static_cast<System::Byte>(204)));
+		this->lstMask0011->FormattingEnabled = true;
+		this->lstMask0011->ItemHeight = 16;
+		this->lstMask0011->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
+		this->lstMask0011->Location = System::Drawing::Point(597, 441);
+		this->lstMask0011->Name = L"lstMask0011";
+		this->lstMask0011->Size = System::Drawing::Size(20, 36);
+		this->lstMask0011->TabIndex = 37;
+		// 
+		// label15
+		// 
+		this->label15->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+		this->label15->FlatStyle = System::Windows::Forms::FlatStyle::System;
+		this->label15->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+														   static_cast<System::Byte>(204)));
+		this->label15->Location = System::Drawing::Point(643, 343);
+		this->label15->Name = L"label15";
+		this->label15->Size = System::Drawing::Size(34, 35);
+		this->label15->TabIndex = 36;
+		this->label15->Text = L"1 1 1 1";
+		this->label15->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+		// 
+		// lstMask1111
+		// 
+		this->lstMask1111->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															   static_cast<System::Byte>(204)));
+		this->lstMask1111->FormattingEnabled = true;
+		this->lstMask1111->ItemHeight = 16;
+		this->lstMask1111->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
+		this->lstMask1111->Location = System::Drawing::Point(683, 343);
+		this->lstMask1111->Name = L"lstMask1111";
+		this->lstMask1111->Size = System::Drawing::Size(20, 36);
+		this->lstMask1111->TabIndex = 37;
+		// 
+		// label13
+		// 
+		this->label13->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+		this->label13->FlatStyle = System::Windows::Forms::FlatStyle::System;
+		this->label13->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+														   static_cast<System::Byte>(204)));
+		this->label13->Location = System::Drawing::Point(643, 393);
+		this->label13->Name = L"label13";
+		this->label13->Size = System::Drawing::Size(34, 35);
+		this->label13->TabIndex = 36;
+		this->label13->Text = L"1 1 1 0";
+		this->label13->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+		// 
+		// lstMask0111
+		// 
+		this->lstMask0111->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															   static_cast<System::Byte>(204)));
+		this->lstMask0111->FormattingEnabled = true;
+		this->lstMask0111->ItemHeight = 16;
+		this->lstMask0111->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
+		this->lstMask0111->Location = System::Drawing::Point(683, 393);
+		this->lstMask0111->Name = L"lstMask0111";
+		this->lstMask0111->Size = System::Drawing::Size(20, 36);
+		this->lstMask0111->TabIndex = 37;
+		// 
+		// label16
+		// 
+		this->label16->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+		this->label16->FlatStyle = System::Windows::Forms::FlatStyle::System;
+		this->label16->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+														   static_cast<System::Byte>(204)));
+		this->label16->Location = System::Drawing::Point(643, 442);
+		this->label16->Name = L"label16";
+		this->label16->Size = System::Drawing::Size(34, 35);
+		this->label16->TabIndex = 36;
+		this->label16->Text = L"0 1 1 0";
+		this->label16->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+		// 
+		// lstMask0110
+		// 
+		this->lstMask0110->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+															   static_cast<System::Byte>(204)));
+		this->lstMask0110->FormattingEnabled = true;
+		this->lstMask0110->ItemHeight = 16;
+		this->lstMask0110->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
+		this->lstMask0110->Location = System::Drawing::Point(683, 442);
+		this->lstMask0110->Name = L"lstMask0110";
+		this->lstMask0110->Size = System::Drawing::Size(20, 36);
+		this->lstMask0110->TabIndex = 37;
+		// 
 		// Form1
 		// 
 		this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 		this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 		this->ClientSize = System::Drawing::Size(803, 662);
+		this->Controls->Add(this->lstMask1111);
+		this->Controls->Add(this->lstMask0110);
+		this->Controls->Add(this->lstMask0011);
+		this->Controls->Add(this->lstMask0111);
+		this->Controls->Add(this->lstMask0001);
+		this->Controls->Add(this->lstMask0000);
+		this->Controls->Add(this->label15);
+		this->Controls->Add(this->label16);
+		this->Controls->Add(this->label14);
+		this->Controls->Add(this->label13);
+		this->Controls->Add(this->lbMask0001);
+		this->Controls->Add(this->label12);
+		this->Controls->Add(this->lbLaysCnt);
+		this->Controls->Add(this->label11);
 		this->Controls->Add(this->btCancel);
 		this->Controls->Add(this->txKBorder);
 		this->Controls->Add(this->txKInertion);
@@ -703,6 +927,14 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	dArr[InpOptions::kSigmaX] = convertd(txKSigmaX);
 	dArr[InpOptions::kInertion] = convertd(txKInertion);
 	dArr[InpOptions::kBorder] = convertd(txKBorder);
+
+	iArr[InpOptions::AMasks] = lstMask0000->SelectedIndex;
+	iArr[InpOptions::AMasks + 1] = iArr[InpOptions::AMasks + 2] = iArr[InpOptions::AMasks + 4] = iArr[InpOptions::AMasks + 8] = lstMask0001->SelectedIndex;
+	iArr[InpOptions::AMasks + 3] = iArr[InpOptions::AMasks + 5] = iArr[InpOptions::AMasks + 10] = iArr[InpOptions::AMasks + 12] = lstMask0011->SelectedIndex;
+	iArr[InpOptions::AMasks + 6] = iArr[InpOptions::AMasks + 9] = lstMask0110->SelectedIndex;
+	iArr[InpOptions::AMasks + 7] = iArr[InpOptions::AMasks + 11] = iArr[InpOptions::AMasks + 13] = iArr[InpOptions::AMasks + 14] = lstMask0111->SelectedIndex;
+	iArr[InpOptions::AMasks + 15] = lstMask1111->SelectedIndex;
+
 	OkCancel = true;
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
