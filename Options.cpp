@@ -25,6 +25,21 @@ int Options::showDlg(){
 bool Options::setDefault(){
 	blocks2D2.setDefault();
 	blocks2D2.toDirs(dirs);
+	iArr[InpOptions::NormDir] = 1;
+	iArr[InpOptions::LaysSzUpY] = 1;
+	iArr[InpOptions::LaysSzUpX] = 1;
+	iArr[InpOptions::SeedRnd] = 2020;
+	iArr[InpOptions::LaysCnt] = 0;
+	for(int j=0; j<_countof(AMask); j++)
+		iArr[InpOptions::AMasks + j] = AMask[j];
+
+	dArr[InpOptions::kFillRnd] = 0.035;
+	dArr[InpOptions::kSigmaY] = 0.45;
+	dArr[InpOptions::kSigmaX] = 0.45;
+	dArr[InpOptions::kInertion] = 0.0;
+	dArr[InpOptions::kBorder] = 0.0;
+	for(int j=0; j<InpOptions::LaysCntReserv; j++)
+		dArr[InpOptions::kLays + j] = 1.0;
 
 	bool ret = save(autoDirsFName);
 	return ret;
