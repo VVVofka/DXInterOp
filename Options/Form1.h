@@ -56,6 +56,14 @@ public:
 		lstMask0110->SelectedIndex = iArr[InpOptions::AMasks + 6];
 		lstMask0111->SelectedIndex = iArr[InpOptions::AMasks + 7];
 		lstMask1111->SelectedIndex = iArr[InpOptions::AMasks + 15];
+
+		txKFillRnd->Text = Convert::ToString(dArr[InpOptions::kFillRnd]);
+		txKSigmaY->Text = Convert::ToString(dArr[InpOptions::kSigmaY]);
+		txKSigmaX->Text = Convert::ToString(dArr[InpOptions::kSigmaX]);
+		txKInertion->Text = Convert::ToString(dArr[InpOptions::kInertion]);
+		txKBorder->Text = Convert::ToString(dArr[InpOptions::kBorder]);
+		txKLaysFrom->Text = Convert::ToString(dArr[InpOptions::kLays]);
+		txKLaysTo->Text = Convert::ToString(dArr[InpOptions::kLays + iArr[InpOptions::LaysCnt] - 1]);
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 	Form1(void){
 		InitializeComponent();
@@ -669,7 +677,7 @@ private:
 		this->lbMask0001->FlatStyle = System::Windows::Forms::FlatStyle::System;
 		this->lbMask0001->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 															  static_cast<System::Byte>(204)));
-		this->lbMask0001->Location = System::Drawing::Point(557, 392);
+		this->lbMask0001->Location = System::Drawing::Point(643, 343);
 		this->lbMask0001->Name = L"lbMask0001";
 		this->lbMask0001->Size = System::Drawing::Size(34, 35);
 		this->lbMask0001->TabIndex = 36;
@@ -683,7 +691,7 @@ private:
 		this->lstMask0001->FormattingEnabled = true;
 		this->lstMask0001->ItemHeight = 16;
 		this->lstMask0001->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
-		this->lstMask0001->Location = System::Drawing::Point(597, 392);
+		this->lstMask0001->Location = System::Drawing::Point(683, 343);
 		this->lstMask0001->Name = L"lstMask0001";
 		this->lstMask0001->Size = System::Drawing::Size(20, 36);
 		this->lstMask0001->TabIndex = 37;
@@ -694,7 +702,7 @@ private:
 		this->label14->FlatStyle = System::Windows::Forms::FlatStyle::System;
 		this->label14->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 														   static_cast<System::Byte>(204)));
-		this->label14->Location = System::Drawing::Point(557, 441);
+		this->label14->Location = System::Drawing::Point(557, 394);
 		this->label14->Name = L"label14";
 		this->label14->Size = System::Drawing::Size(34, 35);
 		this->label14->TabIndex = 36;
@@ -708,7 +716,7 @@ private:
 		this->lstMask0011->FormattingEnabled = true;
 		this->lstMask0011->ItemHeight = 16;
 		this->lstMask0011->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
-		this->lstMask0011->Location = System::Drawing::Point(597, 441);
+		this->lstMask0011->Location = System::Drawing::Point(597, 394);
 		this->lstMask0011->Name = L"lstMask0011";
 		this->lstMask0011->Size = System::Drawing::Size(20, 36);
 		this->lstMask0011->TabIndex = 37;
@@ -719,7 +727,7 @@ private:
 		this->label15->FlatStyle = System::Windows::Forms::FlatStyle::System;
 		this->label15->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 														   static_cast<System::Byte>(204)));
-		this->label15->Location = System::Drawing::Point(643, 343);
+		this->label15->Location = System::Drawing::Point(643, 444);
 		this->label15->Name = L"label15";
 		this->label15->Size = System::Drawing::Size(34, 35);
 		this->label15->TabIndex = 36;
@@ -733,7 +741,7 @@ private:
 		this->lstMask1111->FormattingEnabled = true;
 		this->lstMask1111->ItemHeight = 16;
 		this->lstMask1111->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
-		this->lstMask1111->Location = System::Drawing::Point(683, 343);
+		this->lstMask1111->Location = System::Drawing::Point(683, 444);
 		this->lstMask1111->Name = L"lstMask1111";
 		this->lstMask1111->Size = System::Drawing::Size(20, 36);
 		this->lstMask1111->TabIndex = 37;
@@ -744,7 +752,7 @@ private:
 		this->label13->FlatStyle = System::Windows::Forms::FlatStyle::System;
 		this->label13->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 														   static_cast<System::Byte>(204)));
-		this->label13->Location = System::Drawing::Point(643, 393);
+		this->label13->Location = System::Drawing::Point(557, 443);
 		this->label13->Name = L"label13";
 		this->label13->Size = System::Drawing::Size(34, 35);
 		this->label13->TabIndex = 36;
@@ -758,7 +766,7 @@ private:
 		this->lstMask0111->FormattingEnabled = true;
 		this->lstMask0111->ItemHeight = 16;
 		this->lstMask0111->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
-		this->lstMask0111->Location = System::Drawing::Point(683, 393);
+		this->lstMask0111->Location = System::Drawing::Point(597, 443);
 		this->lstMask0111->Name = L"lstMask0111";
 		this->lstMask0111->Size = System::Drawing::Size(20, 36);
 		this->lstMask0111->TabIndex = 37;
@@ -769,7 +777,7 @@ private:
 		this->label16->FlatStyle = System::Windows::Forms::FlatStyle::System;
 		this->label16->Font = (gcnew System::Drawing::Font(L"Courier New", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 														   static_cast<System::Byte>(204)));
-		this->label16->Location = System::Drawing::Point(643, 442);
+		this->label16->Location = System::Drawing::Point(643, 395);
 		this->label16->Name = L"label16";
 		this->label16->Size = System::Drawing::Size(34, 35);
 		this->label16->TabIndex = 36;
@@ -783,7 +791,7 @@ private:
 		this->lstMask0110->FormattingEnabled = true;
 		this->lstMask0110->ItemHeight = 16;
 		this->lstMask0110->Items->AddRange(gcnew cli::array< System::Object^  >(2){ L"0", L"1" });
-		this->lstMask0110->Location = System::Drawing::Point(683, 442);
+		this->lstMask0110->Location = System::Drawing::Point(683, 395);
 		this->lstMask0110->Name = L"lstMask0110";
 		this->lstMask0110->Size = System::Drawing::Size(20, 36);
 		this->lstMask0110->TabIndex = 37;
@@ -915,19 +923,6 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 			for(int nitem = 0; nitem < 4; nitem++)
 				iArr[n++] = getDir(a, ncell, nitem);
 
-	dArr[InpOptions::NormDir] = converti(chNormDirs);
-	dArr[InpOptions::SeedRnd] = converti(chSeedRnd);
-
-	dArr[InpOptions::LaysSzUpY] = converti(txSizeYUp);
-	dArr[InpOptions::LaysSzUpX] = converti(txSizeXUp);
-	dArr[InpOptions::LaysSzDn] = converti(txSizeDn);
-
-	dArr[InpOptions::kFillRnd] = convertd(txKFillRnd);
-	dArr[InpOptions::kSigmaY] = convertd(txKSigmaY);
-	dArr[InpOptions::kSigmaX] = convertd(txKSigmaX);
-	dArr[InpOptions::kInertion] = convertd(txKInertion);
-	dArr[InpOptions::kBorder] = convertd(txKBorder);
-
 	iArr[InpOptions::AMasks] = lstMask0000->SelectedIndex;
 	iArr[InpOptions::AMasks + 1] = iArr[InpOptions::AMasks + 2] = iArr[InpOptions::AMasks + 4] = iArr[InpOptions::AMasks + 8] = lstMask0001->SelectedIndex;
 	iArr[InpOptions::AMasks + 3] = iArr[InpOptions::AMasks + 5] = iArr[InpOptions::AMasks + 10] = iArr[InpOptions::AMasks + 12] = lstMask0011->SelectedIndex;
@@ -935,7 +930,30 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	iArr[InpOptions::AMasks + 7] = iArr[InpOptions::AMasks + 11] = iArr[InpOptions::AMasks + 13] = iArr[InpOptions::AMasks + 14] = lstMask0111->SelectedIndex;
 	iArr[InpOptions::AMasks + 15] = lstMask1111->SelectedIndex;
 
-	OkCancel = true;
+	iArr[InpOptions::NormDir] = converti(chNormDirs);
+	iArr[InpOptions::SeedRnd] = converti(chSeedRnd);
+
+	iArr[InpOptions::LaysSzUpY] = converti(txSizeYUp);
+	iArr[InpOptions::LaysSzUpX] = converti(txSizeXUp);
+	iArr[InpOptions::LaysSzDn] = converti(txSizeDn);
+
+	dArr[InpOptions::kFillRnd] = convertd(txKFillRnd);
+	dArr[InpOptions::kSigmaY] = convertd(txKSigmaY);
+	dArr[InpOptions::kSigmaX] = convertd(txKSigmaX);
+	dArr[InpOptions::kInertion] = convertd(txKInertion);
+	dArr[InpOptions::kBorder] = convertd(txKBorder);
+
+	int cnt = iArr[InpOptions::LaysCnt];
+	if(cnt <= 1){
+		OkCancel = false;
+	} else{
+		double kfrom = convertd(txKLaysFrom);
+		double kto = convertd(txKLaysTo);
+		double step = (kto - kfrom) / (cnt - 1);
+		for(int n = 0; n < cnt; n++)
+			dArr[iArr[InpOptions::kLays] + n] = kfrom + step * n;
+		OkCancel = true;
+	}
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
 private: System::Void btCancel_Click(System::Object^ sender, System::EventArgs^ e){

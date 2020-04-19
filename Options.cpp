@@ -1,7 +1,6 @@
 #include "Options.h"
 
 Options::Options(){
-	dirs = iArr;
 	bool isload = loadAuto();
 	if(!isload)
 		setDefault();
@@ -24,13 +23,14 @@ int Options::showDlg(){
 } // ///////////////////////////////////////////////////////////////////////////
 bool Options::setDefault(){
 	blocks2D2.setDefault();
-	blocks2D2.toDirs(dirs);
+	blocks2D2.toDirs(dirs());
 	iArr[InpOptions::NormDir] = 1;
 	iArr[InpOptions::LaysSzUpY] = 1;
 	iArr[InpOptions::LaysSzUpX] = 1;
-	iArr[InpOptions::SeedRnd] = 2020;
+	iArr[InpOptions::LaysSzDn] = 1024;
+	iArr[InpOptions::SeedRnd] = 1;
 	iArr[InpOptions::LaysCnt] = 0;
-	for(int j=0; j<_countof(AMask); j++)
+	for(int j = 0; j < _countof(AMask); j++)
 		iArr[InpOptions::AMasks + j] = AMask[j];
 
 	dArr[InpOptions::kFillRnd] = 0.035;
@@ -38,7 +38,7 @@ bool Options::setDefault(){
 	dArr[InpOptions::kSigmaX] = 0.45;
 	dArr[InpOptions::kInertion] = 0.0;
 	dArr[InpOptions::kBorder] = 0.0;
-	for(int j=0; j<InpOptions::LaysCntReserv; j++)
+	for(int j = 0; j < InpOptions::LaysCntReserv; j++)
 		dArr[InpOptions::kLays + j] = 1.0;
 
 	bool ret = save(autoDirsFName);
@@ -54,7 +54,7 @@ bool Options::save(const char* fname) const{
 			MessageBoxA(NULL, fname, "Error#1 write i file!", MB_ICONEXCLAMATION | MB_OK);
 			return false;
 		}
-		double checki = 10;
+		int checki = 10;
 		for(int j = 0; j < sziArr; j++)
 			checki += iArr[j];
 		sziwrite = (int)fwrite(&checki, sizeof(checki), 1, f);
@@ -84,6 +84,7 @@ bool Options::load(const char* fname){
 		if(sziread != sziArr){
 			fclose(f);
 			MessageBoxA(NULL, fname, "Error#1 read i file!", MB_ICONEXCLAMATION | MB_OK);
+			remove(fname);
 			return false;
 		}
 		int checki = 10;
@@ -91,11 +92,12 @@ bool Options::load(const char* fname){
 			checki += iArr[j];
 		int checkiread = 0;
 		sziread = (int)fread(&checkiread, sizeof(checkiread), 1, f);
-		
+
 		int szdread = (int)fread(dArr, sizeof(dArr[0]), szdArr, f);
 		if(szdread != szdArr){
 			fclose(f);
 			MessageBoxA(NULL, fname, "Error#1 read d file!", MB_ICONEXCLAMATION | MB_OK);
+			remove(fname);
 			return false;
 		}
 		double checkd = 10.0;
@@ -104,14 +106,16 @@ bool Options::load(const char* fname){
 		int checkdread = 0;
 		szdread = (int)fread(&checkdread, sizeof(checkdread), 1, f);
 
-fclose(f);
+		fclose(f);
 		if(sziread == 1 && szdread == 1 && checkiread == checki && checkdread == checkd)
 			return true;
+		else
+			remove(fname);
 	}
 	MessageBoxA(NULL, fname, "Error#2 read file!", MB_ICONEXCLAMATION | MB_OK);
 	return false;
 } // ///////////////////////////////////////////////////////////////////////////
 void Options::loadAll(){
-	blocks2D2.fromDirs(dirs);// TODO: add other parametrs
+	blocks2D2.fromDirs(dirs());// TODO: add other parametrs
 } // ///////////////////////////////////////////////////////////////////////////
 

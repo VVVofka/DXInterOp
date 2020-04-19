@@ -4,13 +4,13 @@ namespace InpOptions{
 static const int LaysCntReserv = 20; 
 // offset in iArr;
 static const int Dirs = 0;
-static const int NormDir = Dirs + 16 * 4 * 4;
+static const int NormDir = Dirs + 16 * 4 * 4; // 256
 
-static const int LaysSzUpY = NormDir + 1;
-static const int LaysSzUpX = LaysSzUpY + 1;
-static const int LaysSzDn = LaysSzUpX + 1;
+static const int LaysSzUpY = NormDir + 1;    // 257
+static const int LaysSzUpX = LaysSzUpY + 1;  // 258
+static const int LaysSzDn = LaysSzUpX + 1;   // 259
 
-static const int SeedRnd = LaysSzDn + 1;
+static const int SeedRnd = LaysSzDn + 1;     // 260
 static const int LaysCnt = SeedRnd + 1;
 static const int AMasks = LaysCnt + 1;
               // next = AMasks + 16
