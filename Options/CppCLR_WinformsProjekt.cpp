@@ -25,7 +25,7 @@ int openDlgOptions(int* iArr, double* dArr){
 	auto frm = gcnew CppCLRWinformsProjekt::Form1();
 	frm->setArr(iArr, dArr);
 	Application::Run(frm);
-	//int ret =  ReturnOptions::Restart;
-	int ret =  1;
+	int ret =  iArr[InpOptions::Restart];
+	//int ret =  1;
 	return ret;
 } // //////////////////////////////////////////////////////////////////////////////////////////////

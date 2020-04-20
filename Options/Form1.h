@@ -15,7 +15,7 @@ using namespace System::Drawing;
 /// Zusammenfassung fьr Form1
 /// </summary>
 public ref class Form1 : public System::Windows::Forms::Form{
-	int OkCancel = 1; // Ok=1 Cancel=0
+	//int OkCancel = 1; // Ok=1 Cancel=0
 	int* iArr;
 private: System::Windows::Forms::Label^ label11;
 private: System::Windows::Forms::Label^ lbLaysCnt;
@@ -37,7 +37,7 @@ private: System::Windows::Forms::ListBox^ lstMask0110;
 public:
 	void setDir(int a, int ncell, int nitem, int dir){ cells[a]->getCell(ncell, nitem)->setDir(dir); }
 	int getDir(int a, int ncell, int nitem){ return cells[a]->getCell(ncell, nitem)->getDir(); }
-	int getOk(){ return OkCancel; }
+	//int getOk(){ return OkCancel; }
 	void setArr(int* i_arr, double* d_arr){
 		iArr = i_arr; dArr = d_arr;
 		for(int a = 0, n = 0; a < 16; a++)
@@ -945,19 +945,19 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 
 	int cnt = iArr[InpOptions::LaysCnt];
 	if(cnt <= 1){
-		OkCancel = false;
+		dArr[InpOptions::Restart] = 0;
 	} else{
 		double kfrom = convertd(txKLaysFrom);
 		double kto = convertd(txKLaysTo);
 		double step = (kto - kfrom) / (cnt - 1);
 		for(int n = 0; n < cnt; n++)
-			dArr[iArr[InpOptions::kLays] + n] = kfrom + step * n;
-		OkCancel = true;
+			dArr[InpOptions::kLays + n] = kfrom + step * n;
+		dArr[InpOptions::Restart] = 1;
 	}
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
 private: System::Void btCancel_Click(System::Object^ sender, System::EventArgs^ e){
-	OkCancel = false;
+	dArr[InpOptions::Restart] = 0;
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
 private: double convertd(TextBox^ tx){

@@ -30,6 +30,7 @@ bool Options::setDefault(){
 	iArr[InpOptions::LaysSzDn] = 1024;
 	iArr[InpOptions::SeedRnd] = 1;
 	iArr[InpOptions::LaysCnt] = 0;
+	iArr[InpOptions::Restart] = 0;
 	for(int j = 0; j < _countof(AMask); j++)
 		iArr[InpOptions::AMasks + j] = AMask[j];
 
@@ -90,7 +91,7 @@ bool Options::load(const char* fname){
 		int checki = 10;
 		for(int j = 0; j < sziArr; j++)
 			checki += iArr[j];
-		int checkiread = 0;
+		int checkiread = -1;
 		sziread = (int)fread(&checkiread, sizeof(checkiread), 1, f);
 
 		int szdread = (int)fread(dArr, sizeof(dArr[0]), szdArr, f);
@@ -103,7 +104,7 @@ bool Options::load(const char* fname){
 		double checkd = 10.0;
 		for(int j = 0; j < szdArr; j++)
 			checkd += dArr[j];
-		int checkdread = 0;
+		double checkdread = -1.0;
 		szdread = (int)fread(&checkdread, sizeof(checkdread), 1, f);
 
 		fclose(f);
