@@ -58,7 +58,7 @@ void RunDlast::Run(const INT2 shift,
 		const int mask[7] = {0,0,1, 9, -1,0,0};
 		const int y0 = idx[0] * 2 + shift.y;
 		const int x0 = idx[1] * 2 + shift.x;
-		for(int ncell = 0; ncell < 4; ncell++){
+		for(int ncell = 0; ncell < 4; ncell++){ // TODO: shifts
 			const int ycell = ncell / 2;
 			const int xcell = ncell % 2;
 			const int y = (y0 + ycell) % dstd.extent[0];
