@@ -31,7 +31,8 @@ class AMPEng2{
 	std::vector<std::unique_ptr<array<DrQuadro, 2>>> var_dirs;
 	std::unique_ptr<array<FLT2, 2>> last_dirs;
 	std::unique_ptr<array<int, 1>> amask;
-	std::unique_ptr<array<FLT2, 1>> dmask;
+	//std::unique_ptr<array<FLT2, 1>> dmask;
+	std::vector<std::unique_ptr<array<FLT2, 1>>> var_masks;
 
 public:
 	AMPEng2(ID3D11Device* d3ddevice) : m_accl_view(Concurrency::direct3d::create_accelerator_view(d3ddevice)){
@@ -48,7 +49,7 @@ private:
 	std::random_device rd;   // non-deterministic generator
 	std::mt19937 gen;  // to seed mersenne twister. rand: gen(rd())
 	std::uniform_int_distribution<int> distLastAY, distLastAX;
-	int nlastlay = -1;  // N last lay
+	size_t nlastlay = 0;  // N last lay
 
 public:
 	void dumpA(int nlay);

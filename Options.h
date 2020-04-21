@@ -32,18 +32,9 @@ public:
 
 	int* dirs(){ return &iArr[InpOptions::Dirs]; }
 	bool normDir(){ return iArr[InpOptions::NormDir] != 0; } // if DirX < 0.5 * DirY then DirX = 0
-	INT2 LaysSzUp(){ return INT2(InpOptions::LaysSzUpY, InpOptions::LaysSzUpX); }
-	int LaysSzDn(){ InpOptions::LaysSzDn; }
 	int seedRnd(){ return iArr[InpOptions::SeedRnd]; }
-	int setLaysCnt(int cnt){ iArr[InpOptions::LaysCnt] = cnt; }
 	const int* aMask() const { return &iArr[InpOptions::AMasks]; }
 
-	double kFillRnd(){ return dArr[InpOptions::kFillRnd]; }
-	double kSigmaY(){ return dArr[InpOptions::kSigmaY]; }
-	double kSigmaX(){ return dArr[InpOptions::kSigmaX]; }
-	double kInertion(){ return dArr[InpOptions::kInertion]; }
-	double kBorder(){ return dArr[InpOptions::kBorder]; }
-	//double* kLays(){ return &dArr[InpOptions::kLays]; }
 	double kLays(int nlay){ return dArr[InpOptions::kLays + nlay]; }
 
 	bool setDefault();

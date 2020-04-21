@@ -3,11 +3,11 @@ void AMPEng2::initialize_data(){
 	int seed = model.options.seedRnd();
 	if(seed >= 0)
 		gen.seed(seed);
-	 else
+	else
 		gen.seed(rd());
 	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY() - 1);
 	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX() - 1);
-	nlastlay = model.LaysCnt() - 1; // N last lay
+	nlastlay = size_t(model.LaysCnt() - 1); // N last lay
 
 	int layscnt = (int)model.v_areas.size();
 	for(int nlay = 0; nlay < layscnt; nlay++){
@@ -21,13 +21,24 @@ void AMPEng2::initialize_data(){
 			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>());
 			var_dirs[nlay] = std::unique_ptr<array<DrQuadro, 2>>
 				(new array<DrQuadro, 2>(size.y, size.x, model.v_dirs[nlay].begin(), m_accl_view));
+
+			var_masks.push_back(std::unique_ptr<array<FLT2, 1>>());
+			FLT2 tmp[Options::szDirs];
+			for(int j = 0; j < _countof(tmp); j++){
+				tmp[j].y = model.options.blocks2D2.vin[j].y * (float)model.options.kLays(nlay);
+				tmp[j].x = model.options.blocks2D2.vin[j].x * (float)model.options.kLays(nlay);
+			}
+			var_masks[nlay] = std::unique_ptr<array<FLT2, 1>> 
+				(new array<FLT2, 1>(Options::szDirs, tmp, m_accl_view));
+			setConsole();
+			printf("%u %f\n", nlay, model.options.kLays(nlay));
 		}
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(int(model.lastPoss().size()), model.lastPoss().begin(), m_accl_view));
 	last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
 	amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, model.options.aMask(), m_accl_view));
-	FLT2* strt = model.options.blocks2D2.vin;// getFLT2();
-	dmask = std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(Options::szDirs, strt, m_accl_view));
+	//FLT2* strt = model.options.blocks2D2.vin;// getFLT2();
+	//dmask = std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(Options::szDirs, strt, m_accl_view));
 	//setConsole();
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 void AMPEng2::run(){
@@ -36,19 +47,21 @@ void AMPEng2::run(){
 	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[size_t(nlastlay) - 1], *amask);
 	//RunA::RunUnTorLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 
-	for(int nlay = nlastlay - 1; nlay > 0; nlay--){
+	for(size_t nlay = nlastlay - 1; nlay > 0; nlay--){
 		//dumpA(nlay);
-		RunA::Run(*var_areas[nlay], *var_areas[size_t(nlay - 1)], *amask);
+		RunA::Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
 	}
 	//dumpA(0);
 	// Back to down
-	for(int nlay = 1; nlay < nlastlay; nlay++){
-		//RunD::Run(*var_dirs[size_t(nlay - 1)], *var_dirs[size_t(nlay)], *var_areas[size_t(nlay)], *dmask);
-		RunD::RunK(*var_dirs[size_t(nlay - 1)], *var_dirs[size_t(nlay)], *var_areas[size_t(nlay)], *dmask, model.options.kLays(nlay));
+	for(size_t nlay = 1; nlay < nlastlay; nlay++){
+		setConsole();
+		printf("%d\n", int(nlay)-1);
+		RunD::Run(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *var_masks[nlay-1]);
+		//RunD::RunK(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *var_masks[nlay], model.options.kLays(nlay));
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
-	RunDlast::Run(shift, *var_dirs[size_t(nlastlay - 1)], *m_data, *var_areas[size_t(nlastlay)], *last_dirs, model.sizeYX(), model.options.normDir());
+	RunDlast::Run(shift, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeYX(), model.options.normDir());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void AMPEng2::dumpA(int nlay){

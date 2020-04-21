@@ -31,7 +31,7 @@ bool Options::setDefault(){
 	iArr[InpOptions::LaysSzUpX] = 1;
 	iArr[InpOptions::LaysSzDn] = 1024;
 	iArr[InpOptions::SeedRnd] = -1;
-	iArr[InpOptions::LaysCnt] = 0;
+	iArr[InpOptions::LaysCnt] = 10;
 	iArr[InpOptions::Restart] = 0;
 	for(int j = 0; j < _countof(AMask); j++)
 		iArr[InpOptions::AMasks + j] = AMask[j];
@@ -120,7 +120,5 @@ bool Options::load(const char* fname){
 } // ///////////////////////////////////////////////////////////////////////////
 void Options::loadAll(){
 	blocks2D2.fromDirs(dirs());// TODO: add other parametrs
-	//for(int j=0; j<_countof(AMask); j++)
-	//	AMask[j] = iArr[j + ]
 } // ///////////////////////////////////////////////////////////////////////////
 

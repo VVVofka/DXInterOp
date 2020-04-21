@@ -15,9 +15,4 @@ public:
                     const array<int, 2>& dsta, 
                     const array<FLT2, 1>& masksD
                     );
-	static void RunK(const array<DrQuadro, 2>& srcd,
-                    array<DrQuadro, 2>& dstd,
-                    const array<int, 2>& dsta, 
-                    const array<FLT2, 1>& masksD,
-                    double kLay);
 }; // **************************************************************************************************************
