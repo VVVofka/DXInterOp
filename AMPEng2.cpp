@@ -1,15 +1,10 @@
 #include "AMPEng2.h"
 void AMPEng2::initialize_data(){
 	int seed = model.options.seedRnd();
-	if(seed >= 0){
-	//	gen = std::mt19937(2020);  // to seed mersenne twister. rand: gen(rd())
-	//	std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
+	if(seed >= 0)
 		gen.seed(seed);
-	} else{
-		//std::random_device rd;
-		//std::mt19937 gen(rd());
+	 else
 		gen.seed(rd());
-	}
 	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY() - 1);
 	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX() - 1);
 	nlastlay = model.LaysCnt() - 1; // N last lay
@@ -30,7 +25,7 @@ void AMPEng2::initialize_data(){
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(int(model.lastPoss().size()), model.lastPoss().begin(), m_accl_view));
 	last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
-	amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, model.options.AMask, m_accl_view));
+	amask = std::unique_ptr<array<int, 1>>(new array<int, 1>(16, model.options.aMask(), m_accl_view));
 	FLT2* strt = model.options.blocks2D2.vin;// getFLT2();
 	dmask = std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(Options::szDirs, strt, m_accl_view));
 	//setConsole();
@@ -48,7 +43,8 @@ void AMPEng2::run(){
 	//dumpA(0);
 	// Back to down
 	for(int nlay = 1; nlay < nlastlay; nlay++){
-		RunD::Run(*var_dirs[size_t(nlay - 1)], *var_dirs[size_t(nlay)], *var_areas[size_t(nlay)], *dmask);
+		//RunD::Run(*var_dirs[size_t(nlay - 1)], *var_dirs[size_t(nlay)], *var_areas[size_t(nlay)], *dmask);
+		RunD::RunK(*var_dirs[size_t(nlay - 1)], *var_dirs[size_t(nlay)], *var_areas[size_t(nlay)], *dmask, model.options.kLays(nlay));
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}

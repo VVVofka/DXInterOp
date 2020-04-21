@@ -9,7 +9,6 @@
 #include <DirectXMath.h>
 #pragma warning(pop)
 
-//#include "DXInterOp.h"
 #include "Utils.h"
 #include "Vertex.h"
 #include "Masks.h"

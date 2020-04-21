@@ -6,9 +6,6 @@
 #define autoDirsFName "autoArr.dat"
 
 class Options{
-public:
-	static const int szDirs = Blocks2D2::szFLT;
-	Options();
 						// 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
 						// 00 10 01 11 00 10 01 11 00 10 01 11 00 10 01 11
 						// 00 00 00 00 10 10 10 10 01 01 01 01 11 11 11 11
@@ -17,6 +14,9 @@ public:
   //const int AMask[16] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1};  // line=1 diag=0 +
   //const int AMask[16] = {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};  // line=0 diag=1 quadro
   //const int AMask[16] = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1};  // line=0 diag=0 quadro
+public:
+	static const int szDirs = Blocks2D2::szFLT;
+	Options();
 
 	bool saveAuto() const;
 	bool loadAuto();
@@ -36,14 +36,15 @@ public:
 	int LaysSzDn(){ InpOptions::LaysSzDn; }
 	int seedRnd(){ return iArr[InpOptions::SeedRnd]; }
 	int setLaysCnt(int cnt){ iArr[InpOptions::LaysCnt] = cnt; }
-	int* aMask(){ return &iArr[InpOptions::AMasks]; }
+	const int* aMask() const { return &iArr[InpOptions::AMasks]; }
 
 	double kFillRnd(){ return dArr[InpOptions::kFillRnd]; }
 	double kSigmaY(){ return dArr[InpOptions::kSigmaY]; }
 	double kSigmaX(){ return dArr[InpOptions::kSigmaX]; }
 	double kInertion(){ return dArr[InpOptions::kInertion]; }
 	double kBorder(){ return dArr[InpOptions::kBorder]; }
-	double* kLays(){ return &dArr[InpOptions::kLays]; }
+	//double* kLays(){ return &dArr[InpOptions::kLays]; }
+	double kLays(int nlay){ return dArr[InpOptions::kLays + nlay]; }
 
 	bool setDefault();
 	bool save(const char* fname) const;
