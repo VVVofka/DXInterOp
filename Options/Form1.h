@@ -955,7 +955,7 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	dArr[InpOptions::kInertion] = convertd(txKInertion);
 	dArr[InpOptions::kBorder] = convertd(txKBorder);
 
-	int cnt = iArr[InpOptions::LaysCnt];
+	int cnt = iArr[InpOptions::LaysCnt] - 1;
 	if(cnt <= 1){
 		iArr[InpOptions::Restart] = 0;
 	} else{
