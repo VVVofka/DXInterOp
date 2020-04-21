@@ -1,8 +1,17 @@
 #include "AMPEng2.h"
 void AMPEng2::initialize_data(){
-	gen = std::mt19937(2020);  // to seed mersenne twister. rand: gen(rd())
-	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY()-1);
-	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX()-1);
+	int seed = model.options.seedRnd();
+	if(seed >= 0){
+	//	gen = std::mt19937(2020);  // to seed mersenne twister. rand: gen(rd())
+	//	std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
+		gen.seed(seed);
+	} else{
+		//std::random_device rd;
+		//std::mt19937 gen(rd());
+		gen.seed(rd());
+	}
+	distLastAY = std::uniform_int_distribution<int>(0, model.sizeY() - 1);
+	distLastAX = std::uniform_int_distribution<int>(0, model.sizeX() - 1);
 	nlastlay = model.LaysCnt() - 1; // N last lay
 
 	int layscnt = (int)model.v_areas.size();
@@ -43,7 +52,7 @@ void AMPEng2::run(){
 		//concurrency::copy(*m_data, vpos.data());
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
-	RunDlast::Run(shift, *var_dirs[size_t(nlastlay - 1)], *m_data, *var_areas[size_t(nlastlay)], *last_dirs, model.sizeYX());
+	RunDlast::Run(shift, *var_dirs[size_t(nlastlay - 1)], *m_data, *var_areas[size_t(nlastlay)], *last_dirs, model.sizeYX(), model.options.normDir());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void AMPEng2::dumpA(int nlay){

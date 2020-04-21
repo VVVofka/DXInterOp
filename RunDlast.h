@@ -16,6 +16,7 @@ public:
 				    array<Vertex2D, 1>& dstpos,
 				    array<int, 2>& dsta,
 				    array<FLT2, 2>& dstd,
-				    const INT2 sz);
+				    const INT2 sz,
+					bool normdir);
 
 }; // ***************************************************************************************************

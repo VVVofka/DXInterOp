@@ -16,10 +16,12 @@ bool Options::loadAuto(){
 	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
 int Options::showDlg(){
-	retDlg = openDlgOptions(iArr, dArr);
-	save(autoDirsFName);
-	loadAll();
-	return retDlg;
+	int ret = openDlgOptions(iArr, dArr);
+	if(ret != 0){
+		save(autoDirsFName);
+		loadAll();
+	}
+	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
 bool Options::setDefault(){
 	blocks2D2.setDefault();
@@ -28,7 +30,7 @@ bool Options::setDefault(){
 	iArr[InpOptions::LaysSzUpY] = 1;
 	iArr[InpOptions::LaysSzUpX] = 1;
 	iArr[InpOptions::LaysSzDn] = 1024;
-	iArr[InpOptions::SeedRnd] = 1;
+	iArr[InpOptions::SeedRnd] = -1;
 	iArr[InpOptions::LaysCnt] = 0;
 	iArr[InpOptions::Restart] = 0;
 	for(int j = 0; j < _countof(AMask); j++)

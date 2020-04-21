@@ -117,11 +117,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					break;
 				case 79:{ // key 'o'  // I=73
 					pauseRender = true;
-					model.options.showDlg();
-					//if(options.isRestart()){
-					mdx.CleanupDevice();
-					mdx.InitDevice(g_hWnd, model.lastPoss());
-				//}
+					if(model.options.showDlg()){
+						model.Create();
+						mdx.CleanupDevice();
+						mdx.InitDevice(g_hWnd, model.lastPoss());
+					}
 					pauseRender = false;
 					break; }
 				case VK_PAUSE:

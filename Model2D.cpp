@@ -5,11 +5,12 @@ void Model2D::Create(){
 	double kRnd = options.dArr[InpOptions::kFillRnd];
 	DBL2 kSigma(options.dArr[InpOptions::kSigmaY], options.dArr[InpOptions::kSigmaX]);
 
+	;
 	const int RESERV_LAYS_CNT = 16;
-	v_poss.reserve(RESERV_LAYS_CNT);
-	v_areas.reserve(RESERV_LAYS_CNT);
-	v_dirs.reserve(RESERV_LAYS_CNT);
-	vsz.reserve(RESERV_LAYS_CNT);
+	v_poss.clear(); v_poss.reserve(RESERV_LAYS_CNT);
+	v_areas.clear(); v_areas.reserve(RESERV_LAYS_CNT);
+	v_dirs.clear(); v_dirs.reserve(RESERV_LAYS_CNT);
+	vsz.clear(); vsz.reserve(RESERV_LAYS_CNT);
 	size_t nlay = 0;
 	INT2 sz(minsz);
 	int szmaxxy = sz.Max();
@@ -46,8 +47,15 @@ Vertex2D Model2D::norm(int curpos, INT2 sizes) const{
 	return Vertex2D(y, x);
 } // /////////////////////////////////////////////////////////////////////////////////
 void Model2D::fillrnd(int nlay, size_t szarea, double kFill, DBL2 kSigma){
-	std::random_device rd;   // non-deterministic generator
-	std::mt19937 gen(2020);  // to seed mersenne twister. rand: gen(rd())
+	std::mt19937 gen;  // to seed mersenne twister. rand: gen(rd())
+
+	int seed = options.seedRnd();
+	if(seed >= 0)
+		gen.seed(seed);
+	else{
+		std::random_device rd;   // non-deterministic generator
+		gen.seed(rd());
+	}
 	std::uniform_int_distribution<int> dist(0, int(szarea) - 1);
 	size_t szpos = size_t(szarea * kFill + 0.5);
 	v_poss[nlay].reserve(szpos);

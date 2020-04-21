@@ -5,7 +5,8 @@ void RunDlast::Run(const INT2 shift,
 				   array<Vertex2D, 1>& dstpos,
 				   array<int, 2>& dsta,
 				   array<FLT2, 2>& dstd,
-				   const INT2 sz){
+				   const INT2 sz,
+				   bool normdir){
 	parallel_for_each(srcd.extent, [=, &srcd, &dstd](index<2> idx) restrict(amp){
 		const INT2 src(idx);
 		const int y0 = (src.y * 2 + shift.y) % dstd.extent[0];
@@ -21,27 +22,28 @@ void RunDlast::Run(const INT2 shift,
 	}); // parallel_for_each(srcd.extent,
 
 	// // prefer to center -
-    //parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
+	//parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
 	//	int y = idx[0];
 	//	int x = idx[1];
 	//	dstd[y][x].y += 1.f + y / (-0.5f * dstd.extent[0]);
 	//	dstd[y][x].x += 1.f + x / (-0.5f * dstd.extent[1]);
 	//}); // parallel_for_each(srcd.extent,
 
-	// // del small dir (ex. 7,3 -> 7,0) +
- //   parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
-	//	const INT2 dst(idx);
-	//	const FLT2 absdir(dstd[dst.y][dst.x].abs());
-	//	if(absdir.x >= 2 * absdir.y)
-	//		dstd[dst.y][dst.x].y = 0;
-	//	else if(absdir.y >= 2 * absdir.x)
-	//		dstd[dst.y][dst.x].x = 0;
-	//}); // parallel_for_each(srcd.extent,
-
+	// // del small dir (ex. 7,3 -> 7,0)
+	if(normdir){
+		parallel_for_each(dstd.extent, [&dstd](index<2> idx) restrict(amp){
+			const INT2 dst(idx);
+			const FLT2 absdir(dstd[dst.y][dst.x].abs());
+			if(absdir.x >= 2 * absdir.y)
+				dstd[dst.y][dst.x].y = 0;
+			else if(absdir.y >= 2 * absdir.x)
+				dstd[dst.y][dst.x].x = 0;
+		}); // parallel_for_each(srcd.extent,
+	}
 #ifdef AMPDBG_DLAST
 	struct myStruct{
-		int x=-9, y = -9;
-		int absx=-9, absy = -9;
+		int x = -9, y = -9;
+		int absx = -9, absy = -9;
 		int cell = -9, aold = -9, anew = -9;
 		int newx = -9, newy = -9;
 		int maskx = -9, masky = -9;
@@ -100,7 +102,7 @@ void RunDlast::Run(const INT2 shift,
 	for(int j = 0; j < dbg.size(); j++){
 		myStruct& q = dbg[j];
 		if(q.anew == -1 && q.aold > 0){
-			printf("%d\t%d\t(%d %d) ->\t(%d %d)\n",j, q.aold, q.y, q.x, q.newy, q.newx);
+			printf("%d\t%d\t(%d %d) ->\t(%d %d)\n", j, q.aold, q.y, q.x, q.newy, q.newx);
 		}
 	}
 #endif

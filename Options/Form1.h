@@ -32,6 +32,8 @@ private: System::Windows::Forms::Label^ label13;
 private: System::Windows::Forms::ListBox^ lstMask0111;
 private: System::Windows::Forms::Label^ label16;
 private: System::Windows::Forms::ListBox^ lstMask0110;
+private: System::Windows::Forms::TextBox^ txSeedRnd;
+private: System::Windows::Forms::Label^ label17;
 
 	   double* dArr;
 public:
@@ -48,7 +50,8 @@ public:
 		txSizeYUp->Text = Convert::ToString(iArr[InpOptions::LaysSzUpY]);
 		txSizeXUp->Text = Convert::ToString(iArr[InpOptions::LaysSzUpX]);
 		txSizeDn->Text = Convert::ToString(iArr[InpOptions::LaysSzDn]);
-		chSeedRnd->Checked = (iArr[InpOptions::SeedRnd] > 0);
+		//chSeedRnd->Checked = (iArr[InpOptions::SeedRnd] > 0);
+		txSeedRnd->Text = Convert::ToString(iArr[InpOptions::SeedRnd]);
 		lbLaysCnt->Text = Convert::ToString(iArr[InpOptions::LaysCnt]);
 		lstMask0000->SelectedIndex = iArr[InpOptions::AMasks];
 		lstMask0001->SelectedIndex = iArr[InpOptions::AMasks + 1];
@@ -118,7 +121,7 @@ private: System::Windows::Forms::TextBox^ txSizeDn;
 
 
 private: System::Windows::Forms::Label^ label3;
-private: System::Windows::Forms::CheckBox^ chSeedRnd;
+
 private: System::Windows::Forms::Label^ label4;
 private: System::Windows::Forms::TextBox^ txKFillRnd;
 private: System::Windows::Forms::TextBox^ txKSigmaY;
@@ -195,7 +198,6 @@ private:
 		this->txSizeXUp = (gcnew System::Windows::Forms::TextBox());
 		this->txSizeDn = (gcnew System::Windows::Forms::TextBox());
 		this->label3 = (gcnew System::Windows::Forms::Label());
-		this->chSeedRnd = (gcnew System::Windows::Forms::CheckBox());
 		this->label4 = (gcnew System::Windows::Forms::Label());
 		this->txKFillRnd = (gcnew System::Windows::Forms::TextBox());
 		this->txKSigmaY = (gcnew System::Windows::Forms::TextBox());
@@ -225,6 +227,8 @@ private:
 		this->lstMask0111 = (gcnew System::Windows::Forms::ListBox());
 		this->label16 = (gcnew System::Windows::Forms::Label());
 		this->lstMask0110 = (gcnew System::Windows::Forms::ListBox());
+		this->txSeedRnd = (gcnew System::Windows::Forms::TextBox());
+		this->label17 = (gcnew System::Windows::Forms::Label());
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0110))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0000))->BeginInit();
 		(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->box0001))->BeginInit();
@@ -495,16 +499,6 @@ private:
 		this->label3->Size = System::Drawing::Size(90, 13);
 		this->label3->TabIndex = 26;
 		this->label3->Text = L"Size Dn Max(Y,X)";
-		// 
-		// chSeedRnd
-		// 
-		this->chSeedRnd->AutoSize = true;
-		this->chSeedRnd->Location = System::Drawing::Point(650, 36);
-		this->chSeedRnd->Name = L"chSeedRnd";
-		this->chSeedRnd->Size = System::Drawing::Size(72, 17);
-		this->chSeedRnd->TabIndex = 24;
-		this->chSeedRnd->Text = L"seed Rnd";
-		this->chSeedRnd->UseVisualStyleBackColor = true;
 		// 
 		// label4
 		// 
@@ -796,11 +790,30 @@ private:
 		this->lstMask0110->Size = System::Drawing::Size(20, 36);
 		this->lstMask0110->TabIndex = 37;
 		// 
+		// txSeedRnd
+		// 
+		this->txSeedRnd->Location = System::Drawing::Point(678, 37);
+		this->txSeedRnd->Name = L"txSeedRnd";
+		this->txSeedRnd->Size = System::Drawing::Size(74, 20);
+		this->txSeedRnd->TabIndex = 38;
+		this->txSeedRnd->Text = L"-1";
+		// 
+		// label17
+		// 
+		this->label17->AutoSize = true;
+		this->label17->Location = System::Drawing::Point(621, 44);
+		this->label17->Name = L"label17";
+		this->label17->Size = System::Drawing::Size(56, 13);
+		this->label17->TabIndex = 39;
+		this->label17->Text = L"seed Rnd:";
+		// 
 		// Form1
 		// 
 		this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 		this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 		this->ClientSize = System::Drawing::Size(803, 662);
+		this->Controls->Add(this->label17);
+		this->Controls->Add(this->txSeedRnd);
 		this->Controls->Add(this->lstMask1111);
 		this->Controls->Add(this->lstMask0110);
 		this->Controls->Add(this->lstMask0011);
@@ -836,7 +849,6 @@ private:
 		this->Controls->Add(this->txKSigmaY);
 		this->Controls->Add(this->txSizeDn);
 		this->Controls->Add(this->txSizeYUp);
-		this->Controls->Add(this->chSeedRnd);
 		this->Controls->Add(this->chNormDirs);
 		this->Controls->Add(this->btOk);
 		this->Controls->Add(this->btn0110);
@@ -931,7 +943,7 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	iArr[InpOptions::AMasks + 15] = lstMask1111->SelectedIndex;
 
 	iArr[InpOptions::NormDir] = converti(chNormDirs);
-	iArr[InpOptions::SeedRnd] = converti(chSeedRnd);
+	iArr[InpOptions::SeedRnd] = converti(txSeedRnd);
 
 	iArr[InpOptions::LaysSzUpY] = converti(txSizeYUp);
 	iArr[InpOptions::LaysSzUpX] = converti(txSizeXUp);
@@ -945,19 +957,19 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 
 	int cnt = iArr[InpOptions::LaysCnt];
 	if(cnt <= 1){
-		dArr[InpOptions::Restart] = 0;
+		iArr[InpOptions::Restart] = 0;
 	} else{
 		double kfrom = convertd(txKLaysFrom);
 		double kto = convertd(txKLaysTo);
 		double step = (kto - kfrom) / (cnt - 1);
 		for(int n = 0; n < cnt; n++)
 			dArr[InpOptions::kLays + n] = kfrom + step * n;
-		dArr[InpOptions::Restart] = 1;
+		iArr[InpOptions::Restart] = 1;
 	}
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
 private: System::Void btCancel_Click(System::Object^ sender, System::EventArgs^ e){
-	dArr[InpOptions::Restart] = 0;
+	iArr[InpOptions::Restart] = 0;
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
 private: double convertd(TextBox^ tx){

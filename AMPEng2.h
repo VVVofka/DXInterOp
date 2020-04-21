@@ -2,6 +2,7 @@
 #include <amp.h>
 #include <amp_graphics.h>
 #include <vector>
+#include <random>
 
 #pragma warning(push)
 #pragma warning(disable:4005 26812) 
