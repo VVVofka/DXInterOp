@@ -18,6 +18,7 @@
     <ClCompile Include="Model2D.cpp" />
     <ClCompile Include="Masks.cpp" />
     <ClCompile Include="Options.cpp" />
+    <ClCompile Include="Shifter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine3.h" />
@@ -43,6 +44,8 @@
     </ClInclude>
     <ClInclude Include="Ini.h" />
     <ClInclude Include="Options.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Shifter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl" />
@@ -51,5 +54,8 @@
     <Filter Include="Run">
       <UniqueIdentifier>{8a9bfb03-6eec-423a-862a-98f8fddc245c}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AmpDX.rc" />
   </ItemGroup>
 </Project>

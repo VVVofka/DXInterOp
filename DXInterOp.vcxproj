@@ -363,9 +363,11 @@
     <ClInclude Include="MDX3.h" />
     <ClInclude Include="Model2D.h" />
     <ClInclude Include="Options.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RunA.h" />
     <ClInclude Include="RunD.h" />
     <ClInclude Include="RunDlast.h" />
+    <ClInclude Include="Shifter.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
@@ -380,6 +382,7 @@
     <ClCompile Include="RunA.cpp" />
     <ClCompile Include="RunD.cpp" />
     <ClCompile Include="RunDlast.cpp" />
+    <ClCompile Include="Shifter.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +394,9 @@
     <ProjectReference Include="Options\Options.vcxproj">
       <Project>{de3f8f7c-baf2-4990-9aa0-08e44288b9e8}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AmpDX.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

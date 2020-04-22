@@ -54,13 +54,23 @@ void RunDlast::Run(const INT2 shift,
 	//printf("shift:%d %d\n", shift.y, shift.x);
 	//printf("sz:%d %d\n", dsta.extent[0], dsta.extent[1]);
 #endif
+	const int vShiftOrders[8] = {
+		0b00110110, 0b01100011, 0b10010011, 0b00111001,
+		0b11000110, 0b01101100, 0b10011100, 0b11001001};
+	static int nshiftOrders = 0;
+	int shiftOrder = vShiftOrders[nshiftOrders];
+	if(++nshiftOrders >= 8) nshiftOrders = 0;
 	parallel_for_each(srcd.extent, [=, &dsta, &dstd, &dstpos](index<2> idx) restrict(amp){
 		const int mask[7] = {0,0,1, 9, -1,0,0};
 		const int y0 = idx[0] * 2 + shift.y;
 		const int x0 = idx[1] * 2 + shift.x;
-		for(int ncell = 0; ncell < 4; ncell++){ // TODO: shifts
-			const int ycell = ncell / 2;
-			const int xcell = ncell % 2;
+		int curshift = shiftOrder;
+		for(int ncell = 0; ncell < 4; ncell++){
+			const int xcell = curshift & 1;
+			curshift >>= 1;
+			const int ycell = curshift & 1;
+			curshift >>= 1;
+
 			const int y = (y0 + ycell) % dstd.extent[0];
 			const int x = (x0 + xcell) % dstd.extent[1];
 			const int aold = dsta[y][x];
@@ -106,8 +116,7 @@ void RunDlast::Run(const INT2 shift,
 		}
 	}
 #endif
-} // ///////////////////////////////////////////////////////////////////////////////////////////////
-
+		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 #ifdef AMPDBG_DLAST
 #undef AMPDBG_DLAST
 #endif
