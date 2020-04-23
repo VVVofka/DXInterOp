@@ -18,7 +18,6 @@
     <ClCompile Include="Model2D.cpp" />
     <ClCompile Include="Masks.cpp" />
     <ClCompile Include="Options.cpp" />
-    <ClCompile Include="Shifter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMPEngine3.h" />
@@ -45,7 +44,6 @@
     <ClInclude Include="Ini.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Shifter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXInterOpPsVs.hlsl" />

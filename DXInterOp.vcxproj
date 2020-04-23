@@ -367,7 +367,6 @@
     <ClInclude Include="RunA.h" />
     <ClInclude Include="RunD.h" />
     <ClInclude Include="RunDlast.h" />
-    <ClInclude Include="Shifter.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
@@ -382,7 +381,6 @@
     <ClCompile Include="RunA.cpp" />
     <ClCompile Include="RunD.cpp" />
     <ClCompile Include="RunDlast.cpp" />
-    <ClCompile Include="Shifter.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
