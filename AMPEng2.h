@@ -31,13 +31,14 @@ class AMPEng2{
 	std::vector<std::unique_ptr<array<DrQuadro, 2>>> var_dirs;
 	std::unique_ptr<array<FLT2, 2>> last_dirs;
 	std::unique_ptr<array<int, 1>> amask;
-	//std::unique_ptr<array<FLT2, 1>> dmask;
 	std::vector<std::unique_ptr<array<FLT2, 1>>> var_masks;
 
 	std::unique_ptr<array<int, 2>> ashort, along;
 	std::unique_ptr<array<DrQuadro, 2>> dshort, dlong;
 	std::vector<int> vashort, valong;
 	std::vector<DrQuadro> vdshort, vdlong;
+	std::vector<FLT2> v;
+
 public:
 	AMPEng2(ID3D11Device* d3ddevice) : m_accl_view(Concurrency::direct3d::create_accelerator_view(d3ddevice)){
 	} // /////////////////////////////////////////////////////////////////////////////////////////////////////
