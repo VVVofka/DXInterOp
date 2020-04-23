@@ -44,6 +44,7 @@ public:
 
 	void initialize_data();
 	void run();
+	void runFast();
 
 	HRESULT get_data_d3dbuffer(void** d3dbuffer) const{
 		return Concurrency::direct3d::get_buffer(*m_data)->QueryInterface(__uuidof(ID3D11Buffer), (LPVOID*)d3dbuffer);

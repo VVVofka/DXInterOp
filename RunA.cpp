@@ -27,3 +27,10 @@ void RunA::Run(const array<int, 2>& src, array<int, 2>& dsta, const array<int, 1
 		dsta[dst.y][dst.x] = mask[adr];
 	});
 } // /////////////////////////////////////////////////////////////////////////////////////////////////////
+void RunA::Copy(const array<int, 2>& src, array<int, 2>& dst){
+	parallel_for_each(src.extent, [&src, &dst](index<2> idx) restrict(amp){
+		const int y = idx[0];
+		const int x = idx[1];
+		dst[y + src.extent[0] + 1][x + src.extent[1] + 1] = src[y][x];
+	});
+} // /////////////////////////////////////////////////////////////////////////////////////////////////////

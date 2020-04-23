@@ -60,7 +60,6 @@ void AMPEng2::run(){
 	INT2 shift(distLastAY(gen), distLastAX(gen));
 	//printf("\nshift = y:%d x:%d\n", shift.y, shift.x);	dumpA(nlastlay);
 	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[size_t(nlastlay) - 1], *amask);
-	//RunA::RunUnTorLast(shift, *var_areas[nlastlay], *var_areas[nlastlay - 1], *amask);
 
 	for(size_t nlay = nlastlay - 1; nlay > 0; nlay--){
 		//dumpA(nlay);
@@ -74,6 +73,18 @@ void AMPEng2::run(){
 		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
 	}
 	RunDlast::Run(shift, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeYX(), model.options.normDir());
+} // ///////////////////////////////////////////////////////////////////////////////////////////////
+void AMPEng2::runFast(){
+	INT2 shiftArea(distLastAY(gen), distLastAX(gen));
+	RunA::RunLast(shiftArea, *var_areas[nlastlay], *along, *amask);
+	RunA::Run(*along, *ashort, *amask);
+	RunA::Copy(*ashort, *along);
+	for(size_t nlay = 1; nlay < nlastlay; nlay++){
+		RunD::Run(*var_dirs[nlay - 1], *var_dirs[nlay], *var_areas[nlay], *var_masks[nlay - 1]);
+		//concurrency::copy(*m_data, vpos.data());
+		//for(int n=0; n<(int)vpos.size(); n++) printf("%d\t%f\t%f\n", n, vpos[n].Pos.y, vpos[n].Pos.x);
+	}
+	RunDlast::Run(shiftArea, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeYX(), model.options.normDir());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void AMPEng2::dumpA(int nlay){
