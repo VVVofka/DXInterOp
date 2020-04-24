@@ -15,7 +15,6 @@
 #include "Options.h"
 struct InfoLay{
 	INT2 sz;
-	float kLay = 0.f;
 	int pos = 0;
 	FLT2 masks[Options::szDirs];
 }; // ***************************************************************************

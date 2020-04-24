@@ -52,6 +52,7 @@ struct INT2{
 
 	INT2 operator * (int mult) const restrict(amp, cpu){ return INT2(y * mult, x * mult); }
 	INT2 operator / (int mult) const restrict(amp, cpu){ return INT2(y / mult, x / mult); }
+	int sq() const { return y * x; } // y * x
 	int Max(){ return __max(y, x); }
 	int Min(){ return __min(y, x); }
 }; // ********************************************************************************************

@@ -1,6 +1,5 @@
 #include "Model2D.h"
 void Model2D::Create(){
-	INT2 minsz = INT2(options.iArr[InpOptions::LaysSzUpY], options.iArr[InpOptions::LaysSzUpX]);
 	int maxszXY = options.iArr[InpOptions::LaysSzDn];
 	double kRnd = options.dArr[InpOptions::kFillRnd];
 	DBL2 kSigma(options.dArr[InpOptions::kSigmaY], options.dArr[InpOptions::kSigmaX]);
@@ -12,7 +11,7 @@ void Model2D::Create(){
 	vLaysInfo.clear(); vLaysInfo.reserve(RESERV_LAYS_CNT);
 	size_t nlay = 0;
 	InfoLay layinfo;
-	layinfo.sz = minsz;
+	layinfo.sz = INT2(options.iArr[InpOptions::LaysSzUpY], options.iArr[InpOptions::LaysSzUpX]);
 	int szmaxxy = layinfo.sz.Max();
 	while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
 		size_t szarea = size_t(layinfo.sz.x) * size_t(layinfo.sz.y);
@@ -28,7 +27,9 @@ void Model2D::Create(){
 		}
 		vLaysInfo.push_back(layinfo);
 
-		layinfo.sz *= 2; szmaxxy *= 2;
+		layinfo.pos += layinfo.sz.sq();
+		layinfo.sz *= 2; 
+		szmaxxy *= 2;
 		nlay++;
 	} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 

@@ -66,7 +66,8 @@ public:
 		txKInertion->Text = Convert::ToString(dArr[InpOptions::kInertion]);
 		txKBorder->Text = Convert::ToString(dArr[InpOptions::kBorder]);
 		txKLaysFrom->Text = Convert::ToString(dArr[InpOptions::kLays]);
-		txKLaysTo->Text = Convert::ToString(dArr[InpOptions::kLays + iArr[InpOptions::LaysCnt] - 1]);
+		int adr = InpOptions::kLays + iArr[InpOptions::LaysCnt] - 2;
+		txKLaysTo->Text = Convert::ToString(dArr[adr]);
 	} // ////////////////////////////////////////////////////////////////////////////////////////
 	Form1(void){
 		InitializeComponent();

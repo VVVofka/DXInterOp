@@ -12,23 +12,12 @@ void AMPEng2::initialize_data(){
 	int layscnt = (int)model.v_areas.size();
 	for(int nlay = 0; nlay < layscnt; nlay++){
 		const INT2 size = model.sizeYX(nlay);
-
-		var_areas.push_back(std::unique_ptr<array<int, 2>>());
-		var_areas[nlay] = std::unique_ptr<array<int, 2>>
-			(new array<int, 2>(size.y, size.x, model.v_areas[nlay].begin(), m_accl_view));
-
+		var_areas.push_back(std::unique_ptr<array<int, 2>>(new array<int, 2>(size.y, size.x, model.v_areas[nlay].begin(), m_accl_view)));
 		if(nlay < layscnt - 1){
-			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>());
-			var_dirs[nlay] = std::unique_ptr<array<DrQuadro, 2>>
-				(new array<DrQuadro, 2>(size.y, size.x, model.v_dirs[nlay].begin(), m_accl_view));
-
-			var_masks.push_back(std::unique_ptr<array<FLT2, 1>>());
-			var_masks[nlay] = std::unique_ptr<array<FLT2, 1>>
-				(new array<FLT2, 1>(Options::szDirs, model.vLaysInfo[nlay].masks, m_accl_view));
+			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>(new array<DrQuadro, 2>(size.y, size.x, model.v_dirs[nlay].begin(), m_accl_view)));
+			var_masks.push_back(std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(Options::szDirs, model.vLaysInfo[nlay].masks, m_accl_view)));
+			setConsole(); printf("%d\t%f\n", nlay, model.vLaysInfo[nlay].masks[255].x);
 		}
-		if(nlay < layscnt - 2){
-		}
-		setConsole(); printf("%d\t%f\n", nlay, model.vLaysInfo[nlay].masks[255].x);
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(int(model.lastPoss().size()), model.lastPoss().begin(), m_accl_view));
 	last_dirs = std::unique_ptr<array<FLT2, 2>>(new array<FLT2, 2>(model.sizeY(), model.sizeX(), model.last_dirs.begin(), m_accl_view));
@@ -67,9 +56,10 @@ void AMPEng2::run(){
 	//printf("\nshift = y:%d x:%d\n", shift.y, shift.x);	dumpA(nlastlay);
 	RunA::RunLast(shift, *var_areas[nlastlay], *var_areas[size_t(nlastlay) - 1], *amask);
 
-	for(size_t nlay = nlastlay - 1; nlay > 0; nlay--){
+	for(int nlay = nlastlay - 1; nlay > 0; nlay--){
 		//dumpA(nlay);
-		RunA::Run(*var_areas[nlay], *var_areas[nlay - 1], *amask);
+		size_t n = size_t(nlay);
+		RunA::Run(*var_areas[n], *var_areas[n - 1], *amask);
 	}
 	//dumpA(0);
 	// Back to down
