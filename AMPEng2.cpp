@@ -16,7 +16,7 @@ void AMPEng2::initialize_data(){
 		if(nlay < layscnt - 1){
 			var_dirs.push_back(std::unique_ptr<array<DrQuadro, 2>>(new array<DrQuadro, 2>(size.y, size.x, model.v_dirs[nlay].begin(), m_accl_view)));
 			var_masks.push_back(std::unique_ptr<array<FLT2, 1>>(new array<FLT2, 1>(Options::szDirs, model.vLaysInfo[nlay].masks, m_accl_view)));
-			setConsole(); printf("%d\t%f\n", nlay, model.vLaysInfo[nlay].masks[255].x);
+			//setConsole(); printf("%d\t%f\n", nlay, model.vLaysInfo[nlay].masks[255].x);
 		}
 	}
 	m_data = std::unique_ptr<array<Vertex2D, 1>>(new array<Vertex2D, 1>(int(model.lastPoss().size()), model.lastPoss().begin(), m_accl_view));
