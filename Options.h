@@ -34,8 +34,7 @@ public:
 	bool normDir(){ return iArr[InpOptions::NormDir] != 0; } // if DirX < 0.5 * DirY then DirX = 0
 	int seedRnd(){ return iArr[InpOptions::SeedRnd]; }
 	const int* aMask() const { return &iArr[InpOptions::AMasks]; }
-
-	double kLays(int nlay){ return dArr[InpOptions::kLays + nlay]; }
+	double kLays(int nlay);
 
 	bool setDefault();
 	bool save(const char* fname) const;

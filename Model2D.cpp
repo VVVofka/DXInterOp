@@ -5,7 +5,6 @@ void Model2D::Create(){
 	double kRnd = options.dArr[InpOptions::kFillRnd];
 	DBL2 kSigma(options.dArr[InpOptions::kSigmaY], options.dArr[InpOptions::kSigmaX]);
 
-	;
 	const int RESERV_LAYS_CNT = 16;
 	v_poss.clear(); v_poss.reserve(RESERV_LAYS_CNT);
 	v_areas.clear(); v_areas.reserve(RESERV_LAYS_CNT);
@@ -21,6 +20,12 @@ void Model2D::Create(){
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		v_dirs.push_back(std::vector<DrQuadro>(szarea));
 		v_poss.push_back(std::vector<Vertex2D>());
+
+		for(int j = 0; j < _countof(layinfo.masks); j++){
+			float klay = (float)options.kLays(nlay);
+			layinfo.masks[j].y = options.blocks2D2.vin[j].y * klay;
+			layinfo.masks[j].x = options.blocks2D2.vin[j].x * klay;
+		}
 		vLaysInfo.push_back(layinfo);
 
 		layinfo.sz *= 2; szmaxxy *= 2;

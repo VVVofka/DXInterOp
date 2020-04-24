@@ -23,6 +23,11 @@ int Options::showDlg(){
 	}
 	return ret;
 } // ///////////////////////////////////////////////////////////////////////////
+double Options::kLays(int nlay){
+	if(nlay == 0)
+		return 0;
+	return dArr[InpOptions::kLays + nlay - 1];
+} // ///////////////////////////////////////////////////////////////////////////
 bool Options::setDefault(){
 	blocks2D2.setDefault();
 	blocks2D2.toDirs(dirs());
