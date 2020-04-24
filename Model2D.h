@@ -13,6 +13,11 @@
 #include "Vertex.h"
 #include "Masks.h"
 #include "Options.h"
+	struct InfoLay{
+		INT2 sz;
+		float kLay = 0.f;
+		int pos = 0;
+	};
 
 class Model2D{
 public:

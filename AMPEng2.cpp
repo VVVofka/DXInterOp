@@ -89,7 +89,7 @@ void AMPEng2::runFast(){
 	RunA::Run(*along, *ashort, *amask);
 	RunA::Copy(*ashort, *along);
 
-	RunD::Run(*dshort, *dlong, *along, *var_masks[nlay - 1]);
+	//RunD::Run(*dshort, *dlong, *along, *var_masks[nlay - 1]);
 	RunDlast::Run(shiftArea, *var_dirs[nlastlay - 1], *m_data, *var_areas[nlastlay], *last_dirs, model.sizeYX(), model.options.normDir());
 } // ///////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -50,8 +50,8 @@ struct INT2{
 	void operator *=(int mult){ y *= mult; x *= mult; }
 	void operator /=(int mult){ y /= mult; x /= mult; }
 
-	const INT2& operator * (int mult) const restrict(amp, cpu){ return INT2(y * mult, x * mult); }
-	const INT2& operator / (int mult) const restrict(amp, cpu){ return INT2(y / mult, x / mult); }
+	INT2 operator * (int mult) const restrict(amp, cpu){ return INT2(y * mult, x * mult); }
+	INT2 operator / (int mult) const restrict(amp, cpu){ return INT2(y / mult, x / mult); }
 	int Max(){ return __max(y, x); }
 	int Min(){ return __min(y, x); }
 }; // ********************************************************************************************
