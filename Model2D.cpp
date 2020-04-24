@@ -10,25 +10,26 @@ void Model2D::Create(){
 	v_poss.clear(); v_poss.reserve(RESERV_LAYS_CNT);
 	v_areas.clear(); v_areas.reserve(RESERV_LAYS_CNT);
 	v_dirs.clear(); v_dirs.reserve(RESERV_LAYS_CNT);
-	vsz.clear(); vsz.reserve(RESERV_LAYS_CNT);
+	vLaysInfo.clear(); vLaysInfo.reserve(RESERV_LAYS_CNT);
 	size_t nlay = 0;
-	INT2 sz(minsz);
-	int szmaxxy = sz.Max();
+	InfoLay layinfo;
+	layinfo.sz = minsz;
+	int szmaxxy = layinfo.sz.Max();
 	while(szmaxxy <= maxszXY / 2){ // without last lay (it don't contnent v_dirs)
-		size_t szarea = size_t(sz.x) * size_t(sz.y);
+		size_t szarea = size_t(layinfo.sz.x) * size_t(layinfo.sz.y);
 
 		v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 		v_dirs.push_back(std::vector<DrQuadro>(szarea));
 		v_poss.push_back(std::vector<Vertex2D>());
-		vsz.push_back(sz);
+		vLaysInfo.push_back(layinfo);
 
-		sz *= 2; szmaxxy *= 2;
+		layinfo.sz *= 2; szmaxxy *= 2;
 		nlay++;
 	} // while(szmaxxy <= maxszXY / 2){ // without last lay (it not contnent v_dirs)
 
 	  // Last lay
-	vsz.push_back(sz);
-	const size_t szarea = size_t(sz.x) * size_t(sz.y);
+	vLaysInfo.push_back(layinfo);
+	const size_t szarea = size_t(layinfo.sz.x) * size_t(layinfo.sz.y);
 	v_areas.push_back(std::vector<int>(szarea, -1)); // -1 - empty value
 	last_dirs.resize(szarea, FLT2(0, 0));
 
@@ -60,7 +61,7 @@ void Model2D::fillrnd(int nlay, size_t szarea, double kFill, DBL2 kSigma){
 	size_t szpos = size_t(szarea * kFill + 0.5);
 	v_poss[nlay].reserve(szpos);
 
-	const INT2 sz(vsz[nlay]);
+	const INT2 sz(vLaysInfo[nlay].sz);
 	std::normal_distribution<> distry(sz.y * 0.5, sz.y * 0.3 * kSigma.y);
 	std::normal_distribution<> distrx(sz.x * 0.5, sz.x * 0.3 * kSigma.x);
 
@@ -91,7 +92,7 @@ void Model2D::filltest(int nlay){
 	{0, 8, 16, 4 * 17, 4 * 17 + 8, 4 * 17 + 16, 8 * 17, 8 * 17 + 8, 8 * 17 + 16};
 	for(auto curpos : vcurpos){
 		v_areas[nlay][curpos] = (unsigned int)v_poss[nlay].size();
-		const Vertex2D vert2 = norm(curpos, vsz[nlay]);
+		const Vertex2D vert2 = norm(curpos, vLaysInfo[nlay].sz);
 		v_poss[nlay].push_back(vert2);
 	}
 } // ////////////////////////////////////////////////////////////////////////////////////////////////
