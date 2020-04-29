@@ -54,10 +54,13 @@ void RunDlast::Run(const INT2 shift,
 	//printf("shift:%d %d\n", shift.y, shift.x);
 	//printf("sz:%d %d\n", dsta.extent[0], dsta.extent[1]);
 #endif
-	const int vShiftOrders[8] = {
+	const int vShiftOrders[] = {
 		0b00110110, 0b01100011, 0b10010011, 0b00111001,
-		0b11000110, 0b01101100, 0b10011100, 0b11001001};
-	int nshiftOrders = rand() % 8;
+		0b11000110, 0b01101100, 0b10011100, 0b11001001,
+		0b00011110, 0b01111000, 0b11100001, 0b10000111,
+		0b00101101, 0b10110100, 0b11010010, 0b01001011
+};
+	int nshiftOrders = rand() % _countof(vShiftOrders);
 	//static int nshiftOrders = 0;
 	int shiftOrder = vShiftOrders[nshiftOrders];
 	//if(++nshiftOrders >= 8) nshiftOrders = 0;
