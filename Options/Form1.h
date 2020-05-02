@@ -933,9 +933,11 @@ private: System::Void btn0110_Click(System::Object^ sender, System::EventArgs^ e
 private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	for(int a = 0, n = 0; a < 16; a++)
 		for(int ncell = 0; ncell < 4; ncell++)
-			for(int nitem = 0; nitem < 4; nitem++)
+			for(int nitem = 0; nitem < 4; nitem++){
+				//const int invy[] = {0, 7, 6, 5, 4, 3, 2, 1, 8};
 				iArr[n++] = getDir(a, ncell, nitem);
-
+				//iArr[n++] = invy[getDir(a, ncell, nitem)];
+			}
 	iArr[InpOptions::AMasks] = lstMask0000->SelectedIndex;
 	iArr[InpOptions::AMasks + 1] = iArr[InpOptions::AMasks + 2] = iArr[InpOptions::AMasks + 4] = iArr[InpOptions::AMasks + 8] = lstMask0001->SelectedIndex;
 	iArr[InpOptions::AMasks + 3] = iArr[InpOptions::AMasks + 5] = iArr[InpOptions::AMasks + 10] = iArr[InpOptions::AMasks + 12] = lstMask0011->SelectedIndex;

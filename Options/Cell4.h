@@ -43,9 +43,9 @@ public:
 			}
 		}
 	} // //////////////////////////////////////////////////////////////////////////////////////////////
-	Cell^ getCell(int index){return cells[index];}
-	Cell^ getCell(int ncell, int nitem){return cells[4 * ncell + nitem];}
-	void setDir(int ncell, int nitem, int newdir){ cells[4 * ncell + nitem]->setDir(newdir);}
+	Cell^ getCell(int index){ return cells[index]; }
+	Cell^ getCell(int ncell, int nitem){ return cells[4 * ncell + nitem]; }
+	void setDir(int ncell, int nitem, int newdir){ cells[4 * ncell + nitem]->setDir(newdir); }
 	// //////////////////////////////////////////////////////////////////////////////////////////////
 	void dump(){
 		Diagnostics::Debug::Print("{0}\t{1}\t\t{2}\t{3}", cells[0]->getDir(), cells[1]->getDir(), cells[4]->getDir(), cells[5]->getDir());
@@ -93,9 +93,25 @@ private:
 		const int nyitem = (4 * y) / heigh;
 		const int nitem = 2 * (nyitem % 2) + (nxitem % 2);
 
-		const int shift = e->Button == MouseButtons::Left ? -1 : 1;
-		cells[ncell * 4 + nitem]->nextDir(shift);
 		PictureBox^ pb = (PictureBox^)sender;
+		Keys modkeys = pb->ModifierKeys;
+		const int shift = e->Button == MouseButtons::Left ? -1 : 1;
+		switch(modkeys){
+			case Keys::Alt:
+				cells[ncell * 4 + nitem]->setDir(0);
+				break;
+			case Keys::Control:
+				for(int j = 0; j < 4; j++)
+					cells[ncell * 4 + j]->nextDir(shift);
+				break;
+			case Keys::Control | Keys::Alt:
+				for(int j = 0; j < 4; j++)
+					cells[ncell * 4 + j]->setDir(0);
+				break;
+			default:
+				cells[ncell * 4 + nitem]->nextDir(shift);
+				break;
+		}
 		pb->Refresh();
 		return System::Void();
 	}
