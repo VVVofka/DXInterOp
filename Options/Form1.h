@@ -958,7 +958,7 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	dArr[InpOptions::kInertion] = convertd(txKInertion);
 	dArr[InpOptions::kBorder] = convertd(txKBorder);
 
-	int cnt = iArr[InpOptions::LaysCnt] - 1;
+	int cnt = getcnt() - 2;
 	if(cnt <= 1){
 		iArr[InpOptions::Restart] = 0;
 	} else{
@@ -971,6 +971,19 @@ private: System::Void btOk_Click(System::Object^ sender, System::EventArgs^ e){
 	}
 	this->Close();
 } // ///////////////////////////////////////////////////////////////////////////
+private: int getcnt(){
+	int szfromx = converti(txSizeXUp);
+	int szfromy = converti(txSizeYUp);
+	if(szfromx <= 0 || szfromy <= 0) return -1;
+	int szfrom = __min(szfromx, szfromy);
+	int cnt = 0;
+	int szto = converti(txSizeDn);
+	while(szfrom <= szto){
+		szfrom *= 2;
+		cnt++;
+	}
+	return cnt;
+} // ///////////////////////////////////////////////////////////////////////////////////////
 private: System::Void btCancel_Click(System::Object^ sender, System::EventArgs^ e){
 	iArr[InpOptions::Restart] = 0;
 	this->Close();
