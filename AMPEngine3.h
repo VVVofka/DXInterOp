@@ -6,10 +6,10 @@
 #include <numeric>
 //#include <ppl.h>
 
-#pragma warning(push)
-#pragma warning(disable:4005 26812) 
+//#pragma warning(push)
+//#pragma warning(disable:4005 26812) 
 #include <D3D11.h>
-#pragma warning(pop)
+//#pragma warning(pop)
 
 #include "Vertex.h"
 #include "DXInterOp.h"

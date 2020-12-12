@@ -10,8 +10,8 @@
 
 #include "Vertex.h"
 
-#pragma warning(push)
-#pragma warning(disable:4005 26812) 
+//#pragma warning(push)
+//#pragma warning(disable:4005 26812) 
 #include <d3dcompiler.h>
 #include <D3D11.h>
 
@@ -140,7 +140,7 @@ protected:
 		g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, NULL);
 
 		// Setup the viewport
-		D3D11_VIEWPORT vp;
+		D3D11_VIEWPORT vp{};
 		vp.Width = (FLOAT)width;
 		vp.Height = (FLOAT)height;
 		vp.MinDepth = 0.0f;
@@ -150,7 +150,7 @@ protected:
 		g_pImmediateContext->RSSetViewports(1, &vp);
 		return hr;
 	} // ///////////////////////////////////////////////////////////////////////////////////////////
-#pragma warning(suppress : 4996)
+//#pragma warning(suppress : 4996)
 	HRESULT CreateVertexShader(char* snaderName){
 		HRESULT hr = S_OK;
 		ID3DBlob* pVSBlob = NULL;
@@ -158,10 +158,13 @@ protected:
 		hr = CompileShaderFromFile(L"DXInterOpPsVs.hlsl", snaderName, pProfile, &pVSBlob);
 		if(FAILED(hr)){
 			hr = CompileShaderFromFile(L"..\\DXInterOpPsVs.hlsl", snaderName, pProfile, &pVSBlob);
-			//MessageBox(NULL, L"The vertex shader in DXInterOpPsVs.hlsl cannot be compiled", L"Error", MB_OK);
 			if(FAILED(hr)){
-				auto q = _wpgmptr;
-				MessageBox(NULL, L"The vertex shader in DXInterOpPsVs.hlsl cannot be compiled", q, MB_OK);
+				wchar_t* q = NULL;
+				errno_t err = _get_wpgmptr(&q);		//_wpgmptr;
+				if(err == 0)
+					MessageBox(NULL, L"The vertex shader in DXInterOpPsVs.hlsl cannot be compiled", q, MB_OK);
+				else
+					MessageBox(NULL, L"The vertex shader in DXInterOpPsVs.hlsl cannot be compiled", L"Error", MB_OK);
 				return hr;
 			}
 		}
@@ -234,7 +237,7 @@ protected:
 		}
 		SAFE_RELEASE(pErrorBlob);
 		return hr;
-	} // ///////////////////////////////////////////////////////////////////////////////////////////
+} // ///////////////////////////////////////////////////////////////////////////////////////////
 	HRESULT CreatePixelShader(){
 		HRESULT hr = S_OK;
 		// Compile the pixel shader
@@ -295,5 +298,5 @@ protected:
 	} // /////////////////////////////////////////////////////////////////////////////////////////////
 
 }; // ******************************************************************************************
-#pragma warning(pop)
+//#pragma warning(pop)
 
